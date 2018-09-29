@@ -1,3 +1,10 @@
+fork-plugin (2.12) unstable; urgency=medium
+
+  * cdbs->dh  (+ correct b. dependency)
+  * tab
+
+ -- Michal Maruska <mmaruska@gmail.com>  Sat, 29 Sep 2018 19:33:15 +0200
+
 fork-plugin (2.11) precise unstable; urgency=medium
 
   * drop "pointer" type
