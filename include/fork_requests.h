@@ -43,7 +43,8 @@ typedef struct _forkConfigure {
    CARD16               what;
    CARD16               pad2;
    CARD32               value;
-} forkConfigureReq;                 /* SetLastKeysCountReq */
+} forkConfigureReq;
+
 #define sz_forkConfigureReq     16
 
 
@@ -58,7 +59,7 @@ typedef struct _forkConfigureKey {
    CARD16               code;
    CARD16               twin;   /* the other code */
    CARD32               value;
-} forkConfigureKeyReq;                 /* SetLastKeysCountReq */
+} forkConfigureKeyReq;
 #define sz_forkConfigureKeyReq  16
 
 
@@ -73,7 +74,7 @@ typedef struct _forkGetConfigure {
    CARD16               pad1;
    CARD16               what;
    CARD16               pad2;
-} forkGetConfigureReq;                 /* SetLastKeysCountReq */
+} forkGetConfigureReq;
 #define sz_forkGetConfigureReq  12
 
 
@@ -88,7 +89,7 @@ typedef struct _forkGetConfigureKey {
    CARD16               code;
    CARD16               what;
    CARD16               twin;   /* other code */
-} forkGetConfigureKeyReq;                 /* SetLastKeysCountReq */
+} forkGetConfigureKeyReq;
 #define sz_forkGetConfigureKeyReq  12
 
 
