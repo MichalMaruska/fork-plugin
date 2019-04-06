@@ -168,7 +168,7 @@ machine_configure_twins (machineRec* machine, int type, KeyCode key, KeyCode twi
 
 
 static int
-machine_configure_key (machineRec* machine, int type, KeyCode key, int value, Bool set)
+machine_configure_key(machineRec* machine, int type, KeyCode key, int value, Bool set)
 {
    MDB(("%s: keycode %d -> value %d, function %d\n", __FUNCTION__, key, value, type));
 
@@ -190,8 +190,8 @@ machine_configure_key (machineRec* machine, int type, KeyCode key, int value, Bo
 
 
 static int
-machine_configure_global (PluginInstance* plugin, machineRec* machine, int type,
-                          int value, Bool set)
+machine_configure_global(PluginInstance* plugin, machineRec* machine, int type,
+                         int value, Bool set)
 {
    switch (type){
    case fork_configure_overlap_limit:
