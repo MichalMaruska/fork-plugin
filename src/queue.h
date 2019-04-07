@@ -44,44 +44,6 @@ public:
         }
 
 
-    /* move the content of appendix to the END of this queue
-     *      this      appendix    this        appendix
-     *     xxxxxxx   yyyyy   ->   xxxxyyyy       (empty)
-     */
-    void slice (my_queue<T>& appendix);
-
-    ~my_queue()
-        {
-            if (m_name)
-            {
-                m_name = NULL;
-            }
-        }
-    my_queue<T>(const char* name = NULL) : m_name(name)
-        {
-            DB(("constructor\n"));
-            last_node = list.end();
-        };
-
-    void swap (my_queue<T>& peer)
-        {
-            typename slist<T*>::iterator temp;
-            temp = last_node;
-
-            list.swap(peer.list);
-
-            // iter_swap(last_node,peer.last_node);
-            if (list.empty())
-                last_node = list.begin();
-            else {
-                last_node = peer.last_node;
-            }
-
-            if (peer.list.empty())
-                peer.last_node = peer.list.begin();
-            else
-                peer.last_node = temp;
-        }
   int length() const
   {
     return list.size();
@@ -108,8 +70,45 @@ public:
     push(clone);
   }
 
+  /* move the content of appendix to the END of this queue
+   *      this      appendix    this        appendix
+   *     xxxxxxx   yyyyy   ->   xxxxyyyy       (empty)
+   */
+  void slice (my_queue<T>& appendix);
 
+  ~my_queue()
+  {
+    if (m_name)
+    {
+      m_name = NULL;
+    }
+  }
 
+  my_queue<T>(const char* name = NULL) : m_name(name)
+  {
+    DB(("constructor\n"));
+    last_node = list.end();
+  };
+
+  void swap (my_queue<T>& peer)
+  {
+    typename slist<T*>::iterator temp;
+    temp = last_node;
+
+    list.swap(peer.list);
+
+    // iter_swap(last_node,peer.last_node);
+    if (list.empty())
+      last_node = list.begin();
+    else {
+      last_node = peer.last_node;
+    }
+
+    if (peer.list.empty())
+      peer.last_node = peer.list.begin();
+    else
+      peer.last_node = temp;
+  }
 };
 
 
