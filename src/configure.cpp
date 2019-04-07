@@ -1,5 +1,4 @@
-
-// in this file: processing X11 requests to configure the plugin.
+// In this file: processing X11 requests to configure the plugin.
 
 #include "config.h"
 #include "debug.h"
@@ -135,9 +134,6 @@ machine_new_config(void)
    config->next = NULL;
    return config;
 }
-
-
-
 
 
 /* fixme:  where is the documentation: fork_requests.h ? */
@@ -349,7 +345,7 @@ machine_configure(PluginInstance* plugin, int values[5])
 /*todo: int*/
 void
 machine_command(ClientPtr client, PluginInstance* plugin, int cmd, int data1,
-		int data2, int data3, int data4)
+                int data2, int data3, int data4)
 {
   DB(("%s cmd %d, data %d ...\n", __FUNCTION__, cmd, data1));
   switch (cmd)
