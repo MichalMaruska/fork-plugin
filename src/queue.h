@@ -43,15 +43,6 @@ public:
             m_name = name;
         }
 
-    int length() const;
-
-    bool empty() const;
-
-    const T* front () const;
-    T* pop();                    // top_and_pop()
-
-    void push(T* element);
-    void push(const T& value);   // we clone the value!
 
     /* move the content of appendix to the END of this queue
      *      this      appendix    this        appendix
@@ -91,21 +82,37 @@ public:
             else
                 peer.last_node = temp;
         }
-};
-
-
-
-template<typename T>
-int my_queue<T>::length () const
-{
+  int length() const
+  {
     return list.size();
+  }
+
+  bool empty() const
+  {
+    return (list.empty());
+  }
+
+  const T* front () const
+  {
+    return list.front();
+  }
+
+  T* pop();                    // top_and_pop()
+
+  void push(T* element);
+
+  // fixme: move-?
+  void push(const T& value)   // we clone the value!
+  {
+    T* clone = new T(value);
+    push(clone);
+  }
+
+
+
 };
 
-template<typename T>
-bool my_queue<T>::empty () const
-{
-    return (list.empty());
-}
+
 
 
 template<typename T>
@@ -122,13 +129,6 @@ void my_queue<T>::push (T* value)
     }
 }
 
-template<typename T>
-void my_queue<T>::push (const T& value)
-{
-    T* clone = new T(value);
-    push(clone);
-}
-
 
 template<typename T>
 T* my_queue<T>::pop ()
@@ -140,14 +140,6 @@ T* my_queue<T>::pop ()
     if (list.empty())
         last_node = list.begin();
     return pointer;
-}
-
-
-
-template<typename T>
-const T* my_queue<T>::front () const
-{
-    return list.front();
 }
 
 
