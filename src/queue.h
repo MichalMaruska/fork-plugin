@@ -28,9 +28,9 @@ template <typename T>
 class my_queue
 {
 private:
-    slist<T*> list;
     const char* m_name;     // for debug string
-    typename slist<T*>::iterator last_node;
+  slist<T*> list;
+  typename slist<T*>::iterator last_node;
 
 public:
     const char* get_name()
