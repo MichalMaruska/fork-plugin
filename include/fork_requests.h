@@ -2,10 +2,16 @@
 #define MACHINE_REQUESTS_H
 
 #include <X11/Xmd.h>
+extern "C" {
+#include <xorg-server.h>
+
+#include <X11/X.h>
+#include <X11/Xproto.h>
+#include <X11/keysym.h>
+#include <xorg/inputstr.h>
+}
 
 #define FORK_PLUGIN_NAME "fork"
-
-
 
 /* I think, that this is, at the beginning, a list of requests, which each plugin should handle.
  * Then, there should be interpretation of the config sub-OPs.  */
