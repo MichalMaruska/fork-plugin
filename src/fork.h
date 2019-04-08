@@ -45,14 +45,13 @@ typedef my_queue<key_event> list_with_tail;
 
 #define plugin_machine(p) ((machineRec*)(plugin->data))
 #define MALLOC(type)   (type *) malloc(sizeof (type))
-#define MAX_KEYCODE 256   	/* fixme: inherit from xorg! */
+#define MAX_KEYCODE 256         /* fixme: inherit from xorg! */
 typedef int keycode_parameter_matrix[MAX_KEYCODE][MAX_KEYCODE];
 
 
 
 /* we can have a (linked) list of configs! */
 typedef struct _fork_configuration fork_configuration;
-
 
 struct _fork_configuration
 {
@@ -114,7 +113,7 @@ typedef struct machine
     Time suspect_time;           /* time of the 1st event in the queue. */
     Time verificator_time;       /* press of the `verificator' */
     // calculated:
-    Time decision_time;		/* Time to wait... so that the current event queue could decide more*/
+    Time decision_time;         /* Time to wait... so that the current event queue could decide more*/
     Time current_time;
 
     /* we cannot hold only a Bool, since when we have to reconfigure, we need the original
@@ -172,4 +171,4 @@ mxfree(void* p, size_t size)
   free(p);
 }
 
-#endif	/* _FORK_H_ */
+#endif  /* _FORK_H_ */
