@@ -13,16 +13,15 @@ extern "C" {
 
 #define FORK_PLUGIN_NAME "fork"
 
-/* I think, that this is, at the beginning, a list of requests, which each plugin should handle.
- * Then, there should be interpretation of the config sub-OPs.  */
+/** I think, that this is, at the beginning, a list of requests, which each plugin should handle.
+ * Then, there should be interpretation of the config sub-OPs.
+ */
 
 /** Requests:  **/
-
-enum{
-   // can C ?
-//      X_kbSetFork = 28,
-//      X_kbSetForkRepeat,
-
+enum {
+      // can C ?
+      //      X_kbSetFork = 28,
+      //      X_kbSetForkRepeat,
       X_kbGetLastKeys = 30,
 
       X_kbConfigure,
@@ -30,8 +29,6 @@ enum{
       X_kbGetConfigure,
       X_kbGetConfigureKey,
 };
-
-
 
 
 /**  Configuring:  sending a pair of numbers + OP-code   **/
@@ -44,7 +41,7 @@ typedef struct _forkConfigure {
    CARD16               deviceSpec B16;
    CARD16               pad1;
 
-        /* see /x/cvs/xfree/xpatches/medved-plugin/include/extensions/XKBproto.h  ->        _forkPluginConfig  */
+  /* see /x/cvs/xfree/xpatches/medved-plugin/include/extensions/XKBproto.h  ->        _forkPluginConfig  */
 
    CARD16               what;
    CARD16               pad2;
@@ -55,6 +52,7 @@ typedef struct _forkConfigure {
 
 
 /* fixme: not keys, but events ! */
+/* twin ... the other code, forked(code) */
 typedef struct _forkConfigureKey {
    CARD8                reqType;
    CARD8                forkReqType;
@@ -63,14 +61,11 @@ typedef struct _forkConfigureKey {
 
    CARD16               what;
    CARD16               code;
-   CARD16               twin;   /* the other code */
+   CARD16               twin;
    CARD32               value;
 } forkConfigureKeyReq;
 #define sz_forkConfigureKeyReq  16
 
-
-
-/* fixme: not keys, but events ! */
 typedef struct _forkGetConfigure {
    CARD8                reqType;
    CARD8                forkReqType;
@@ -83,9 +78,6 @@ typedef struct _forkGetConfigure {
 } forkGetConfigureReq;
 #define sz_forkGetConfigureReq  12
 
-
-
-/* fixme: not keys, but events ! */
 typedef struct _forkGetConfigureKey {
    CARD8                reqType;
    CARD8                forkReqType;
@@ -94,41 +86,33 @@ typedef struct _forkGetConfigureKey {
 
    CARD16               code;
    CARD16               what;
-   CARD16               twin;   /* other code */
+   CARD16               twin;
 } forkGetConfigureKeyReq;
 #define sz_forkGetConfigureKeyReq  12
 
 
-
-
-
 /** Sub-OP-codes for the Set/Get-Configure-key request:  **/
 enum  {
-        fork_configure_last_events,
-        fork_configure_overlap_limit,
-        fork_configure_total_limit,
-        fork_configure_repeat_limit,
+       fork_configure_last_events,
+       fork_configure_overlap_limit,
+       fork_configure_total_limit,
+       fork_configure_repeat_limit,
 
-        fork_configure_repeat_consider_forks,
-        /* only per key: */
-        fork_configure_key_fork,
-        fork_configure_key_fork_repeat,
-        // 7
+       fork_configure_repeat_consider_forks,
+       /* only per key: */
+       fork_configure_key_fork,
+       fork_configure_key_fork_repeat, // 7
 
-        fork_configure_debug,
-        fork_configure_switch,
-        fork_configure_clone,
-        fork_configure_clear_interval,
+       fork_configure_debug,
+       fork_configure_switch,
+       fork_configure_clone,
+       fork_configure_clear_interval,
 
-        /* 11 */
-        fork_server_dump_keys,
-        fork_client_dump_keys,
+       fork_server_dump_keys, // 11
+       fork_client_dump_keys,
 };
 
-
-
-//  Events
-
+/*  Dumping Events */
 typedef struct _fork_event_notify {
     BYTE        type;
     BYTE        forkType;
@@ -163,34 +147,31 @@ typedef struct _fork_event_notify {
 #define sz_fork_event_notify    32
 
 
-/**  Grabbed keys should not be pushed?   i think i'll make it confgirable in XF86Config  **/
-/**  requesting & providing  last keys typed **/
+/**  Grabbed keys should not be pushed?   I think I'll make it confgurable in XF86Config  **/
 
-
+/**  Requesting & providing  last keys typed **/
 typedef struct _xforkGetLastKeys {
-   CARD8                reqType;
-   CARD8                forkReqType;    /* always X_KBSetFork */
-   CARD16               length B16;
-   CARD16               deviceSpec B16;
-   CARD16               count;  /* how many ? */
+    CARD8                reqType;
+    CARD8                forkReqType;    /* always X_KBSetFork */
+    CARD16               length B16;
+    CARD16               deviceSpec B16;
+    CARD16               count;  /* how many ? */
 } xforkGetLastKeysReq;
-#define sz_xforkGetLastKeysReq  8 /* 8 bytes */
-
-
+#define sz_xforkGetLastKeysReq  8
 
 typedef struct
 {
-   Time time;
-   KeyCode key;
-   KeyCode forked;
-   Bool press;                  /* client type? */
+    Time time;
+    KeyCode key;
+    KeyCode forked;
+    Bool press;                  /* client type? */
 } archived_event;
 /* 10 bytes? i guess 12! */
 
 typedef struct
 {
-   int count;
-   archived_event e[];
+    int count;
+    archived_event e[];
 } fork_events_reply;
 
 #endif
