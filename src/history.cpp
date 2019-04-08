@@ -202,8 +202,7 @@ dump_last_events(PluginInstance* plugin)
   ErrorF("%s(%s) %" SIZE_FMT "\n", __FUNCTION__, plugin->device->name,
          machine->last_events->size());
 
-  event_dumper function(plugin);
   for_each(machine->last_events->begin(),
            machine->last_events->end(),
-           function);
+           event_dumper(plugin));
 }
