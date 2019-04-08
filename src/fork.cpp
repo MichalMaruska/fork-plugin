@@ -1433,27 +1433,26 @@ fork_plug(void          *options,
           int		*errmaj,
           int		*errmin)
 {
-    ErrorF("%s: version %d\n", __FUNCTION__, PLUGIN_VERSION);
-    static struct _DevicePluginRec plugin_class =
-        {
-            // slot name,     value
-            _B(name, FORK_PLUGIN_NAME),
-            _B(instantiate, make_machine),
-            _B(ProcessEvent, ProcessEvent),
-            _B(ProcessTime, step_in_time),
-            _B(NotifyThaw, fork_thaw_notify),
-            _B(config,    machine_configure),
-            _B(getconfig, machine_configure_get),
-            _B(client_command, machine_command),
-            _B(module, NULL),
-            _B(ref_count, 0),
-            _B(stop,       stop_and_exhaust_machine),
-            _B(terminate,  destroy_machine)
-        };
-    plugin_class.ref_count = 0;
-    xkb_add_plugin_class(&plugin_class);
+  ErrorF("%s: version %d\n", __FUNCTION__, PLUGIN_VERSION);
+  static struct _DevicePluginRec plugin_class = {
+    // slot name,     value
+    _B(name, FORK_PLUGIN_NAME),
+    _B(instantiate, make_machine),
+    _B(ProcessEvent, ProcessEvent),
+    _B(ProcessTime, step_in_time),
+    _B(NotifyThaw, fork_thaw_notify),
+    _B(config,    machine_configure),
+    _B(getconfig, machine_configure_get),
+    _B(client_command, machine_command),
+    _B(module, NULL),
+    _B(ref_count, 0),
+    _B(stop,       stop_and_exhaust_machine),
+    _B(terminate,  destroy_machine)
+  };
+  plugin_class.ref_count = 0;
+  xkb_add_plugin_class(&plugin_class);
 
-    return &plugin_class;
+  return &plugin_class;
 }
 
 
