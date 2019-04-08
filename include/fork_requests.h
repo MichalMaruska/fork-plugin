@@ -1,5 +1,5 @@
-#ifndef MACHINE_REQUESTS_H
-#define MACHINE_REQUESTS_H
+#ifndef FORK_REQUESTS_H
+#define FORK_REQUESTS_H
 
 #include <X11/Xmd.h>
 extern "C" {
