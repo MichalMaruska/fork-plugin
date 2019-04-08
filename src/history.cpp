@@ -130,7 +130,7 @@ dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n)
 // prints in the Xorg.n.log
 static void
 dump_event(KeyCode key, KeyCode fork, bool press, Time event_time, XkbDescPtr xkb,
-	   XkbSrvInfoPtr xkbi, Time prev_time)
+           XkbSrvInfoPtr xkbi, Time prev_time)
 {
     char* ksname = xkb->names->keys[key].name;
     ErrorF("%d %.4s\n", key, ksname);
@@ -140,30 +140,30 @@ dump_event(KeyCode key, KeyCode fork, bool press, Time event_time, XkbDescPtr xk
     char* sname = NULL;
 
     if (sym){
-	sname = XkbKeysymText(*sym,XkbCFile); // doesn't work inside server !!
+        sname = XkbKeysymText(*sym,XkbCFile); // doesn't work inside server !!
 
-	// my ascii hack
-	if (! isalpha(* (unsigned char*) sym)){
-	    sym = (KeySym*) " ";
-	} else {
-	    static char keysymname[15];
-	    sprintf(keysymname, "%c", (*sym));
-	    sname = keysymname;
-	};
+        // my ascii hack
+        if (! isalpha(* (unsigned char*) sym)){
+            sym = (KeySym*) " ";
+        } else {
+            static char keysymname[15];
+            sprintf(keysymname, "%c", (*sym));
+            sname = keysymname;
+        };
     };
     /*  Format:
-	keycode
-	press/release
-	[  57 4 18500973        112
-	] 33   18502021        1048
+        keycode
+        press/release
+        [  57 4 18500973        112
+        ] 33   18502021        1048
     */
 
     ErrorF("%s %d (%d)" ,(press?" ]":"[ "),
-	   (int)key, (int) fork);
+           (int)key, (int) fork);
     ErrorF(" %.4s (%5.5s) %" TIME_FMT "\t%" TIME_FMT "\n",
-	   ksname, sname,
-	   event_time,
-	   event_time - prev_time);
+           ksname, sname,
+           event_time,
+           event_time - prev_time);
 }
 
 
