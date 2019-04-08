@@ -5,11 +5,10 @@
 // #include "debug.h"
 
 #include <ext/slist>
-#include <iterator>
-#include <iostream>
-#include <string>
 #include <algorithm>
-
+#include <iostream>
+#include <iterator>
+#include <string>
 
 using namespace std;
 using namespace __gnu_cxx;
