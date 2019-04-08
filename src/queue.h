@@ -58,9 +58,30 @@ public:
     return list.front();
   }
 
-  T* pop();                    // top_and_pop()
+  T* pop()                    // top_and_pop()
+  {
+    // not thread-safe!
+    T* pointer = list.front();
+    list.pop_front();
+    // invalidate iterators
+    if (list.empty())
+      last_node = list.begin();
+    return pointer;
+  }
 
-  void push(T* element);
+
+  void push(T* value)
+  {
+#if DEBUG > 1
+    DB(("%s: %s: now %d + 1\n", __FUNCTION__, get_name(), length()));
+#endif
+    if (!empty ()) {
+      last_node = list.insert_after(last_node, value);
+    } else {
+      list.push_front(value);
+      last_node = list.begin();
+    }
+  }
 
   // fixme: move-?
   void push(const T& value)   // we clone the value!
@@ -73,7 +94,24 @@ public:
    *      this      appendix    this        appendix
    *     xxxxxxx   yyyyy   ->   xxxxyyyy       (empty)
    */
-  void slice (my_queue<T>& appendix);
+  void slice (my_queue<T>& suffix) // appendix
+  {
+#if DEBUG > 1
+    DB(("%s: %s: appending/moving all from %s:\n", __FUNCTION__, get_name(),
+        suffix.get_name()));
+#endif
+
+    if (! suffix.list.empty())
+    {
+      list.splice_after(last_node, suffix.list);
+      last_node=suffix.last_node;
+    }
+#if DEBUG > 1
+    DB(("%s now has %d\n", get_name(), length()));
+    DB(("%s now has %d\n", suffix.get_name(), suffix.length()));
+#endif
+  }
+
 
   ~my_queue()
   {
@@ -109,57 +147,5 @@ public:
       peer.last_node = temp;
   }
 };
-
-
-
-
-template<typename T>
-void my_queue<T>::push (T* value)
-{
-#if DEBUG > 1
-    DB(("%s: %s: now %d + 1\n", __FUNCTION__, get_name(), length()));
-#endif
-    if (!empty ()) {
-        last_node = list.insert_after(last_node, value);
-    } else {
-        list.push_front(value);
-        last_node = list.begin();
-    }
-}
-
-
-template<typename T>
-T* my_queue<T>::pop ()
-{
-    T* pointer = list.front();
-
-    list.pop_front();
-    // invalidate iterators
-    if (list.empty())
-        last_node = list.begin();
-    return pointer;
-}
-
-
-template<typename T>
-void my_queue<T>::slice (my_queue<T> &suffix)
-{
-#if DEBUG > 1
-    DB(("%s: %s: appending/moving all from %s:\n", __FUNCTION__, get_name(),
-        suffix.get_name()));
-#endif
-
-    if (! suffix.list.empty())
-    {
-        list.splice_after(last_node,
-                          suffix.list);
-        last_node=suffix.last_node;
-    }
-#if DEBUG > 1
-    DB(("%s now has %d\n", get_name(), length()));
-    DB(("%s now has %d\n", suffix.get_name(), suffix.length()));
-#endif
-}
-
 
 #endif
