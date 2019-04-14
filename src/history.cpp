@@ -1,6 +1,6 @@
 /*
-   We want to keep a history (most recent key events):
-*/
+ *  Keep a history (= list of most recent key events):
+ */
 
 #include "config.h"
 #include "debug.h"
@@ -42,8 +42,6 @@ make_archived_events (key_event* ev)
   return event;
 }
 
-
-
 int
 machine_set_last_events_count(machineRec* machine, int new_max) // fixme:  lock ??
 {
@@ -64,29 +62,28 @@ machine_set_last_events_count(machineRec* machine, int new_max) // fixme:  lock 
 
 
 /* ---------------------
- * returns the message to send as Xreply, len is filled w/ the lenght.
- * lenght <0 -> error!
+ * Return the message to send as Xreply, len is filled with the length.
+ * length<0  means error!
  *
- * or ?? just invoke `plugin_send_reply'(ClientPtr client, char* message, int lenght)
+ * or ?? just invoke `plugin_send_reply'(ClientPtr client, char* message, int length)
  * --------------------
  */
 int
 dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n)
 {
-
    machineRec* machine = plugin_machine(plugin);
-
    int queue_count = machine->max_last;           // I don't need to count them! last_events_count
 
 #if 0
    if (queue_count > machine->max_last)
-      queue_count = machine->max_last;
+       queue_count = machine->max_last;
 #endif
 
    // how many in the store?
    // upper bound
+   // trim/clamp?
    if (n > queue_count) {
-      n =  queue_count;
+      n = queue_count;
    };
 
    // allocate the appendix buffer:
@@ -112,25 +109,24 @@ dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n)
 
 #if 0
    // fixme: we need to increase an iterator .. pointer .... to the C array!
-   last_events.for_each(
-                        begin(),
+   last_events.for_each(begin(),
                         end(),
                         function);
 #endif
 
    DB(("sending %d events: + %d!\n", n, appendix_len));
 
-   int r =  xkb_plugin_send_reply(client, plugin, start, appendix_len);
+   int r = xkb_plugin_send_reply(client, plugin, start, appendix_len);
    if (r == 0)
       return client->noClientException;
    return r;
 }
 
 
-// prints in the Xorg.n.log
+// prints into the Xorg.*.log
 static void
-dump_event(KeyCode key, KeyCode fork, bool press, Time event_time, XkbDescPtr xkb,
-           XkbSrvInfoPtr xkbi, Time prev_time)
+dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
+           XkbDescPtr xkb, XkbSrvInfoPtr xkbi, Time prev_time)
 {
     char* ksname = xkb->names->keys[key].name;
     ErrorF("%d %.4s\n", key, ksname);
@@ -203,7 +199,7 @@ void
 dump_last_events(PluginInstance* plugin)
 {
   machineRec* machine = plugin_machine(plugin);
-  ErrorF("%s(%s) %" SIZE_FMT "\n",__FUNCTION__, plugin->device->name,
+  ErrorF("%s(%s) %" SIZE_FMT "\n", __FUNCTION__, plugin->device->name,
          machine->last_events->size());
 
   event_dumper function(plugin);
