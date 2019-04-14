@@ -2,3 +2,4 @@
 
 %:
 	dh $@ --buildsystem=cmake+ninja
+override_dh_auto_test:
