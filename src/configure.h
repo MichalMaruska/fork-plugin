@@ -1,9 +1,10 @@
 #ifndef CONFIGURE_H
 #define CONFIGURE_H
 
-
-// fixme: this needs to include ^^^
-#include "fork_requests.h"
+extern "C"
+{
+#include <xorg/inputstr.h>
+}
 
 int machine_configure_get(PluginInstance* plugin, int values[5], int return_config[3]);
 int machine_configure(PluginInstance* plugin, int values[5]);
