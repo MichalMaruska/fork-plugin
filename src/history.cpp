@@ -125,8 +125,8 @@ dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n)
 
 // prints into the Xorg.*.log
 static void
-dump_event(KeyCode key, KeyCode fork, bool press, Time event_time, XkbDescPtr xkb,
-           XkbSrvInfoPtr xkbi, Time prev_time)
+dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
+           XkbDescPtr xkb, XkbSrvInfoPtr xkbi, Time prev_time)
 {
     char* ksname = xkb->names->keys[key].name;
     ErrorF("%d %.4s\n", key, ksname);
