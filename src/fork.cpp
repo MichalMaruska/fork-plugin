@@ -523,8 +523,8 @@ key_pressed_in_parallel(machineRec *machine, Time current_time)
              overlap_tolerance,
              (int) (current_time - machine->verificator_time)));
 
-        MDB(("suspected = %d, verificator %d. Times: overlap %d, "
-             "still needed: %u (ms)\n", machine->suspect, machine->verificator,
+        MDB(("suspected = %d, verificator %d. Times: overlap %lu, "
+             "still needed: %lu (ms)\n", machine->suspect, machine->verificator,
              current_time - machine->verificator_time,
              decision_time - current_time));
 
@@ -575,7 +575,7 @@ step_fork_automaton_by_time(machineRec *machine, PluginInstance* plugin,
 
 
     /* So, we were woken too early. */
-    MDB(("*** %s: returning with some more time-to-wait: %u"
+    MDB(("*** %s: returning with some more time-to-wait: %lu"
          "(prematurely woken)\n", __FUNCTION__,
          machine->decision_time - current_time));
     return false;
@@ -827,7 +827,7 @@ apply_event_to_verify(machineRec *machine, key_event *ev, PluginInstance* plugin
 
 
     if (release_p(event) && (key == machine->suspect)){ // fixme: is release_p(event) useless?
-        MDB(("fork-key released on time: %dms is a tolerated error (< %d)\n",
+        MDB(("fork-key released on time: %dms is a tolerated error (< %lu)\n",
              (int)(simulated_time -  machine->suspect_time),
              verification_interval_of(machine->config,
                                       machine->suspect,
@@ -1067,14 +1067,14 @@ filter_config_key_maybe(PluginInstance* plugin,const InternalEvent *event)
         if ((detail_of(event) == PAUSE_KEYCODE) && release_p(event)) { //  fake ?
             if ( (time_of(event) - last_press_time) < 30) // fixme: configurable!
             {
-                ErrorF("the key seems buggy, tolerating %d: %d! .. & latching config mode\n",
+                ErrorF("the key seems buggy, tolerating %lu: %d! .. & latching config mode\n",
                        time_of(event), (int)(time_of(event) - last_press_time));
                 latch = 1;
                 return -1;
             }
             config_mode = 0;
             // fixme: key_to_fork = 0;
-            ErrorF("dumping (%s) %d: %d!\n",
+            ErrorF("dumping (%s) %lu: %d!\n",
                    plugin->device->name,
                    time_of(event), (int)(time_of(event) - last_press_time));
             // todo: send a message to listening clients.
@@ -1093,7 +1093,7 @@ filter_config_key_maybe(PluginInstance* plugin,const InternalEvent *event)
         /* wait for the next and act ? but start w/ printing the last events: */
     {
         last_press_time = time_of(event);
-        ErrorF("entering config_mode & discarding the event: %u!\n", last_press_time);
+        ErrorF("entering config_mode & discarding the event: %lu!\n", last_press_time);
         config_mode = 1;
 
         /* fixme: should I update the ->down bitarray? */
@@ -1124,7 +1124,7 @@ set_wakeup_time(PluginInstance* plugin, Time now)
         plugin->wakeup_time = plugin->next->wakeup_time;
     // (machine->internal_queue.empty())? plugin->next->wakeup_time:0;
 
-    MDB(("%s %s wakeup_time = %u, next wants: %u, we %u\n", FORK_PLUGIN_NAME, __FUNCTION__,
+    MDB(("%s %s wakeup_time = %d, next wants: %u, we %lu\n", FORK_PLUGIN_NAME, __FUNCTION__,
          (int)plugin->wakeup_time, (int)plugin->next->wakeup_time,machine->decision_time));
 }
 
