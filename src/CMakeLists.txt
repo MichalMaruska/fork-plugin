@@ -11,7 +11,7 @@ set(CMAKE_DEBUG_TARGET_PROPERTIES
   )
 # not GLOB_RECURSE
 file(GLOB sources "*.cpp")
-add_library(fork SHARED ${sources})
+add_library(fork MODULE ${sources})
 
 pkg_search_module(xorg-server REQUIRED xorg-server)
 # /usr/lib/x86_64-linux-gnu/pkgconfig/xorg-server.pc
