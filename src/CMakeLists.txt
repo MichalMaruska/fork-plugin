@@ -2,7 +2,14 @@ cmake_minimum_required(VERSION 3.13)
 
 find_package(PkgConfig)
 
-# no _RECURSE
+set(CMAKE_DEBUG_TARGET_PROPERTIES
+  #INCLUDE_DIRECTORIES
+  # COMPILE_DEFINITIONS
+  COMPILE_OPTIONS
+  AUTOUIC_OPTIONS
+  POSITION_INDEPENDENT_CODE
+  )
+# not GLOB_RECURSE
 file(GLOB sources "*.cpp")
 add_library(fork SHARED ${sources})
 
