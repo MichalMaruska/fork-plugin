@@ -13,11 +13,13 @@ set(CMAKE_DEBUG_TARGET_PROPERTIES
 file(GLOB sources "*.cpp")
 add_library(fork MODULE ${sources})
 
-pkg_search_module(xorg-server REQUIRED xorg-server)
+pkg_search_module(xorg-server REQUIRED xorg-server
+  IMPORTED_TARGET GLOBAL)
 # /usr/lib/x86_64-linux-gnu/pkgconfig/xorg-server.pc
 # or SDK?
-target_include_directories(fork SYSTEM PUBLIC ${xorg-server_INCLUDE_DIRS})
-target_link_libraries(fork ${xorg-server_LIBRARIES})
+#target_include_directories(fork SYSTEM PUBLIC ${xorg-server_INCLUDE_DIRS})
+
+target_link_libraries(fork PkgConfig::xorg-server) # ${xorg-server_LIBRARIES}
 
 pkg_get_variable(moduledir xorg-server moduledir)
 pkg_get_variable(includedir xorg-server sdkdir)
