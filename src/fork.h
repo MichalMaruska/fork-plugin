@@ -2,11 +2,12 @@
 #define _FORK_H_
 
 
+extern "C" {
 #include <xorg-server.h>
 #ifndef MMC_PIPELINE
 #error "This is useful only when the xorg-server is configured with --enable-pipeline"
 #endif
-
+}
 
 extern "C" {
 #include <X11/X.h>
@@ -22,10 +23,6 @@ extern "C" {
 
 // include/os.h
 #undef xalloc
-
-// in C++ it conflicts! (/usr/include/xorg/misc.h vs alorithm)
-#undef max
-#undef min
 
 #include "fork_requests.h"
 }
