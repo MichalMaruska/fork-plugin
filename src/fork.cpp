@@ -145,12 +145,12 @@ describe_key(DeviceIntPtr keybd, InternalEvent *event)
 
     const KeySym *sym= XkbKeySymsPtr(xkbi->desc,key);
     if ((!sym) || (! isalpha(*(unsigned char*)sym)))
-	sym = (KeySym*) " ";
+        sym = (KeySym*) " ";
 
     snprintf(buffer, BufferLength, "(%s) %d %4.4s -> %c %s (%u)",
-	     keybd->name,
-	     key, keycode_name,(char)*sym,
-	     event_type_brief(event),(unsigned int)time_of(event));
+             keybd->name,
+             key, keycode_name,(char)*sym,
+             event_type_brief(event),(unsigned int)time_of(event));
 
     return buffer;
 }
@@ -241,7 +241,7 @@ try_to_output(PluginInstance* plugin)
             PluginClass(plugin->next)->ProcessTime(plugin->next, now);
             LOCK(machine);
         }
-        
+
     }
     if (!queue.empty ())
         MDB(("%s: still %d events to output\n", __FUNCTION__, queue.length ()));
@@ -1400,7 +1400,7 @@ stop_and_exhaust_machine(PluginInstance* plugin)
     LOCK(machine);
     MDB(("%s: what to do?\n", __FUNCTION__));
     // free all the stuff, and then:
-    xkb_remove_plugin (plugin);
+    xkb_remove_plugin(plugin);
     return 1;
 }
 
@@ -1429,7 +1429,7 @@ destroy_machine(PluginInstance* plugin)
 #endif
 
 static void* /*DevicePluginRec* */
-fork_plug(void	        *options,
+fork_plug(void          *options,
           int		*errmaj,
           int		*errmin)
 {
