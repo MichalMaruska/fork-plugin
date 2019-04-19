@@ -3,6 +3,7 @@
 
 #include "config.h"
 
+// #ifndef NDEBUG
 #if DEBUG
 
 #if USE_COLORS
@@ -14,21 +15,21 @@
 #define warning_color "\x1b[38;5;160m"
 #define key_io_color "\x1b[38;5;226m"
 #define color_reset "\x1b[0m"
-#else
+# else // USE_COLORS
 #define info_color ""
 #define key_color  ""
 #define warning_color  ""
 #define color_reset ""
 #define escape_sequence ""
 // ....
-#endif
+#endif // USE_COLORS
 
 #define MDB(x) do {if (machine->config->debug) {ErrorF x;} } while (0)
 #define DB(x)     ErrorF x
 
 
-#else  /* DEBUG */
-#define DB(x) do { ; } while (0)
+# else  /* DEBUG */
+#define DB(x)  do { ; } while (0)
 #define MDB(x) do { ; } while (0)
 #endif /* DEBUG */
 

@@ -163,6 +163,7 @@ void* mmalloc(size_t size)
   return p;
 }
 
+// #pragma message ( "Debug configuration - OK" )
 inline
 void
 mxfree(void* p, size_t size)
