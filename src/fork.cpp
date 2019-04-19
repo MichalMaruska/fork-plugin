@@ -77,16 +77,8 @@ extern "C" {
 
 const char* describe_key(DeviceIntPtr keybd, InternalEvent *event);
 
-
-/* How we decided for the fork */
-enum {
-    reason_total,               // key pressed too long
-    reason_overlap,             // key press overlaps with another key
-    reason_force                // mouse-button was pressed & triggered fork.
-};
-
 /* used only for debugging */
-char const *state_description[]={
+char const *machineRec::state_description[]={
     "normal",
     "suspect",
     "verify",
@@ -262,7 +254,7 @@ change_state(machineRec* machine, fork_state_t new_state)
 {
     machine->state = new_state;
     MDB((" --->%s[%dm%s%s\n", escape_sequence, 32 + new_state,
-         state_description[new_state], color_reset));
+         machineRec::state_description[new_state], color_reset));
 }
 
 void
@@ -478,7 +470,7 @@ step_fork_automaton_by_time(machineRec *machine, PluginInstance* plugin,
 
     if (0 == (machine->decision_time =
               key_pressed_too_long(machine, current_time))) {
-        reason = reason_total;
+        reason = machineRec::reason_total;
         activate_fork(machine, plugin);
         return true;
     };
@@ -489,7 +481,7 @@ step_fork_automaton_by_time(machineRec *machine, PluginInstance* plugin,
         Time decision_time = key_pressed_in_parallel(machine, current_time);
 
         if (decision_time == 0) {
-            reason = reason_overlap;
+            reason = machineRec::reason_overlap;
             activate_fork(machine, plugin);
             return true;
         }

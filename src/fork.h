@@ -113,6 +113,16 @@ extern char const *state_description[];
 // typedef
 struct machineRec
 {
+    /* How we decided for the fork */
+    enum {
+        reason_total,               // key pressed too long
+        reason_overlap,             // key press overlaps with another key
+        reason_force                // mouse-button was pressed & triggered fork.
+    };
+
+    /* used only for debugging */
+    static char const *state_description[];
+
     volatile int lock;           /* the mouse interrupt handler should ..... err!  `volatile'
                                   * useless mmc!  But i want to avoid any caching it.... SMP ??*/
     // fork_state_t
