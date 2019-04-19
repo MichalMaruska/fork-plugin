@@ -44,11 +44,13 @@ typedef int keycode_parameter_matrix[MAX_KEYCODE][MAX_KEYCODE];
 
 
 
-/* we can have a (linked) list of configs! */
+/* We can switch between configs. */
 typedef struct _fork_configuration fork_configuration;
 
 struct _fork_configuration
 {
+    /* static data of the machine: i.e.  `configuration' */
+
 private:
     static Time
     get_value_from_matrix (keycode_parameter_matrix matrix, KeyCode code, KeyCode verificator)
