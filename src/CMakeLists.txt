@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.13)
 
+# /usr/share/cmake-3.13/Modules/FindPkgConfig.cmake
+# set(PKG_CONFIG_EXECUTABLE "$ENV{PKG_CONFIG}" CACHE FILEPATH "pkg-config executable")
+# mark_as_advanced(PKG_CONFIG_EXECUTABLE)
 find_package(PkgConfig)
 
 set(CMAKE_DEBUG_TARGET_PROPERTIES
@@ -11,7 +14,8 @@ set(CMAKE_DEBUG_TARGET_PROPERTIES
   )
 # not GLOB_RECURSE
 file(GLOB sources "*.cpp")
-add_library(fork MODULE ${sources})
+add_library(fork SHARED ${sources})
+# MODULE
 
 pkg_search_module(xorg-server REQUIRED xorg-server
   IMPORTED_TARGET GLOBAL)
