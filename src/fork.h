@@ -83,6 +83,7 @@ typedef enum {
   st_activated
 } fork_state_t;
 
+extern char const *state_description[];
 
 /* `machine': the dynamic `state' */
 
@@ -128,6 +129,18 @@ struct machineRec
 
     fork_configuration  *config;
 
+
+    static const int BufferLength = 200;
+    const char*
+    describe_machine_state()
+    {
+        static char buffer[BufferLength];
+
+        snprintf(buffer, BufferLength, "%s[%dm%s%s",
+                 escape_sequence, 32 + this->state,
+                 state_description[this->state], color_reset);
+        return buffer;
+    }
 
     machineRec()
         : internal_queue("internal"),

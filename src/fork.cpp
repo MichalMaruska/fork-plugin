@@ -125,23 +125,6 @@ const char* event_names[] = {
 /* memory problems tracking: (used with mxfree & mmalloc) I observe this value. */
 size_t memory_balance = 0;
 
-
-#if DEBUG
-/* the returned string is in static space. don't free it! */
-static const char*
-describe_machine_state(machineRec* machine)
-{
-    const int BufferLength = 200;
-    static char buffer[BufferLength];
-
-    snprintf(buffer, BufferLength, "%s[%dm%s%s",
-             escape_sequence, 32 + machine->state,
-             state_description[machine->state], color_reset);
-    return buffer;
-}
-#endif
-
-
 /* Push the event to the next plugin. Ownership is handed over! */
 inline void
 hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* plugin)
@@ -368,7 +351,8 @@ activate_fork(machineRec *machine, PluginInstance* plugin)
          forked_key,
          machine->config->fork_keycode[forked_key],
          machine->internal_queue.length (),
-         describe_machine_state(machine)));
+         machine->describe_machine_state()
+         ));
     rewind_machine(machine);
 
     EMIT_EVENT(ev);
@@ -400,7 +384,7 @@ step_fork_automaton_by_force(machineRec *machine, PluginInstance* plugin)
 
     MDB(("%s%s%s state: %s, queue: %d .... FORCE\n",
          fork_color, __FUNCTION__, color_reset,
-         describe_machine_state(machine),
+         machine->describe_machine_state(),
          queue.length ()));
 
     machine->decision_time = 0;
@@ -513,7 +497,7 @@ step_fork_automaton_by_time(machineRec *machine, PluginInstance* plugin,
     int reason;
     MDB(("%s%s%s state: %s, queue: %d, time: %u key: %d\n",
          fork_color, __FUNCTION__, color_reset,
-         describe_machine_state (machine),
+         machine->describe_machine_state(),
          machine->internal_queue.length (), (int)current_time,
          machine->suspect));
 
@@ -877,7 +861,7 @@ step_fork_automaton_by_key(machineRec *machine, key_event *ev, PluginInstance* p
         sym = (KeySym*) " ";
     MDB(("%s%s%s state: %s, queue: %d, event: %d %s%c %s %s\n",
          info_color,__FUNCTION__,color_reset,
-         describe_machine_state(machine),
+         machine->describe_machine_state(),
          queue.length (),
          key, key_color, (char)*sym, color_reset, event_type_brief(event)));
 #endif
