@@ -43,7 +43,7 @@ using namespace __gnu_cxx;
 typedef my_queue<key_event> list_with_tail;
 
 
-#define plugin_machine(p) ((machineRec*)(plugin->data))
+#define plugin_machine(plugin) ((machineRec*)(plugin->data))
 #define MALLOC(type)   (type *) malloc(sizeof (type))
 #define MAX_KEYCODE 256         /* fixme: inherit from xorg! */
 typedef int keycode_parameter_matrix[MAX_KEYCODE][MAX_KEYCODE];
