@@ -239,33 +239,6 @@ output_event(key_event* ev, PluginInstance* plugin)
  * ....
  */
 
-inline Time
-get_value_from_matrix (keycode_parameter_matrix matrix, KeyCode code, KeyCode verificator)
-{
-    return (matrix[code][verificator]?
-            matrix[code][verificator]:
-            (matrix[code][0]?
-             matrix[code][0]: matrix[0][0]));
-}
-
-
-// note: depending on verificator is strange. There might be none!
-inline Time
-verification_interval_of(fork_configuration* config,
-                         KeyCode code, KeyCode verificator)
-{
-    return get_value_from_matrix (config->verification_interval, code,
-                                  verificator);
-}
-
-
-inline Time
-overlap_tolerance_of(fork_configuration* config, KeyCode code,
-                     KeyCode verificator)
-{
-    return get_value_from_matrix (config->overlap_tolerance, code, verificator);
-}
-
 inline Bool
 forkable_p(fork_configuration* config, KeyCode code)
 {
@@ -445,8 +418,7 @@ Time
 key_pressed_too_long(machineRec *machine, Time current_time)
 {
     int verification_interval =
-        verification_interval_of(machine->config,
-                                 machine->suspect,
+        machine->config->verification_interval_of(machine->suspect,
                                  // this can be 0 (& should be, unless)
                                  machine->verificator);
     Time decision_time = machine->suspect_time + verification_interval;
@@ -467,9 +439,8 @@ Time
 key_pressed_in_parallel(machineRec *machine, Time current_time)
 {
     // verify overlap
-    int overlap_tolerance = overlap_tolerance_of(machine->config,
-                                                 machine->suspect,
-                                                 machine->verificator);
+    int overlap_tolerance = machine->config->overlap_tolerance_of(machine->suspect,
+                                                                  machine->verificator);
     Time decision_time =  machine->verificator_time + overlap_tolerance;
 
     if (decision_time <= current_time) {
@@ -587,7 +558,7 @@ apply_event_to_normal(machineRec *machine, key_event *ev, PluginInstance* plugin
             machine->suspect = key;
             machine->suspect_time = time_of(event);
             machine->decision_time = machine->suspect_time +
-                verification_interval_of(machine->config, key, 0);
+                machine->config->verification_interval_of(key, 0);
             do_enqueue_event(machine, ev);
             return;
         } else {
@@ -785,8 +756,7 @@ apply_event_to_verify(machineRec *machine, key_event *ev, PluginInstance* plugin
     if (release_p(event) && (key == machine->suspect)){ // fixme: is release_p(event) useless?
         MDB(("fork-key released on time: %dms is a tolerated error (< %d)\n",
              (int)(simulated_time -  machine->suspect_time),
-             verification_interval_of(machine->config,
-                                      machine->suspect,
+             machine->config->verification_interval_of(machine->suspect,
                                       machine->verificator)));
         machine->decision_time = 0; // useless fixme!
         do_confirm_non_fork_by(machine, ev, plugin);

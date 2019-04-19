@@ -49,7 +49,28 @@ typedef struct _fork_configuration fork_configuration;
 
 struct _fork_configuration
 {
-  /* static data of the machine: i.e.  `configuration' */
+private:
+    static Time
+    get_value_from_matrix (keycode_parameter_matrix matrix, KeyCode code, KeyCode verificator)
+        {
+            return (matrix[code][verificator]?
+                    matrix[code][verificator]:
+                    (matrix[code][0]?
+                     matrix[code][0]: matrix[0][0]));
+        }
+
+public:
+    // note: depending on verificator is strange. There might be none!
+    // fork_configuration* config,
+    Time verification_interval_of(KeyCode code, KeyCode verificator)
+    {
+        return get_value_from_matrix(this->verification_interval, code, verificator);
+    }
+    Time
+    overlap_tolerance_of(KeyCode code, KeyCode verificator)
+    {
+        return get_value_from_matrix(this->overlap_tolerance, code, verificator);
+    }
 
   KeyCode          fork_keycode[MAX_KEYCODE];
   Bool          fork_repeatable[MAX_KEYCODE]; /* True -> if repeat, cancel possible fork. */
