@@ -80,7 +80,7 @@ typedef enum {
   st_verify,
   st_deactivated,
   st_activated
-} state_type;
+} fork_state_t;
 
 
 /* `machine': the dynamic `state' */
@@ -90,6 +90,7 @@ struct machineRec
 {
     volatile int lock;           /* the mouse interrupt handler should ..... err!  `volatile'
                                   * useless mmc!  But i want to avoid any caching it.... SMP ??*/
+    // fork_state_t
     unsigned char state;
 
     /* To allow AR for forkable keys:

@@ -331,7 +331,7 @@ key_forked(machineRec *machine, KeyCode code)
 
 
 inline void
-change_state(machineRec* machine, state_type new_state)
+change_state(machineRec* machine, fork_state_t new_state)
 {
     machine->state = new_state;
     MDB((" --->%s[%dm%s%s\n", escape_sequence, 32 + new_state,
