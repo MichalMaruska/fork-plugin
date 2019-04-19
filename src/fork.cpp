@@ -72,14 +72,9 @@
 #include "fork.h"
 
 extern "C" {
-/* I use it only to print out the keysym in debugging stuff*/
-#include <xorg/xkbsrv.h>
-
-#include <xorg/xf86Module.h>
+#include "event_ops.h"
 }
 
-/*  Functions on xEvent */
-#include "event_ops.h"
 
 
 /* How we decided for the fork */
