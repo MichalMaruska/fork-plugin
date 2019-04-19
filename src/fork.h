@@ -4,12 +4,11 @@
 
 extern "C" {
 #include <xorg-server.h>
+
 #ifndef MMC_PIPELINE
 #error "This is useful only when the xorg-server is configured with --enable-pipeline"
 #endif
-}
 
-extern "C" {
 #include <X11/X.h>
 #include <X11/Xproto.h>
 #include <X11/keysym.h>
@@ -31,11 +30,7 @@ extern "C" {
 
 #include "debug.h"
 #include "queue.h"
-
 #include "history.h"
-
-using namespace std;
-using namespace __gnu_cxx;
 
 
 typedef my_queue<key_event> list_with_tail;
