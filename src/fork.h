@@ -180,6 +180,12 @@ struct machineRec
           output_queue("output_queue")
         {};
 
+    void rewind_machine();
+
+    void activate_fork(PluginInstance* plugin);
+    void step_fork_automaton_by_force(PluginInstance* plugin);
+    void apply_event_to_suspect(key_event *ev, PluginInstance* plugin);
+    void step_fork_automaton_by_key(key_event *ev, PluginInstance* plugin);
 
     void mdb(const char* format...)
     {
