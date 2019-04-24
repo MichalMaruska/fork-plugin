@@ -2,8 +2,6 @@
 #define	_QUEUE_H_ 1
 
 
-// #include "debug.h"
-
 #include <ext/slist>
 #include <algorithm>
 #include <iostream>

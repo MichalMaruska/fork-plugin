@@ -28,7 +28,8 @@ extern "C" {
 
 #include "config.h"
 
-#include "debug.h"
+// #include "debug.h"
+
 #include "queue.h"
 #include "history.h"
 
