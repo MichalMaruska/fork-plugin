@@ -1308,10 +1308,18 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
  * register hooks to other devices,
  *
  * returns: erorr of Success. Should attach stuff by side effect ! */
-static PluginInstance*
-make_machine(DeviceIntPtr keybd, DevicePluginRec* plugin_class)
+extern "C"
 {
-    DB(("%s\n", __FUNCTION__));
+PluginInstance*
+make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class);
+}
+
+PluginInstance*
+make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
+{
+    DB(("%s @%lu\n", __FUNCTION__, keybd));
+    DB(("%s @%lu\n", __FUNCTION__, keybd->name));
+
     assert (strcmp(plugin_class->name, FORK_PLUGIN_NAME) == 0);
 
     PluginInstance* plugin = MALLOC(PluginInstance);
@@ -1343,7 +1351,8 @@ make_machine(DeviceIntPtr keybd, DevicePluginRec* plugin_class)
     ErrorF("%s: constructing the machine %d (official release: %s)\n",
            __FUNCTION__, PLUGIN_VERSION, VERSION_STRING);
 
-    forking_machine =  (machineRec* )mmalloc(sizeof(machineRec));
+#if 0
+    forking_machine = (machineRec* )mmalloc(sizeof(machineRec));
     bzero(forking_machine, sizeof (machineRec));
 
     if (! forking_machine){
@@ -1352,13 +1361,13 @@ make_machine(DeviceIntPtr keybd, DevicePluginRec* plugin_class)
         return NULL;              // BadAlloc
     }
 
-
     // now, if something goes wrong, we have to free it!!
     forking_machine->internal_queue.set_name(string("internal"));
     forking_machine->input_queue.set_name(string("input"));
     forking_machine->output_queue.set_name(string("output"));
-
-
+#else
+    forking_machine = new(machineRec);
+#endif
     forking_machine->max_last = 100;
     forking_machine->last_events = new last_events_type(forking_machine->max_last);
 
@@ -1371,7 +1380,6 @@ make_machine(DeviceIntPtr keybd, DevicePluginRec* plugin_class)
 
     UNLOCK(forking_machine);
 
-
     for (int i=0;i<256;i++){                   // keycode 0 is unused!
         forking_machine->forkActive[i] = 0; /* 0 = not active */
     };
@@ -1380,7 +1388,7 @@ make_machine(DeviceIntPtr keybd, DevicePluginRec* plugin_class)
     forking_machine->config = config;
 
     plugin->data = (void*) forking_machine;
-    ErrorF("%s: returning %d\n", __FUNCTION__, Success);
+    ErrorF("%s:@%s returning %d\n", __FUNCTION__, keybd->name, Success);
 
     AddCallback(&DeviceEventCallback, (CallbackProcPtr) mouse_call_back, (void*) plugin);
 
