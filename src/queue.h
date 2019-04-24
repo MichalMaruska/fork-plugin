@@ -9,6 +9,7 @@
 #include <iostream>
 #include <iterator>
 #include <string>
+#include <utility>
 
 using namespace std;
 using namespace __gnu_cxx;
@@ -27,21 +28,23 @@ template <typename T>
 class my_queue
 {
 private:
-    const char* m_name;     // for debug string
   slist<T*> list;
+  string m_name;     // for debug string const char*
   typename slist<T*>::iterator last_node;
 
 public:
-    const char* get_name()
-        {
-            return m_name?:"(unknown)";// .c_str();
-        }
-    // take ownership
-    void set_name(const char* name)
-        {
-            m_name = name;
-        }
+  const char* get_name()
+  {
+    return m_name.c_str();//  ?:"(unknown)"
+  }
 
+#if 0
+  // move!!! take ownership
+  void set_name(string&& name)
+  {
+    m_name = std::move(name);
+  }
+#endif
 
   int length() const
   {
@@ -115,13 +118,16 @@ public:
 
   ~my_queue()
   {
+#if 0
     if (m_name)
     {
       m_name = NULL;
     }
+#endif
   }
 
-  my_queue<T>(const char* name = NULL) : m_name(name)
+  // const char* name = NULL
+  my_queue<T>(string name) : m_name(name)
   {
     DB(("constructor\n"));
     last_node = list.end();

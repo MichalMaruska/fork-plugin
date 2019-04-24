@@ -85,7 +85,8 @@ typedef enum {
 
 /* `machine': the dynamic `state' */
 
-typedef struct machine
+// typedef
+struct machineRec
 {
     volatile int lock;           /* the mouse interrupt handler should ..... err!  `volatile'
                                   * useless mmc!  But i want to avoid any caching it.... SMP ??*/
@@ -124,7 +125,14 @@ typedef struct machine
     int max_last;
 
     fork_configuration  *config;
-} machineRec;
+
+
+    machineRec()
+        : internal_queue("internal"),
+          input_queue("input_queue"),
+          output_queue("output_queue")
+        {};
+};
 
 extern fork_configuration* machine_new_config(void);
 extern void machine_switch_config(PluginInstance* plugin, machineRec* machine,int id);

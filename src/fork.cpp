@@ -1354,9 +1354,9 @@ make_machine(DeviceIntPtr keybd, DevicePluginRec* plugin_class)
 
 
     // now, if something goes wrong, we have to free it!!
-    forking_machine->internal_queue.set_name("internal");
-    forking_machine->input_queue.set_name("input");
-    forking_machine->output_queue.set_name("output");
+    forking_machine->internal_queue.set_name(string("internal"));
+    forking_machine->input_queue.set_name(string("input"));
+    forking_machine->output_queue.set_name(string("output"));
 
 
     forking_machine->max_last = 100;
