@@ -24,7 +24,7 @@ extern "C" {
 //#include <X11/Xproto.h>
 
     // this is the bug!
-#include <xorg/inputstr.h>
+// #include <xorg/inputstr.h>
 }
 
 // bug these 2 ^ v
