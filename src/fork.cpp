@@ -932,7 +932,7 @@ replay_events(PluginInstance* plugin, Bool force)
  *  react to some `hot_keys':
  *  Pause  Pause  -> dump
  */
-int                      // return, if config-mode continues.
+static int                      // return, if config-mode continues.
 filter_config_key(PluginInstance* plugin,const InternalEvent *event)
 {
     static KeyCode key_to_fork = 0;         //  what key we want to configure
@@ -976,9 +976,7 @@ filter_config_key(PluginInstance* plugin,const InternalEvent *event)
     return -1;
 }
 
-
-inline
-int                             // return:  0  nothing  -1  skip it
+static int                             // return:  0  nothing  -1  skip it
 filter_config_key_maybe(PluginInstance* plugin,const InternalEvent *event)
 {
     static unsigned char config_mode = 0; // While the Pause key is down.
