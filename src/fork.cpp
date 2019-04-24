@@ -71,10 +71,11 @@
 #include "history.h"
 #include "fork.h"
 
-
 extern "C" {
 /* I use it only to print out the keysym in debugging stuff*/
 #include <xorg/xkbsrv.h>
+
+#include <xorg/xf86Module.h>
 }
 
 /*  Functions on xEvent */
@@ -1428,21 +1429,24 @@ destroy_machine(PluginInstance* plugin)
 #define _B(name, value) name : value
 #endif
 
+extern "C" {
+
 static void* /*DevicePluginRec* */
 fork_plug(void          *options,
           int		*errmaj,
           int		*errmin)
 {
-  ErrorF("%s: version %d\n", __FUNCTION__, PLUGIN_VERSION);
+  ErrorF("%s: %s version %d\n", __FUNCTION__, FORK_PLUGIN_NAME, PLUGIN_VERSION);
+
   static struct _DevicePluginRec plugin_class = {
     // slot name,     value
     _B(name, FORK_PLUGIN_NAME),
-    _B(instantiate, make_machine),
+    _B(instantiate, &make_machine),
     _B(ProcessEvent, ProcessEvent),
     _B(ProcessTime, step_in_time),
     _B(NotifyThaw, fork_thaw_notify),
-    _B(config,    machine_configure),
-    _B(getconfig, machine_configure_get),
+    _B(config,    &machine_configure),
+    _B(getconfig, ::machine_configure_get),
     _B(client_command, machine_command),
     _B(module, NULL),
     _B(ref_count, 0),
@@ -1455,12 +1459,42 @@ fork_plug(void          *options,
   return &plugin_class;
 }
 
-
-extern "C" {
-
+// my old way of loading modules?
 void __attribute__((constructor)) on_init()
 {
     ErrorF("%s:\n", __FUNCTION__); /* impossible */
     fork_plug(NULL,NULL,NULL);
 }
+
+static pointer
+SetupProc(pointer module, pointer options, int *errmaj, int *errmin)
+{
+    on_init();
+    return module;
+}
+
+#define PACKAGE_VERSION_MAJOR 1
+#define PACKAGE_VERSION_MINOR 0
+#define PACKAGE_VERSION_PATCHLEVEL 0
+
+static XF86ModuleVersionInfo VersionRec = {
+    "fork",
+    MODULEVENDORSTRING,
+    MODINFOSTRING1,
+    MODINFOSTRING2,
+    XORG_VERSION_CURRENT,
+    PACKAGE_VERSION_MAJOR, PACKAGE_VERSION_MINOR, PACKAGE_VERSION_PATCHLEVEL,
+    //
+    ABI_CLASS_INPUT,
+    ABI_INPUT_VERSION,
+    MOD_CLASS_INPUT,
+    {0, 0, 0, 0}
+};
+
+_X_EXPORT XF86ModuleData forkModuleData = {
+    &VersionRec,
+    &SetupProc,
+    NULL
+};
+
 }
