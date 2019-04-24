@@ -791,7 +791,6 @@ step_fork_automaton_by_key(machineRec *machine, key_event *ev, PluginInstance* p
     assert (ev);
 
     DeviceIntPtr keybd = plugin->device;
-    XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
 
     InternalEvent* event = ev->event;
     KeyCode key = detail_of(event);
@@ -825,6 +824,9 @@ step_fork_automaton_by_key(machineRec *machine, key_event *ev, PluginInstance* p
 
 #if DEBUG
     /* describe the (state, key) */
+    if (keybd->key)
+    {
+    XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
     KeySym *sym = XkbKeySymsPtr(xkbi->desc,key);
     if ((!sym) || (! isalpha(* (unsigned char*) sym)))
         sym = (KeySym*) " ";
@@ -833,6 +835,7 @@ step_fork_automaton_by_key(machineRec *machine, key_event *ev, PluginInstance* p
          machine->describe_machine_state(),
          queue.length (),
          key, key_color, (char)*sym, color_reset, event_type_brief(event)));
+    }
 #endif
 
     switch (machine->state) {
