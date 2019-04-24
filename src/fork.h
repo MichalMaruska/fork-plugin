@@ -34,14 +34,10 @@ extern "C" {
 #include "history.h"
 
 
-typedef my_queue<key_event> list_with_tail;
-
-
 #define plugin_machine(p) ((machineRec*)(plugin->data))
 #define MALLOC(type)   (type *) malloc(sizeof (type))
 #define MAX_KEYCODE 256         /* fixme: inherit from xorg! */
 typedef int keycode_parameter_matrix[MAX_KEYCODE][MAX_KEYCODE];
-
 
 
 /* We can switch between configs. */
@@ -113,6 +109,8 @@ extern char const *state_description[];
 // typedef
 struct machineRec
 {
+    typedef my_queue<key_event> list_with_tail;
+
     /* How we decided for the fork */
     enum {
         reason_total,               // key pressed too long
@@ -180,6 +178,8 @@ struct machineRec
           input_queue("input_queue"),
           output_queue("output_queue")
         {};
+
+    static void reverse_slice(list_with_tail &pre, list_with_tail &post);
 };
 
 extern fork_configuration* machine_new_config(void);

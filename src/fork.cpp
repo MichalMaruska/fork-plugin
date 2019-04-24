@@ -258,7 +258,7 @@ change_state(machineRec* machine, fork_state_t new_state)
 }
 
 void
-reverse_slice(list_with_tail &pre, list_with_tail &post)
+machineRec::reverse_slice(list_with_tail &pre, list_with_tail &post)
 {
     // Slice with a reversed semantic:
     // A.slice(B) --> ()  (AB)
