@@ -37,7 +37,6 @@ find_before_n(machineRec* machine, int n)
     return ((*config_p)->id == n)? config_p: NULL;      // ??? &(config->next);
 }
 
-
 void
 machine_switch_config(PluginInstance* plugin, machineRec* machine,int id)
 {
@@ -87,7 +86,6 @@ machine_switch_config(PluginInstance* plugin, machineRec* machine,int id)
 
 
 static int config_counter = 0;
-
 
 // nothing active (forkable) in this configuration
 fork_configuration*
@@ -164,7 +162,6 @@ machine_configure_twins (machineRec* machine, int type, KeyCode key, KeyCode twi
    }
    return 0;
 }
-
 
 
 static int

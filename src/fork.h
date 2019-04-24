@@ -121,8 +121,6 @@ typedef struct machine
        forked keycode for the release event. */
     KeyCode          forkActive[MAX_KEYCODE];
 
-
-
     list_with_tail internal_queue;
     /* Still undecided events: these events alone don't decide what event is the 1st on the
        queue.*/
@@ -135,8 +133,6 @@ typedef struct machine
 
     fork_configuration  *config;
 } machineRec;
-
-
 
 extern fork_configuration* machine_new_config(void);
 extern void machine_switch_config(PluginInstance* plugin, machineRec* machine,int id);
