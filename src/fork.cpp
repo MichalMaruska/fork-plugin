@@ -506,20 +506,27 @@ step_fork_automaton_by_time(machineRec *machine, PluginInstance* plugin,
 
 /** apply_event_to_{STATE} */
 
+static Bool
+mouse_emulation_on(DeviceIntPtr keybd)
+{
+    if (!keybd->key)
+        return 0;
 
+    XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
+    XkbDescPtr xkb = xkbi->desc;
+    return (MOUSE_EMULATION_ON(xkb));
+}
 
 static void
 apply_event_to_normal(machineRec *machine, key_event *ev, PluginInstance* plugin)
 {
     DeviceIntPtr keybd = plugin->device;
-    XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
 
     InternalEvent* event = ev->event;
     KeyCode key = detail_of(event);
     Time simulated_time = time_of(event);
 
     fork_configuration* config = machine->config;
-    XkbDescPtr xkb = xkbi->desc;
 
     assert(machine->internal_queue.empty());
 
@@ -527,7 +534,7 @@ apply_event_to_normal(machineRec *machine, key_event *ev, PluginInstance* plugin
     if (press_p(event) && forkable_p(config, key)
         /* fixme: is this w/ 1-event precision? (i.e. is the xkb-> updated synchronously) */
         /* todo:  does it have a mouse-related action? */
-        && !(MOUSE_EMULATION_ON(xkb))) {
+        && !(mouse_emulation_on(keybd))) {
         /* Either suspect, or detect .- trick to suppress fork */
 
         /* .- trick: by depressing/re-pressing the key rapidly, fork is disabled,
