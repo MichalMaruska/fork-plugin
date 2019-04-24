@@ -125,37 +125,12 @@ const char* event_names[] = {
 size_t memory_balance = 0;
 
 
-const int BufferLength = 200;
-
-/* The returned string is in static space. Don't free it! */
-static const char*
-describe_key(DeviceIntPtr keybd, InternalEvent *event)
-{
-    assert (event);
-
-    static char buffer[BufferLength];
-    XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
-    KeyCode key = detail_of(event);
-    // assert(0 <= key <= (max_key_code - min_key_code));
-    char* keycode_name = xkbi->desc->names->keys[key].name;
-
-    const KeySym *sym= XkbKeySymsPtr(xkbi->desc,key);
-    if ((!sym) || (! isalpha(*(unsigned char*)sym)))
-        sym = (KeySym*) " ";
-
-    snprintf(buffer, BufferLength, "(%s) %d %4.4s -> %c %s (%u)",
-             keybd->name,
-             key, keycode_name,(char)*sym,
-             event_type_brief(event),(unsigned int)time_of(event));
-
-    return buffer;
-}
-
 #if DEBUG
 /* the returned string is in static space. don't free it! */
 static const char*
 describe_machine_state(machineRec* machine)
 {
+    const int BufferLength = 200;
     static char buffer[BufferLength];
 
     snprintf(buffer, BufferLength, "%s[%dm%s%s",
