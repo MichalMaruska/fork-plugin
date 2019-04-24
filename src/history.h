@@ -3,8 +3,11 @@
 
 
 extern "C" {
+#include <xorg-server.h>
 
 #include <X11/keysym.h>
+
+// ^ for safety: before v
 #include <xorg/inputstr.h>
 
 #include "fork_requests.h"
