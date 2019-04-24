@@ -4,6 +4,7 @@
 #include "config.h"
 
 // #ifndef NDEBUG
+#define DEBUG 1
 #if DEBUG
 
 #if USE_COLORS
