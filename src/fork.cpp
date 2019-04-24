@@ -75,6 +75,7 @@ extern "C" {
 #include "event_ops.h"
 }
 
+const char* describe_key(DeviceIntPtr keybd, InternalEvent *event);
 
 
 /* How we decided for the fork */

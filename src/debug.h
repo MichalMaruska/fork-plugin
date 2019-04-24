@@ -33,6 +33,7 @@
 #endif /* DEBUG */
 
 
+#if 0
 extern "C" {
 // need:
     // keysym:
@@ -51,5 +52,6 @@ extern "C" {
 
 const char*
 describe_key(DeviceIntPtr keybd, InternalEvent *event);
+#endif
 
 #endif /* _DEBUG_H_ */
