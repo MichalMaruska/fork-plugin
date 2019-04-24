@@ -13,9 +13,17 @@ set(CMAKE_DEBUG_TARGET_PROPERTIES
   POSITION_INDEPENDENT_CODE
   )
 # not GLOB_RECURSE
-file(GLOB sources "*.cpp")
-add_library(fork SHARED ${sources})
-# MODULE
+# file(GLOB sources "*.cpp"  "*.c")
+set(sources
+  configure.cpp
+  debug.cpp
+  fork.cpp
+  history.cpp
+  )
+
+add_library(fork MODULE ${sources})
+set_property(TARGET fork PROPERTY NO_SONAME)
+# SHARED
 
 pkg_search_module(xorg-server REQUIRED xorg-server
   IMPORTED_TARGET GLOBAL)
