@@ -26,14 +26,15 @@ extern "C" {
 // in C++ it conflicts! (/usr/include/xorg/misc.h vs alorithm)
 #undef max
 #undef min
-};
+
+#include "fork_requests.h"
+}
 
 #include "config.h"
 
 #include "debug.h"
 #include "queue.h"
 
-#include "fork_requests.h"
 #include "history.h"
 
 using namespace std;

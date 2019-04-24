@@ -5,12 +5,13 @@
 
 #include "configure.h"
 #include "fork.h"
-#include "fork_requests.h"
 #include "history.h"
 
 /* something to define NULL */
 extern "C"
 {
+#include "fork_requests.h"
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
