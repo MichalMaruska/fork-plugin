@@ -26,6 +26,7 @@ extern "C" {
 #include "fork_requests.h"
 }
 
+#include <cstdarg>
 #include "config.h"
 
 // #include "debug.h"
@@ -178,6 +179,16 @@ struct machineRec
           input_queue("input_queue"),
           output_queue("output_queue")
         {};
+
+
+    void mdb(const char* format...)
+    {
+        va_list argptr;
+        // if (config->debug) {ErrorF(x, ...);}
+        va_start(argptr, format);
+        VErrorF(format, argptr);
+        va_end(argptr);
+    };
 
     static void reverse_slice(list_with_tail &pre, list_with_tail &post);
 };
