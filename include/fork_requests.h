@@ -1,8 +1,9 @@
 #ifndef FORK_REQUESTS_H
 #define FORK_REQUESTS_H
 
-#include <X11/Xmd.h>
 extern "C" {
+#include <X11/Xmd.h>
+
 #include <xorg-server.h>
 
 #include <X11/X.h>
