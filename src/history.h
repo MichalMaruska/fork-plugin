@@ -21,21 +21,19 @@ extern "C" {
 
 #include "circular.h"
 
-
 typedef struct {
   InternalEvent* event;
   KeyCode forked; /* if forked to (another keycode), this is the original key */
 } key_event;
 
 
-
-typedef circular_buffer<archived_event*> last_events_type; /* (100) */
+/* (100) */
+typedef circular_buffer<archived_event*> last_events_type;
 
 extern archived_event* make_archived_events(key_event* ev);
 extern int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n);
 
 void dump_last_events(PluginInstance* plugin);
-
 
 
 #endif
