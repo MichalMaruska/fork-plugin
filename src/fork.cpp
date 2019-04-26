@@ -72,7 +72,7 @@
 #include "fork.h"
 
 extern "C" {
-// #include "event_ops.h"
+#include "event_ops.h"
 #include <xorg/xkbsrv.h>
 #include <xorg/xf86Module.h>
 }
