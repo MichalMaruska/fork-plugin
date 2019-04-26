@@ -3,6 +3,8 @@
 #include <xorg-server.h>
 // to include the below files *correctly*, I need the the config!
 #include <X11/X.h>
+
+// #include <X11/Xproto.h>
 // specific keysyms:
 #include <X11/keysym.h>
 
