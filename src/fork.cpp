@@ -72,7 +72,9 @@
 #include "fork.h"
 
 extern "C" {
-#include "event_ops.h"
+// #include "event_ops.h"
+#include <xorg/xkbsrv.h>
+#include <xorg/xf86Module.h>
 }
 
 const char* describe_key(DeviceIntPtr keybd, InternalEvent *event);
