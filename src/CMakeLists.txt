@@ -17,6 +17,7 @@ set(CMAKE_DEBUG_TARGET_PROPERTIES
 set(sources
   configure.cpp
   debug.cpp
+  event_ops.cpp
   fork.cpp
   history.cpp
   )
