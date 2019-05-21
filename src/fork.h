@@ -187,6 +187,8 @@ struct machineRec
     void apply_event_to_suspect(key_event *ev, PluginInstance* plugin);
     void step_fork_automaton_by_key(key_event *ev, PluginInstance* plugin);
 
+    bool step_fork_automaton_by_time(PluginInstance* plugin, Time current_time);
+
     void mdb(const char* format...)
     {
         va_list argptr;

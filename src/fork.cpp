@@ -461,51 +461,51 @@ key_pressed_in_parallel(machineRec *machine, Time current_time)
 }
 
 
-static bool
-step_fork_automaton_by_time(machineRec *machine, PluginInstance* plugin,
+bool
+machineRec::step_fork_automaton_by_time(PluginInstance* plugin,
                             Time current_time)
 {
     // confirm fork:
     int reason;
-    MDB(("%s%s%s state: %s, queue: %d, time: %u key: %d\n",
+    mdb("%s%s%s state: %s, queue: %d, time: %u key: %d\n",
          fork_color, __FUNCTION__, color_reset,
-         machine->describe_machine_state(),
-         machine->internal_queue.length (), (int)current_time,
-         machine->suspect));
+         this->describe_machine_state(),
+         this->internal_queue.length (), (int)current_time,
+         this->suspect);
 
     /* First, I try the simple (fork-by-one-keys).
      * If that works, -> fork! Otherwise, I try w/ 2-key forking, overlapping.
      */
 
-    if (0 == (machine->decision_time =
-              key_pressed_too_long(machine, current_time))) {
+    if (0 == (this->decision_time =
+              key_pressed_too_long(this, current_time))) {
         reason = machineRec::reason_total;
-        machine->activate_fork(plugin);
+        this->activate_fork(plugin);
         return true;
     };
 
     /* To test 2 keys overlap, we need the 2nd key: a verificator! */
-    if (machine->state == st_verify) {
+    if (this->state == st_verify) {
         // verify overlap
-        Time decision_time = key_pressed_in_parallel(machine, current_time);
+        Time decision_time = key_pressed_in_parallel(this, current_time);
 
         if (decision_time == 0) {
             reason = machineRec::reason_overlap;
-            machine->activate_fork(plugin);
+            this->activate_fork(plugin);
             return true;
         }
 
-        if (decision_time < machine->decision_time)
-            machine->decision_time = decision_time;
+        if (decision_time < this->decision_time)
+            this->decision_time = decision_time;
     }
     // so, now we are surely in the replay_mode. All we need is to
     // get an estimate on time still needed:
 
 
     /* So, we were woken too early. */
-    MDB(("*** %s: returning with some more time-to-wait: %lu"
+    mdb("*** %s: returning with some more time-to-wait: %lu"
          "(prematurely woken)\n", __FUNCTION__,
-         machine->decision_time - current_time));
+         this->decision_time - current_time);
     return false;
 }
 
@@ -893,8 +893,7 @@ try_to_play(PluginInstance* plugin, Bool force)
             // at the end ... add the final time event:
             if (machine->current_time && (machine->state != st_normal)) {
                 // was final_state_p
-                if (!step_fork_automaton_by_time(machine, plugin,
-                                                 machine->current_time))
+                if (!machine->step_fork_automaton_by_time(plugin, machine->current_time))
                     // If this time helped to decide -> machine rewound,
                     // we have to try again.
                     // Otherwise, this is the end for now:
