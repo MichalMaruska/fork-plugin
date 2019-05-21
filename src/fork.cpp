@@ -257,15 +257,6 @@ key_forked(machineRec *machine, KeyCode code)
     return (machine->forkActive[code]);
 }
 
-
-inline void
-change_state(machineRec* machine, fork_state_t new_state)
-{
-    machine->state = new_state;
-    MDB((" --->%s[%dm%s%s\n", escape_sequence, 32 + new_state,
-         machineRec::state_description[new_state], color_reset));
-}
-
 void
 machineRec::reverse_slice(list_with_tail &pre, list_with_tail &post)
 {
@@ -288,7 +279,7 @@ machineRec::rewind_machine()
          this->internal_queue.length (),
          this->input_queue.length ());
 
-    change_state(this,st_normal);
+    change_state(st_normal);
     this->verificator = 0;
 
     if (!(this->internal_queue.empty())) {
@@ -320,7 +311,7 @@ machineRec::activate_fork(PluginInstance* plugin)
     this->forkActive[forked_key] =
         ev->event->device_event.detail.key = this->config->fork_keycode[forked_key];
 
-    change_state(this, st_activated);
+    change_state(st_activated);
     mdb("%s suspected: %d-> forked to: %d,  internal queue is long: %d, %s\n", __FUNCTION__,
          forked_key,
          this->config->fork_keycode[forked_key],
@@ -379,7 +370,7 @@ do_confirm_non_fork_by(machineRec *machine, key_event *ev,
                        PluginInstance* plugin)
 {
     assert(machine->decision_time == 0);
-    change_state(machine, st_deactivated);
+    machine->change_state(st_deactivated);
     machine->internal_queue.push(ev); //  this  will be re-processed!!
 
 
@@ -562,7 +553,7 @@ apply_event_to_normal(machineRec *machine, key_event *ev, PluginInstance* plugin
              (simulated_time - machine->last_released_time) >
              (Time) config->repeat_max)) {
             /* Emacs indenting bug: */
-            change_state(machine, st_suspect);
+            machine->change_state(st_suspect);
             machine->suspect = key;
             machine->suspect_time = time_of(event);
             machine->decision_time = machine->suspect_time +
@@ -679,7 +670,7 @@ machineRec::apply_event_to_suspect(key_event *ev, PluginInstance* plugin)
             }
         } else {
             // another key pressed
-            change_state(this, st_verify);
+            change_state(st_verify);
             this->verificator_time = simulated_time;
             this->verificator = key; /* if already we had one -> we are not in this state!
                                            if the verificator becomes a modifier ?? fixme:*/
@@ -772,7 +763,7 @@ apply_event_to_verify(machineRec *machine, key_event *ev, PluginInstance* plugin
         // todo: we might be interested in percentage, Then here we should do the work!
 
         // we should change state:
-        change_state(machine,st_suspect);
+        machine->change_state(st_suspect);
         machine->verificator = 0;   // we _should_ take the next possible verificator
         do_enqueue_event(machine, ev);
     } else {               // fixme: a (repeated) press of the verificator ?

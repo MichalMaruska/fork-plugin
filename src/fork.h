@@ -198,6 +198,14 @@ struct machineRec
         va_end(argptr);
     };
 
+    void
+    change_state(fork_state_t new_state)
+    {
+        this->state = new_state;
+        mdb(" --->%s[%dm%s%s\n", escape_sequence, 32 + new_state,
+            state_description[new_state], color_reset);
+    }
+
     static void reverse_slice(list_with_tail &pre, list_with_tail &post);
 };
 
