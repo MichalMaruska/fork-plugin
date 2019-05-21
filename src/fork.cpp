@@ -382,16 +382,16 @@ do_confirm_non_fork_by(machineRec *machine, key_event *ev,
 }
 
 // so EV confirms fork of the current event.
-static void
-do_confirm_fork(machineRec *machine, key_event *ev, PluginInstance* plugin)
+void
+machineRec::do_confirm_fork(key_event *ev, PluginInstance* plugin)
 {
-    machine->decision_time = 0;
+    this->decision_time = 0;
 
     /* fixme: ev is the just-read event. But that is surely not the head
        of queue (which is confirmed to fork) */
-    MDB(("confirm:\n"));
-    machine->internal_queue.push(ev);
-    machine->activate_fork(plugin);
+    mdb("confirm:\n");
+    this->internal_queue.push(ev);
+    this->activate_fork(plugin);
 }
 
 /*
@@ -625,7 +625,7 @@ machineRec::apply_event_to_suspect(key_event *ev, PluginInstance* plugin)
     // todo: check the ranges (long vs. int)
     if ((this->decision_time =
          key_pressed_too_long(this, simulated_time)) == 0) {
-        do_confirm_fork(this, ev, plugin);
+        do_confirm_fork(ev, plugin);
         return;
     };
 
@@ -734,7 +734,7 @@ apply_event_to_verify(machineRec *machine, key_event *ev, PluginInstance* plugin
 
     if ((machine->decision_time = key_pressed_too_long(machine, simulated_time)) == 0)
     {
-        do_confirm_fork(machine, ev, plugin);
+        machine->do_confirm_fork(ev, plugin);
         return;
     }
 
@@ -744,7 +744,7 @@ apply_event_to_verify(machineRec *machine, key_event *ev, PluginInstance* plugin
     // well, this is an abuse ... this should never be 0.
     if (decision_time == 0)
     {
-        do_confirm_fork(machine, ev, plugin);
+        machine->do_confirm_fork(ev, plugin);
         return;
     }
     if (decision_time < machine->decision_time)

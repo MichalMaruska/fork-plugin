@@ -206,6 +206,8 @@ struct machineRec
             state_description[new_state], color_reset);
     }
 
+    void do_confirm_fork(key_event *ev, PluginInstance* plugin);
+
     static void reverse_slice(list_with_tail &pre, list_with_tail &post);
 };
 
