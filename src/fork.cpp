@@ -407,17 +407,17 @@ machineRec::do_confirm_fork(key_event *ev, PluginInstance* plugin)
 
 // return 0 ... elapsed, or time when will happen
 Time
-key_pressed_too_long(machineRec *machine, Time current_time)
+machineRec::key_pressed_too_long(Time current_time)
 {
     int verification_interval =
-        machine->config->verification_interval_of(machine->suspect,
+        this->config->verification_interval_of(this->suspect,
                                  // this can be 0 (& should be, unless)
-                                 machine->verificator);
-    Time decision_time = machine->suspect_time + verification_interval;
+                                 this->verificator);
+    Time decision_time = this->suspect_time + verification_interval;
 
-    MDB(("time: verification_interval = %dms elapsed so far =%dms\n",
+    mdb("time: verification_interval = %dms elapsed so far =%dms\n",
          verification_interval,
-         (int)(current_time - machine->suspect_time)));
+         (int)(current_time - this->suspect_time));
 
     if (decision_time <= current_time)
         return 0;
@@ -469,7 +469,7 @@ machineRec::step_fork_automaton_by_time(PluginInstance* plugin,
      */
 
     if (0 == (this->decision_time =
-              key_pressed_too_long(this, current_time))) {
+              key_pressed_too_long(current_time))) {
         reason = machineRec::reason_total;
         this->activate_fork(plugin);
         return true;
@@ -624,7 +624,7 @@ machineRec::apply_event_to_suspect(key_event *ev, PluginInstance* plugin)
 
     // todo: check the ranges (long vs. int)
     if ((this->decision_time =
-         key_pressed_too_long(this, simulated_time)) == 0) {
+         key_pressed_too_long(simulated_time)) == 0) {
         do_confirm_fork(ev, plugin);
         return;
     };
@@ -732,7 +732,7 @@ apply_event_to_verify(machineRec *machine, key_event *ev, PluginInstance* plugin
        are slow to release, when we press a specific one afterwards. So in this case fork slower!
     */
 
-    if ((machine->decision_time = key_pressed_too_long(machine, simulated_time)) == 0)
+    if ((machine->decision_time = machine->key_pressed_too_long(simulated_time)) == 0)
     {
         machine->do_confirm_fork(ev, plugin);
         return;
