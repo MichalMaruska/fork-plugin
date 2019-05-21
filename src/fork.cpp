@@ -428,24 +428,24 @@ machineRec::key_pressed_too_long(Time current_time)
 
 // return 0 if enough, otherwise the time when it will be enough/proving a fork.
 Time
-key_pressed_in_parallel(machineRec *machine, Time current_time)
+machineRec::key_pressed_in_parallel(Time current_time)
 {
     // verify overlap
-    int overlap_tolerance = machine->config->overlap_tolerance_of(machine->suspect,
-                                                                  machine->verificator);
-    Time decision_time =  machine->verificator_time + overlap_tolerance;
+    int overlap_tolerance = this->config->overlap_tolerance_of(this->suspect,
+                                                                  this->verificator);
+    Time decision_time =  this->verificator_time + overlap_tolerance;
 
     if (decision_time <= current_time) {
         return 0;
     } else {
-        MDB(("time: overlay interval = %dms elapsed so far =%dms\n",
+        mdb("time: overlay interval = %dms elapsed so far =%dms\n",
              overlap_tolerance,
-             (int) (current_time - machine->verificator_time)));
+             (int) (current_time - this->verificator_time));
 
-        MDB(("suspected = %d, verificator %d. Times: overlap %lu, "
-             "still needed: %lu (ms)\n", machine->suspect, machine->verificator,
-             current_time - machine->verificator_time,
-             decision_time - current_time));
+        mdb("suspected = %d, verificator %d. Times: overlap %lu, "
+             "still needed: %lu (ms)\n", this->suspect, this->verificator,
+             current_time - this->verificator_time,
+             decision_time - current_time);
 
         return decision_time;
     }
@@ -478,7 +478,7 @@ machineRec::step_fork_automaton_by_time(PluginInstance* plugin,
     /* To test 2 keys overlap, we need the 2nd key: a verificator! */
     if (this->state == st_verify) {
         // verify overlap
-        Time decision_time = key_pressed_in_parallel(this, current_time);
+        Time decision_time = key_pressed_in_parallel(current_time);
 
         if (decision_time == 0) {
             reason = machineRec::reason_overlap;
@@ -675,7 +675,7 @@ machineRec::apply_event_to_suspect(key_event *ev, PluginInstance* plugin)
             this->verificator = key; /* if already we had one -> we are not in this state!
                                            if the verificator becomes a modifier ?? fixme:*/
             // verify overlap
-            Time decision_time = key_pressed_in_parallel(this, simulated_time);
+            Time decision_time = key_pressed_in_parallel(simulated_time);
 
             // well, this is an abuse ... this should never be 0.
             if (decision_time == 0) {
@@ -739,7 +739,7 @@ apply_event_to_verify(machineRec *machine, key_event *ev, PluginInstance* plugin
     }
 
     /* now, check the overlap of the 2 first keys */
-    Time decision_time = key_pressed_in_parallel(machine, simulated_time);
+    Time decision_time = machine->key_pressed_in_parallel(simulated_time);
 
     // well, this is an abuse ... this should never be 0.
     if (decision_time == 0)

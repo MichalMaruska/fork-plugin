@@ -209,6 +209,7 @@ struct machineRec
     void do_confirm_fork(key_event *ev, PluginInstance* plugin);
 
     Time key_pressed_too_long(Time current_time);
+    Time key_pressed_in_parallel(Time current_time);
 
     static void reverse_slice(list_with_tail &pre, list_with_tail &post);
 };
