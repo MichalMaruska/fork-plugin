@@ -700,8 +700,8 @@ machineRec::apply_event_to_suspect(key_event *ev, PluginInstance* plugin)
  * So, already 2 keys have been pressed, and still no decision.
  * Now we have the 3rd key.
  *  We wait only for time, and for the release of the key */
-static void
-apply_event_to_verify(machineRec *machine, key_event *ev, PluginInstance* plugin)
+void
+machineRec::apply_event_to_verify(key_event *ev, PluginInstance* plugin)
 {
     InternalEvent* event = ev->event;
     Time simulated_time = time_of(event);
@@ -732,43 +732,43 @@ apply_event_to_verify(machineRec *machine, key_event *ev, PluginInstance* plugin
        are slow to release, when we press a specific one afterwards. So in this case fork slower!
     */
 
-    if ((machine->decision_time = machine->key_pressed_too_long(simulated_time)) == 0)
+    if ((this->decision_time = this->key_pressed_too_long(simulated_time)) == 0)
     {
-        machine->do_confirm_fork(ev, plugin);
+        do_confirm_fork(ev, plugin);
         return;
     }
 
     /* now, check the overlap of the 2 first keys */
-    Time decision_time = machine->key_pressed_in_parallel(simulated_time);
+    Time decision_time = this->key_pressed_in_parallel(simulated_time);
 
     // well, this is an abuse ... this should never be 0.
     if (decision_time == 0)
     {
-        machine->do_confirm_fork(ev, plugin);
+        do_confirm_fork(ev, plugin);
         return;
     }
-    if (decision_time < machine->decision_time)
-        machine->decision_time = decision_time;
+    if (decision_time < this->decision_time)
+        this->decision_time = decision_time;
 
 
-    if (release_p(event) && (key == machine->suspect)){ // fixme: is release_p(event) useless?
-        MDB(("fork-key released on time: %dms is a tolerated error (< %lu)\n",
-             (int)(simulated_time -  machine->suspect_time),
-             machine->config->verification_interval_of(machine->suspect,
-                                      machine->verificator)));
-        machine->decision_time = 0; // useless fixme!
-        do_confirm_non_fork_by(machine, ev, plugin);
+    if (release_p(event) && (key == this->suspect)){ // fixme: is release_p(event) useless?
+        mdb("fork-key released on time: %dms is a tolerated error (< %lu)\n",
+             (int)(simulated_time -  this->suspect_time),
+             this->config->verification_interval_of(this->suspect,
+                                      this->verificator));
+        this->decision_time = 0; // useless fixme!
+        do_confirm_non_fork_by(this, ev, plugin);
 
-    } else if (release_p(event) && (machine->verificator == key)){
+    } else if (release_p(event) && (this->verificator == key)){
         // todo: we might be interested in percentage, Then here we should do the work!
 
         // we should change state:
-        machine->change_state(st_suspect);
-        machine->verificator = 0;   // we _should_ take the next possible verificator
-        machine->do_enqueue_event(ev);
+        change_state(st_suspect);
+        this->verificator = 0;   // we _should_ take the next possible verificator
+        do_enqueue_event(ev);
     } else {               // fixme: a (repeated) press of the verificator ?
         // fixme: we pressed another key: but we should tell XKB to repeat it !
-        machine->do_enqueue_event(ev);
+        do_enqueue_event(ev);
     };
 }
 
@@ -848,7 +848,7 @@ machineRec::step_fork_automaton_by_key(key_event *ev, PluginInstance* plugin)
         }
         case st_verify:
         {
-            apply_event_to_verify(this, ev, plugin);
+            apply_event_to_verify(ev, plugin);
             return;
         }
         default:
