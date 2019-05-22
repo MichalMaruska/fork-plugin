@@ -517,8 +517,8 @@ mouse_emulation_on(DeviceIntPtr keybd)
     return (MOUSE_EMULATION_ON(xkb));
 }
 
-static void
-apply_event_to_normal(machineRec *machine, key_event *ev, PluginInstance* plugin)
+void
+machineRec::apply_event_to_normal(key_event *ev, PluginInstance* plugin)
 {
     DeviceIntPtr keybd = plugin->device;
 
@@ -526,9 +526,7 @@ apply_event_to_normal(machineRec *machine, key_event *ev, PluginInstance* plugin
     KeyCode key = detail_of(event);
     Time simulated_time = time_of(event);
 
-    fork_configuration* config = machine->config;
-
-    assert(machine->internal_queue.empty());
+    assert(this->internal_queue.empty());
 
     // if this key might start a fork....
     if (press_p(event) && forkable_p(config, key)
@@ -540,60 +538,60 @@ apply_event_to_normal(machineRec *machine, key_event *ev, PluginInstance* plugin
         /* .- trick: by depressing/re-pressing the key rapidly, fork is disabled,
          * and AR is invoked */
 #if DEBUG
-        if ( !machine->key_forked(key) && (machine->last_released == key )) {
-            MDB (("can we invoke autorepeat? %d  upper bound %d ms\n",
-                  (int)(simulated_time - machine->last_released_time), config->repeat_max));
+        if ( !key_forked(key) && (this->last_released == key )) {
+            mdb("can we invoke autorepeat? %d  upper bound %d ms\n",
+                  (int)(simulated_time - this->last_released_time), config->repeat_max);
         }
 #endif
         /* So, unless we see the .- trick, we do suspect: */
-        if (!machine->key_forked(key) &&
-            ((machine->last_released != key ) ||
-             /*todo: time_difference_more(machine->last_released_time,simulated_time,
+        if (!key_forked(key) &&
+            ((this->last_released != key ) ||
+             /*todo: time_difference_more(this->last_released_time,simulated_time,
               * config->repeat_max) */
-             (simulated_time - machine->last_released_time) >
+             (simulated_time - this->last_released_time) >
              (Time) config->repeat_max)) {
             /* Emacs indenting bug: */
-            machine->change_state(st_suspect);
-            machine->suspect = key;
-            machine->suspect_time = time_of(event);
-            machine->decision_time = machine->suspect_time +
-                machine->config->verification_interval_of(key, 0);
-            machine->do_enqueue_event(ev);
+            change_state(st_suspect);
+            this->suspect = key;
+            this->suspect_time = time_of(event);
+            this->decision_time = this->suspect_time +
+                this->config->verification_interval_of(key, 0);
+            do_enqueue_event(ev);
             return;
         } else {
             // .- trick: (fixme: or self-forked)
-            MDB(("re-pressed very quickly\n"));
-            machine->forkActive[key] = key; // fixme: why??
+            mdb("re-pressed very quickly\n");
+            this->forkActive[key] = key; // fixme: why??
             EMIT_EVENT(ev);
             return;
         };
-    } else if (release_p(event) && (machine->key_forked(key))) {
-        MDB(("releasing forked key\n"));
+    } else if (release_p(event) && (key_forked(key))) {
+        mdb("releasing forked key\n");
         // fixme:  we should see if the fork was `used'.
         if (config->consider_forks_for_repeat){
             // C-f   f long becomes fork. now we wanted to repeat it....
-            machine->last_released = detail_of(event);
-            machine->last_released_time = time_of(event);
+            this->last_released = detail_of(event);
+            this->last_released_time = time_of(event);
         } else {
             // imagine mouse-button during the short 1st press. Then
             // the 2nd press ..... should not relate the the 1st one.
-            machine->last_released = 0;
-            machine->last_released_time = 0;
+            this->last_released = 0;
+            this->last_released_time = 0;
         }
         /* we finally release a (self-)forked key. Rewrite back the keycode.
          *
          * fixme: do i do this in other machine states?
          */
-        event->device_event.detail.key = machine->forkActive[key];
+        event->device_event.detail.key = this->forkActive[key];
 
         // this is the state (of the keyboard, not the machine).... better to
         // say of the machine!!!
-        machine->forkActive[key] = 0;
+        this->forkActive[key] = 0;
         EMIT_EVENT(ev);
     } else {
         if (release_p (event)) {
-            machine->last_released = detail_of(event);
-            machine->last_released_time = time_of(event);
+            this->last_released = detail_of(event);
+            this->last_released_time = time_of(event);
         };
         // pass along the un-forkable event.
         EMIT_EVENT(ev);
@@ -839,7 +837,7 @@ machineRec::step_fork_automaton_by_key(key_event *ev, PluginInstance* plugin)
 
     switch (this->state) {
         case st_normal:
-            apply_event_to_normal(this, ev, plugin);
+            apply_event_to_normal(ev, plugin);
             return;
         case st_suspect:
         {
