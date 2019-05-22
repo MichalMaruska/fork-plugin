@@ -206,6 +206,7 @@ struct machineRec
             state_description[new_state], color_reset);
     }
 
+    void do_enqueue_event(key_event *ev);
     void do_confirm_fork(key_event *ev, PluginInstance* plugin);
 
     Time key_pressed_too_long(Time current_time);
