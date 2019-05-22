@@ -148,31 +148,29 @@ hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* plugin)
 
 /* The machine is locked here:
  * Push as many as possible from the OUTPUT queue to the next layer */
-static void
-try_to_output(PluginInstance* plugin)
+void
+machineRec::try_to_output(PluginInstance* plugin)
 {
-    machineRec* machine = plugin_machine(plugin);
+    CHECK_LOCKED(this);
 
-    CHECK_LOCKED(machine);
-
-    machineRec::list_with_tail &queue = machine->output_queue;
+    list_with_tail &queue = output_queue;
     PluginInstance* const next = plugin->next;
 
-    MDB(("%s: Queues: output: %d\t internal: %d\t input: %d \n", __FUNCTION__,
+    mdb("%s: Queues: output: %d\t internal: %d\t input: %d \n", __FUNCTION__,
          queue.length (),
-         machine->internal_queue.length (),
-         machine->input_queue.length ()));
+         internal_queue.length (),
+         input_queue.length ());
 
     while((!plugin_frozen(next)) && (!queue.empty ())) {
         key_event* ev = queue.pop();
 
-        machine->last_events->push_back(make_archived_events(ev));
+        last_events->push_back(make_archived_events(ev));
         InternalEvent* event = ev->event;
         mxfree(ev, sizeof(key_event));
 
-        UNLOCK(machine);
+        UNLOCK(this);
         hand_over_event_to_next_plugin(event, plugin);
-        LOCK(machine);
+        LOCK(this);
     };
 
     // interesting: after handing over, the NEXT might need to be refreshed.
@@ -183,24 +181,24 @@ try_to_output(PluginInstance* plugin)
         Time now;
         if (!queue.empty()) {
             now = time_of(queue.front()->event);
-        } else if (!machine->internal_queue.empty()) {
-            now = time_of(machine->internal_queue.front()->event);
-        } else if (!machine->input_queue.empty()) {
-            now = time_of(machine->input_queue.front()->event);
+        } else if (!internal_queue.empty()) {
+            now = time_of(internal_queue.front()->event);
+        } else if (!input_queue.empty()) {
+            now = time_of(input_queue.front()->event);
         } else {
-            now = machine->current_time;
+            now = current_time;
         }
 
         if (now) {
             // this can thaw, freeze,?
-            UNLOCK(machine);
+            UNLOCK(this);
             PluginClass(next)->ProcessTime(next, now);
-            LOCK(machine);
+            LOCK(this);
         }
 
     }
     if (!queue.empty ())
-        MDB(("%s: still %d events to output\n", __FUNCTION__, queue.length ()));
+        mdb("%s: still %d events to output\n", __FUNCTION__, queue.length ());
 }
 
 // Another event has been determined. So:
@@ -212,7 +210,7 @@ output_event(key_event* ev, PluginInstance* plugin)
     assert(ev->event);
     machineRec* machine = plugin_machine(plugin);
     machine->output_queue.push(ev);
-    try_to_output(plugin);
+    machine->try_to_output(plugin);
 };
 
 
@@ -1124,7 +1122,7 @@ step_in_time_locked(PluginInstance* plugin)
 
     /* is this necessary?   I think not: if the next plugin was frozen,
      * and now it's not, then it must have warned us that it thawed */
-    try_to_output(plugin);
+    machine->try_to_output(plugin);
 
     /* push the time ! */
     try_to_play(plugin, FALSE);
@@ -1164,7 +1162,7 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
     MDB(("%s @ time %u\n", __FUNCTION__, (int)now));
 
     LOCK(machine);
-    try_to_output(plugin);
+    machine->try_to_output(plugin);
     // is this correct?
 
     try_to_play(plugin, FALSE);

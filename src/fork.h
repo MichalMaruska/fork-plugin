@@ -246,6 +246,8 @@ public:
     Time key_pressed_in_parallel(Time current_time);
 
     static void reverse_slice(list_with_tail &pre, list_with_tail &post);
+
+    void try_to_output(PluginInstance* plugin);
 };
 
 extern fork_configuration* machine_new_config(void);
