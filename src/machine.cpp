@@ -12,16 +12,6 @@ extern "C" {
 #include <xorg/xf86Module.h>
 }
 
-/* used only for debugging */
-char const *machineRec::state_description[]={
-    "normal",
-    "suspect",
-    "verify",
-    "deactivated",
-    "activated"
-};
-
-
 #define MOUSE_EMULATION_ON(xkb) (xkb->ctrls->enabled_ctrls & XkbMouseKeysMask)
 /** apply_event_to_{STATE} */
 static Bool

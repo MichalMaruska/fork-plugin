@@ -103,8 +103,6 @@ typedef enum {
   st_activated
 } fork_state_t;
 
-extern char const *state_description[];
-
 /* `machine': the dynamic `state' */
 
 // typedef
@@ -120,7 +118,13 @@ struct machineRec
     };
 
     /* used only for debugging */
-    static char const *state_description[];
+    char const * const state_description[5] = {
+        "normal",
+        "suspect",
+        "verify",
+        "deactivated",
+        "activated"
+    };
 
 private:
     volatile int mLock;           /* the mouse interrupt handler should ..... err!  `volatile'
