@@ -1,4 +1,9 @@
+
+extern "C"
+{
 #include "event_ops.h"
+}
+
 
 // specific keysyms:
 
