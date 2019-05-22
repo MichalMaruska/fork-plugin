@@ -251,10 +251,10 @@ forkable_p(fork_configuration* config, KeyCode code)
 
 /* Return the keycode into which CODE has forked _last_ time.
    Returns code itself, if not forked. */
-inline Bool
-key_forked(machineRec *machine, KeyCode code)
+Bool
+machineRec::key_forked(KeyCode code)
 {
-    return (machine->forkActive[code]);
+    return (this->forkActive[code]);
 }
 
 void
@@ -540,13 +540,13 @@ apply_event_to_normal(machineRec *machine, key_event *ev, PluginInstance* plugin
         /* .- trick: by depressing/re-pressing the key rapidly, fork is disabled,
          * and AR is invoked */
 #if DEBUG
-        if ( !key_forked(machine, key) && (machine->last_released == key )) {
+        if ( !machine->key_forked(key) && (machine->last_released == key )) {
             MDB (("can we invoke autorepeat? %d  upper bound %d ms\n",
                   (int)(simulated_time - machine->last_released_time), config->repeat_max));
         }
 #endif
         /* So, unless we see the .- trick, we do suspect: */
-        if (!key_forked(machine, key) &&
+        if (!machine->key_forked(key) &&
             ((machine->last_released != key ) ||
              /*todo: time_difference_more(machine->last_released_time,simulated_time,
               * config->repeat_max) */
@@ -567,7 +567,7 @@ apply_event_to_normal(machineRec *machine, key_event *ev, PluginInstance* plugin
             EMIT_EVENT(ev);
             return;
         };
-    } else if (release_p(event) && (key_forked(machine, key))) {
+    } else if (release_p(event) && (machine->key_forked(key))) {
         MDB(("releasing forked key\n"));
         // fixme:  we should see if the fork was `used'.
         if (config->consider_forks_for_repeat){
@@ -807,7 +807,7 @@ machineRec::step_fork_automaton_by_key(key_event *ev, PluginInstance* plugin)
        modifier are ignored before put in the X input pipe/queue This is only if the
        lower level (keyboard driver) passes through the auto-repeat events. */
 
-    if ((key_forked(this, key)) && press_p(event)
+    if ((key_forked(key)) && press_p(event)
         && (key != this->forkActive[key])) // not `self_forked'
     {
         mdb("%s: the key is forked, ignoring\n", __FUNCTION__);
