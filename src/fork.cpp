@@ -365,18 +365,18 @@ machineRec::do_enqueue_event(key_event *ev)
 }
 
 // so the ev proves, that the current event is not forked.
-static void
-do_confirm_non_fork_by(machineRec *machine, key_event *ev,
+void
+machineRec::do_confirm_non_fork_by(key_event *ev,
                        PluginInstance* plugin)
 {
-    assert(machine->decision_time == 0);
-    machine->change_state(st_deactivated);
-    machine->internal_queue.push(ev); //  this  will be re-processed!!
+    assert(this->decision_time == 0);
+    change_state(st_deactivated);
+    this->internal_queue.push(ev); //  this  will be re-processed!!
 
 
-    key_event* non_forked_event = machine->internal_queue.pop();
-    MDB(("this is not a fork! %d\n", detail_of(non_forked_event->event)));
-    machine->rewind_machine();
+    key_event* non_forked_event = this->internal_queue.pop();
+    mdb("this is not a fork! %d\n", detail_of(non_forked_event->event));
+    rewind_machine();
 
     EMIT_EVENT(non_forked_event);
 }
@@ -636,7 +636,7 @@ machineRec::apply_event_to_suspect(key_event *ev, PluginInstance* plugin)
              this->suspect, (int)(simulated_time  -  this->suspect_time));
         if (key == this->suspect) {
             this->decision_time = 0; // might be useless!
-            do_confirm_non_fork_by(this, ev, plugin);
+            do_confirm_non_fork_by(ev, plugin);
             return;
             /* fixme:  here we confirm, that it was not a user error.....
                bad synchro. i.e. the suspected key was just released  */
@@ -660,7 +660,7 @@ machineRec::apply_event_to_suspect(key_event *ev, PluginInstance* plugin)
                 mdb("The suspected key is configured to repeat, so ...\n");
                 this->forkActive[this->suspect] = this->suspect;
                 this->decision_time = 0;
-                do_confirm_non_fork_by(this, ev, plugin);
+                do_confirm_non_fork_by(ev, plugin);
                 return;
             } else {
                 // fixme: this keycode is repeating, but we still don't know what to do.
@@ -757,7 +757,7 @@ machineRec::apply_event_to_verify(key_event *ev, PluginInstance* plugin)
              this->config->verification_interval_of(this->suspect,
                                       this->verificator));
         this->decision_time = 0; // useless fixme!
-        do_confirm_non_fork_by(this, ev, plugin);
+        do_confirm_non_fork_by(ev, plugin);
 
     } else if (release_p(event) && (this->verificator == key)){
         // todo: we might be interested in percentage, Then here we should do the work!

@@ -212,6 +212,8 @@ struct machineRec
 
     Bool key_forked(KeyCode code);
 
+    void do_confirm_non_fork_by(key_event *ev, PluginInstance* plugin);
+
     Time key_pressed_too_long(Time current_time);
     Time key_pressed_in_parallel(Time current_time);
 
