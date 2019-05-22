@@ -1,9 +1,9 @@
 /* I use it only to print out the keysym in debugging stuff*/
 
-#include <xorg/eventstr.h>
-
 extern "C"
 {
+
+#include <xorg/eventstr.h>
 
 Bool release_p(const InternalEvent* event);
 Bool press_p(const InternalEvent* event);
