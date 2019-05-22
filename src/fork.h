@@ -174,11 +174,19 @@ struct machineRec
         return buffer;
     }
 
+    ~machineRec()
+        {
+            delete last_events;
+        };
+
     machineRec()
         : internal_queue("internal"),
           input_queue("input_queue"),
           output_queue("output_queue")
-        {};
+        {
+            max_last = 100;
+            last_events = new last_events_type(max_last);
+        };
 
     void rewind_machine();
 

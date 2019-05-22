@@ -1287,11 +1287,11 @@ make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
     forking_machine->internal_queue.set_name(string("internal"));
     forking_machine->input_queue.set_name(string("input"));
     forking_machine->output_queue.set_name(string("output"));
+    forking_machine->max_last = 100;
+    forking_machine->last_events = new last_events_type(forking_machine->max_last);
 #else
     forking_machine = new(machineRec);
 #endif
-    forking_machine->max_last = 100;
-    forking_machine->last_events = new last_events_type(forking_machine->max_last);
 
     forking_machine->state = st_normal;
     forking_machine->last_released = 0;
@@ -1342,7 +1342,8 @@ destroy_machine(PluginInstance* plugin)
     machineRec* machine = plugin_machine(plugin);
     LOCK(machine);
 
-    delete machine->last_events;
+    delete machine;
+    // delete machine->last_events;
     DeleteCallback(&DeviceEventCallback, (CallbackProcPtr) mouse_call_back,
                    (void*) plugin);
     MDB(("%s: what to do?\n", __FUNCTION__));
