@@ -229,24 +229,6 @@ output_event(key_event* ev, PluginInstance* plugin)
 
 
 
-/* The Static state = configuration.
- * This is the matrix with some Time values:
- * using the fact, that valid KeyCodes are non zero, we use
- * the 0 column for `code's global values
-
- * Global      xxxxxxxx unused xxxxxx
- * key-wise   per-pair per-pair ....
- * key-wise   per-pair per-pair ....
- * ....
- */
-
-inline Bool
-forkable_p(fork_configuration* config, KeyCode code)
-{
-    return (config->fork_keycode[code]);
-}
-
-
 /* Now the operations on the Dynamic state */
 
 /* Return the keycode into which CODE has forked _last_ time.
@@ -1136,6 +1118,8 @@ static void
 step_in_time_locked(PluginInstance* plugin)
 {
     machineRec* machine = plugin_machine(plugin);
+    PluginInstance* const next = plugin->next;
+
     MDB(("%s:\n", __FUNCTION__));
 
     /* is this necessary?   I think not: if the next plugin was frozen,
@@ -1148,11 +1132,11 @@ step_in_time_locked(PluginInstance* plugin)
     /* i should take the minimum of time and the time of the 1st event in the
        (output) internal queue */
     if (machine->internal_queue.empty() && machine->input_queue.empty()
-        && !plugin_frozen(plugin->next))
+        && !plugin_frozen(next))
     {
         UNLOCK(machine);
         /* might this be invoked several times?  */
-        PluginClass(plugin->next)->ProcessTime(plugin->next, machine->current_time);
+        PluginClass(next)->ProcessTime(next, machine->current_time);
         LOCK(machine);
     }
     // todo: we could push the time before the first event in internal queue!

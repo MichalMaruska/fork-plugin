@@ -161,6 +161,25 @@ struct machineRec
 
     fork_configuration  *config;
 
+/* The Static state = configuration.
+ * This is the matrix with some Time values:
+ * using the fact, that valid KeyCodes are non zero, we use
+ * the 0 column for `code's global values
+
+ * Global      xxxxxxxx unused xxxxxx
+ * key-wise   per-pair per-pair ....
+ * key-wise   per-pair per-pair ....
+ * ....
+ */
+
+private:
+    static Bool
+    forkable_p(fork_configuration* config, KeyCode code)
+    {
+        return (config->fork_keycode[code]);
+    }
+
+public:
 
     static const int BufferLength = 200;
     const char*
