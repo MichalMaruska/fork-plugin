@@ -204,19 +204,17 @@ machineRec::try_to_output(PluginInstance* plugin)
 // Another event has been determined. So:
 // todo:  possible emit a (notification) event immediately,
 // ... and push the event down the pipeline, when not frozen.
-static void
-output_event(key_event* ev, PluginInstance* plugin)
+
+/* note, that after this EV could point to a deallocated memory! */
+void
+machineRec::output_event(key_event* ev, PluginInstance* plugin)
 {
     assert(ev->event);
-    machineRec* machine = plugin_machine(plugin);
-    machine->output_queue.push(ev);
-    machine->try_to_output(plugin);
+    output_queue.push(ev);
+    try_to_output(plugin);
 };
 
 
-/* note, that after this EV could point to a deallocated memory!
- * bad macro: evaluates EV twice. */
-#define EMIT_EVENT(ev) {output_event((ev), plugin); ev=NULL;}
 
 /**
  * Operations on the machine
@@ -300,7 +298,7 @@ machineRec::activate_fork(PluginInstance* plugin)
          );
     this->rewind_machine();
 
-    EMIT_EVENT(ev);
+    output_event(ev,plugin);
 }
 
 
@@ -358,7 +356,7 @@ machineRec::do_confirm_non_fork_by(key_event *ev,
     mdb("this is not a fork! %d\n", detail_of(non_forked_event->event));
     rewind_machine();
 
-    EMIT_EVENT(non_forked_event);
+    output_event(non_forked_event,plugin);
 }
 
 // so EV confirms fork of the current event.
@@ -542,7 +540,7 @@ machineRec::apply_event_to_normal(key_event *ev, PluginInstance* plugin)
             // .- trick: (fixme: or self-forked)
             mdb("re-pressed very quickly\n");
             this->forkActive[key] = key; // fixme: why??
-            EMIT_EVENT(ev);
+            output_event(ev,plugin);
             return;
         };
     } else if (release_p(event) && (key_forked(key))) {
@@ -567,14 +565,14 @@ machineRec::apply_event_to_normal(key_event *ev, PluginInstance* plugin)
         // this is the state (of the keyboard, not the machine).... better to
         // say of the machine!!!
         this->forkActive[key] = 0;
-        EMIT_EVENT(ev);
+        output_event(ev,plugin);
     } else {
         if (release_p (event)) {
             this->last_released = detail_of(event);
             this->last_released_time = time_of(event);
         };
         // pass along the un-forkable event.
-        EMIT_EVENT(ev);
+        output_event(ev,plugin);
     };
 };
 

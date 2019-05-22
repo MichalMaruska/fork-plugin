@@ -248,6 +248,7 @@ public:
     static void reverse_slice(list_with_tail &pre, list_with_tail &post);
 
     void try_to_output(PluginInstance* plugin);
+    void output_event(key_event* ev, PluginInstance* plugin);
 };
 
 extern fork_configuration* machine_new_config(void);
