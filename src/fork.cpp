@@ -382,7 +382,7 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
         return;
 
 #if DEBUG
-    if (((machineRec*) plugin_machine(plugin))->config->debug) {
+    if (machine->config->debug) {
         DB(("%s>>> ", key_io_color));
         DB(("%s", describe_key(keybd, ev->event)));
         DB(("%s\n", color_reset));
