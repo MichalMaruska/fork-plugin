@@ -130,7 +130,7 @@ size_t memory_balance = 0;
 inline void
 hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* plugin)
 {
-    PluginInstance* next = plugin->next;
+    PluginInstance* const next = plugin->next;
 
 #if DEBUG
     if (((machineRec*) plugin_machine(plugin))->config->debug) {
@@ -156,7 +156,7 @@ try_to_output(PluginInstance* plugin)
     CHECK_LOCKED(machine);
 
     machineRec::list_with_tail &queue = machine->output_queue;
-    PluginInstance* next = plugin->next;
+    PluginInstance* const next = plugin->next;
 
     MDB(("%s: Queues: output: %d\t internal: %d\t input: %d \n", __FUNCTION__,
          queue.length (),
@@ -194,7 +194,7 @@ try_to_output(PluginInstance* plugin)
         if (now) {
             // this can thaw, freeze,?
             UNLOCK(machine);
-            PluginClass(plugin->next)->ProcessTime(plugin->next, now);
+            PluginClass(next)->ProcessTime(next, now);
             LOCK(machine);
         }
 
@@ -862,17 +862,18 @@ machineRec::step_fork_automaton_by_key(key_event *ev, PluginInstance* plugin)
 static void
 try_to_play(PluginInstance* plugin, Bool force)
 {
+    PluginInstance* const next = plugin->next;
     machineRec *machine = plugin_machine(plugin);
 
     machineRec::list_with_tail &input_queue = machine->input_queue;
 
     MDB(("%s: next %s: internal %d, input: %d\n", __FUNCTION__,
-         (plugin_frozen(plugin->next)?"frozen":"NOT frozen"),
+         (plugin_frozen(next)?"frozen":"NOT frozen"),
          machine->internal_queue.length (),
          input_queue.length ()));
 
 
-    while (!plugin_frozen(plugin->next)) {
+    while (!plugin_frozen(next)) {
 
         if (! input_queue.empty()) {
             key_event *ev = input_queue.pop();
