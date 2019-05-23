@@ -1,6 +1,8 @@
 /* I use it only to print out the keysym in debugging stuff*/
 
 extern "C" {
+    // this must precede!
+#include <xorg-server.h>
 #include <xorg/eventstr.h>
 }
 
