@@ -3,6 +3,8 @@
 extern "C"
 {
 
+    // this must precede!
+#include <xorg-server.h>
 #include <xorg/eventstr.h>
 
 Bool release_p(const InternalEvent* event);
