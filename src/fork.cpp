@@ -556,14 +556,16 @@ make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
     forking_machine->output_queue.set_name(string("output"));
     forking_machine->max_last = 100;
     forking_machine->last_events = new last_events_type(forking_machine->max_last);
+
+    forking_machine->last_released = 0;
+    forking_machine->decision_time = 0;
+    forking_machine->current_time = 0;
+    forking_machine->state = st_normal;
+
 #else
     forking_machine = new machineRec(plugin);
 #endif
 
-    forking_machine->state = st_normal;
-    forking_machine->last_released = 0;
-    forking_machine->decision_time = 0;
-    forking_machine->current_time = 0;
     // set_wakeup_time(plugin, 0);
     plugin->wakeup_time = 0;
 

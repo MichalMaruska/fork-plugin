@@ -157,7 +157,7 @@ struct machineRec
     list_with_tail output_queue; /* We have decided, but externals don't accept, so we keep them. */
 
     last_events_type *last_events; // history
-    int max_last;
+    int max_last = 100; // can be updated!
 
     fork_configuration  *config;
 
@@ -206,9 +206,12 @@ public:
         : internal_queue("internal"),
           input_queue("input_queue"),
           output_queue("output_queue"),
-          mPlugin(plugin)
+          mPlugin(plugin),
+          last_released(0),
+          decision_time(0),
+          current_time(0),
+          state(st_normal)
         {
-            max_last = 100;
             last_events = new last_events_type(max_last);
         };
 
