@@ -261,7 +261,7 @@ public:
 
     static void reverse_slice(list_with_tail &pre, list_with_tail &post);
 
-    void try_to_output();
+    void flush_to_next();
 private:
     void apply_event_to_suspect(key_event *ev);
 

@@ -94,19 +94,17 @@ machineRec::switch_config(int id)
 /* The machine is locked here:
  * Push as many as possible from the OUTPUT queue to the next layer */
 void
-machineRec::try_to_output()
+machineRec::flush_to_next()
 {
     // todo: lock in this scope only?
     check_locked();
-
-    PluginInstance* const nextPlugin = mPlugin->next;
-
     mdb("%s: Queues: output: %d\t internal: %d\t input: %d \n", __FUNCTION__,
          output_queue.length (),
          internal_queue.length (),
          input_queue.length ());
 
-    while((!plugin_frozen(nextPlugin)) && (!output_queue.empty ())) {
+    PluginInstance* const nextPlugin = mPlugin->next;
+    while(!plugin_frozen(nextPlugin) && !output_queue.empty()) {
         key_event* ev = output_queue.pop();
 
         last_events->push_back(make_archived_events(ev));
@@ -157,7 +155,7 @@ machineRec::output_event(key_event* ev)
     assert(ev->event);
 
     output_queue.push(ev);
-    try_to_output();
+    flush_to_next();
 };
 
 /**

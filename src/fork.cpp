@@ -289,7 +289,7 @@ create_handle_for_event(InternalEvent *event, bool owner)
             return NULL;
         }
     }
-    // the handle is deallocated in `try_to_output'
+    // the handle is deallocated in `flush_to_next'
     key_event* ev = (key_event*)malloc(sizeof(key_event));
     if (!ev) {
         /* This message should be static string. otherwise it fails as well? */
@@ -364,7 +364,7 @@ step_in_time_locked(PluginInstance* plugin)
 
     /* is this necessary?   I think not: if the next plugin was frozen,
      * and now it's not, then it must have warned us that it thawed */
-    machine->try_to_output();
+    machine->flush_to_next();
 
     /* push the time ! */
     machine->try_to_play(FALSE);
@@ -404,7 +404,7 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
     MDB(("%s @ time %u\n", __FUNCTION__, (int)now));
 
     machine->lock();
-    machine->try_to_output();
+    machine->flush_to_next();
     // is this correct?
 
     machine->try_to_play(FALSE);
