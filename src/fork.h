@@ -258,6 +258,7 @@ extern void replay_events(PluginInstance* plugin, Bool force);
 
 extern int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n);
 
+void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* plugin);
 
 enum {
   PAUSE_KEYCODE = 127
