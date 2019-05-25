@@ -593,9 +593,9 @@ machineRec::apply_event_to_verify(key_event *ev)
 }
 
 
-/* apply event EV to (state, internal-queue, time).
- * This can append to the OUTPUT-queue
- * sets: `decision_time'
+/* Apply event EV to (state, internal-queue, time).
+ * This can append to the output-queue
+ *      sets: `decision_time'
  *
  * input:
  *   internal-queue  <+      input-queue
@@ -613,15 +613,16 @@ machineRec::step_fork_automaton_by_key(key_event *ev)
     InternalEvent* event = ev->event;
     KeyCode key = detail_of(event);
 
-    /* please, 1st change the state, then enqueue, and then EMIT_EVENT.
+    /* Please, first change the state, then enqueue, and then EMIT_EVENT.
      * fixme: should be a function then  !!!*/
 
     // decision_time = 0;
 
 #if DDX_REPEATS_KEYS || 1
-    /* `quick_ignore': I want to ignore _quickly_ the repeated forked modifiers. Normal
-       modifier are ignored before put in the X input pipe/queue This is only if the
-       lower level (keyboard driver) passes through the auto-repeat events. */
+    /* `quick_ignore': I want to ignore _quickly_ the hw-repeated unfiltered (forked) modifiers.
+       Normal modifier are ignored before put in the X input pipe/queue.
+       This is only necessary if the lower level (keyboard driver) passes through the
+       HW auto-repeat events. */
 
     if ((key_forked(key)) && press_p(event)
         && (key != forkActive[key])) // not `self_forked'
