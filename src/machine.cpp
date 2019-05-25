@@ -678,15 +678,18 @@ machineRec::step_fork_automaton_by_key(key_event *ev, PluginInstance* plugin)
     /* describe the (state, key) */
     if (keybd->key)
     {
-    XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
-    KeySym *sym = XkbKeySymsPtr(xkbi->desc,key);
-    if ((!sym) || (! isalpha(* (unsigned char*) sym)))
-        sym = (KeySym*) " ";
-    mdb("%s%s%s state: %s, queue: %d, event: %d %s%c %s %s\n",
-         info_color,__FUNCTION__,color_reset,
-         this->describe_machine_state(),
-         queue.length (),
-         key, key_color, (char)*sym, color_reset, event_type_brief(event));
+        XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
+        KeySym *sym = XkbKeySymsPtr(xkbi->desc,key);
+        if ((!sym) || (! isalpha(* (unsigned char*) sym)))
+            sym = (KeySym*) " ";
+
+        mdb("%s%s%s state: %s, queue: %d, event: %d %s%c %s %s\n",
+            info_color,__FUNCTION__,color_reset,
+            describe_machine_state(),
+            queue.length (),
+            key,
+            key_color, (char)*sym, color_reset,
+            event_type_brief(event));
     }
 #endif
 
