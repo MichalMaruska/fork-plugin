@@ -5,13 +5,14 @@
 
 #include "debug.h"
 
+
 extern "C" {
 #include "event_ops.h"
+
+#include <xorg-server.h>
 #include <xorg/xkbsrv.h>
 #include <xorg/xf86Module.h>
 }
-
-
 
 /* used only for debugging */
 char const *machineRec::state_description[]={
