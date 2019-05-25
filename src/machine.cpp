@@ -129,7 +129,10 @@ machineRec::flush_to_next()
         } else if (!input_queue.empty()) {
             now = time_of(input_queue.front()->event);
         } else {
+            // fixme: this is accessed & written to directly by fork.cpp: machine->current_time = now;
             now = current_time;
+            // in this case we might:
+            current_time = 0;
         }
 
         if (now) {
