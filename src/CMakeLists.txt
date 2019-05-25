@@ -24,6 +24,7 @@ set(sources
   )
 
 add_library(fork MODULE ${sources})
+target_compile_definitions(fork PRIVATE VERSION="git-local")
 set_property(TARGET fork PROPERTY NO_SONAME)
 # SHARED
 
