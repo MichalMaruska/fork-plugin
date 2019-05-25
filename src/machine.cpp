@@ -33,14 +33,14 @@ machineRec::try_to_output(PluginInstance* plugin)
     // todo: lock in this scope only?
     check_locked();
 
-    PluginInstance* const next = plugin->next;
+    PluginInstance* const nextPlugin = mPlugin->next;
 
     mdb("%s: Queues: output: %d\t internal: %d\t input: %d \n", __FUNCTION__,
          output_queue.length (),
          internal_queue.length (),
          input_queue.length ());
 
-    while((!plugin_frozen(next)) && (!output_queue.empty ())) {
+    while((!plugin_frozen(nextPlugin)) && (!output_queue.empty ())) {
         key_event* ev = output_queue.pop();
 
         last_events->push_back(make_archived_events(ev));
@@ -55,7 +55,7 @@ machineRec::try_to_output(PluginInstance* plugin)
     // interesting: after handing over, the NEXT might need to be refreshed.
     // if that plugin is gone. todo!
 
-    if (!plugin_frozen(next)) {
+    if (!plugin_frozen(nextPlugin)) {
         // we should push the time!
         Time now;
         if (!output_queue.empty()) {
@@ -71,7 +71,7 @@ machineRec::try_to_output(PluginInstance* plugin)
         if (now) {
             // this can thaw, freeze,?
             unlock();
-            PluginClass(next)->ProcessTime(next, now);
+            PluginClass(nextPlugin)->ProcessTime(nextPlugin, now);
             lock();
         }
 
