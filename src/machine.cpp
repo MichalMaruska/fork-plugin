@@ -12,8 +12,6 @@ extern "C" {
 #include <xorg/xf86Module.h>
 }
 
-#define MOUSE_EMULATION_ON(xkb) (xkb->ctrls->enabled_ctrls & XkbMouseKeysMask)
-/** apply_event_to_{STATE} */
 static Bool
 mouse_emulation_on(DeviceIntPtr keybd)
 {
@@ -22,11 +20,8 @@ mouse_emulation_on(DeviceIntPtr keybd)
 
     XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
     XkbDescPtr xkb = xkbi->desc;
-    return (MOUSE_EMULATION_ON(xkb));
+    return (xkb->ctrls->enabled_ctrls & XkbMouseKeysMask);
 }
-
-
-
 
 /* The machine is locked here:
  * Push as many as possible from the OUTPUT queue to the next layer */
@@ -361,7 +356,7 @@ machineRec::step_fork_automaton_by_time(PluginInstance* plugin,
     return false;
 }
 
-
+/** apply_event_to_{STATE} */
 void
 machineRec::apply_event_to_normal(key_event *ev, PluginInstance* plugin)
 {
