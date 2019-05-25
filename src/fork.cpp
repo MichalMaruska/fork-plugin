@@ -557,7 +557,7 @@ make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
     forking_machine->max_last = 100;
     forking_machine->last_events = new last_events_type(forking_machine->max_last);
 #else
-    forking_machine = new(machineRec);
+    forking_machine = new machineRec(plugin);
 #endif
 
     forking_machine->state = st_normal;
