@@ -15,8 +15,10 @@ extern "C" {
 static Bool
 mouse_emulation_on(DeviceIntPtr keybd)
 {
-    if (!keybd->key)
+    if (!keybd->key) {
+        ErrorF("%s: keybd is null!", __func__);
         return 0;
+    }
 
     XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
     XkbDescPtr xkb = xkbi->desc;
