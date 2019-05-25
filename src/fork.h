@@ -286,7 +286,7 @@ private:
             state_description[new_state], color_reset);
     }
 
-    void do_confirm_fork(key_event *ev);
+    void do_confirm_fork_by(key_event *ev);
     void apply_event_to_verify(key_event *ev);
 
     Time key_pressed_too_long(Time current_time);

@@ -331,7 +331,7 @@ machineRec::do_confirm_non_fork_by(key_event *ev)
 
 // so EV confirms fork of the current event.
 void
-machineRec::do_confirm_fork(key_event *ev)
+machineRec::do_confirm_fork_by(key_event *ev)
 {
     decision_time = 0;
 
@@ -554,7 +554,7 @@ machineRec::apply_event_to_suspect(key_event *ev)
     // todo: check the ranges (long vs. int)
     if ((decision_time =
          key_pressed_too_long(simulated_time)) == 0) {
-        do_confirm_fork(ev);
+        do_confirm_fork_by(ev);
         return;
     };
 
@@ -663,7 +663,7 @@ machineRec::apply_event_to_verify(key_event *ev)
 
     if ((decision_time = key_pressed_too_long(simulated_time)) == 0)
     {
-        do_confirm_fork(ev);
+        do_confirm_fork_by(ev);
         return;
     }
 
@@ -673,7 +673,7 @@ machineRec::apply_event_to_verify(key_event *ev)
     // well, this is an abuse ... this should never be 0.
     if (decision_time == 0)
     {
-        do_confirm_fork(ev);
+        do_confirm_fork_by(ev);
         return;
     }
     if (decision_time < decision_time)
