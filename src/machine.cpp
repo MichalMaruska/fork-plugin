@@ -632,17 +632,13 @@ machineRec::step_fork_automaton_by_key(key_event *ev, PluginInstance* plugin)
     assert (ev);
 
     DeviceIntPtr keybd = plugin->device;
-
     InternalEvent* event = ev->event;
     KeyCode key = detail_of(event);
 
     /* please, 1st change the state, then enqueue, and then EMIT_EVENT.
      * fixme: should be a function then  !!!*/
 
-    list_with_tail &queue = internal_queue;
-
     // decision_time = 0;
-
 
 #if DDX_REPEATS_KEYS || 1
     /* `quick_ignore': I want to ignore _quickly_ the repeated forked modifiers. Normal
@@ -675,7 +671,7 @@ machineRec::step_fork_automaton_by_key(key_event *ev, PluginInstance* plugin)
         mdb("%s%s%s state: %s, queue: %d, event: %d %s%c %s %s\n",
             info_color,__FUNCTION__,color_reset,
             describe_machine_state(),
-            queue.length (),
+            internal_queue.length (),
             key,
             key_color, (char)*sym, color_reset,
             event_type_brief(event));
