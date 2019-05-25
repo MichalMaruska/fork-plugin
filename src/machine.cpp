@@ -583,6 +583,7 @@ machineRec::apply_event_to_normal(key_event *ev)
 #if DEBUG
         if ( !key_forked(key) && (last_released == key )) {
             mdb("can we invoke autorepeat? %d  upper bound %d ms\n",
+                // mmc: config is pointing outside memory range!
                   (int)(simulated_time - last_released_time), config->repeat_max);
         }
 #endif
