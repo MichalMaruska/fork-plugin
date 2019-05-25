@@ -480,8 +480,11 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
 
     if (event->any.type == ET_Motion)
     {
+#if 0
+        // fixme:
         if (machine->mLock)
             ErrorF("%s running, while the machine is locked!\n", __FUNCTION__);
+#endif
         /* else */
         machine->lock();
         /* bug: if we were frozen, then we have a sequence of keys, which
