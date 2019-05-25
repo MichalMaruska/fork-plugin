@@ -247,20 +247,20 @@ public:
             };
         };
 
-    void step_fork_automaton_by_force(PluginInstance* plugin);
+    void step_fork_automaton_by_force();
 
-    void step_fork_automaton_by_key(key_event *ev, PluginInstance* plugin);
+    void step_fork_automaton_by_key(key_event *ev);
 
-    bool step_fork_automaton_by_time(PluginInstance* plugin, Time current_time);
+    bool step_fork_automaton_by_time(Time current_time);
 
     static void reverse_slice(list_with_tail &pre, list_with_tail &post);
 
-    void try_to_output(PluginInstance* plugin);
+    void try_to_output();
 private:
-    void apply_event_to_suspect(key_event *ev, PluginInstance* plugin);
+    void apply_event_to_suspect(key_event *ev);
 
     void rewind_machine();
-    void activate_fork(PluginInstance* plugin);
+    void activate_fork();
 
 
     void mdb(const char* format...)
@@ -280,20 +280,19 @@ private:
             state_description[new_state], color_reset);
     }
 
-    void do_confirm_fork(key_event *ev, PluginInstance* plugin);
-    void apply_event_to_verify(key_event *ev, PluginInstance* plugin);
-
+    void do_confirm_fork(key_event *ev);
+    void apply_event_to_verify(key_event *ev);
 
     Time key_pressed_too_long(Time current_time);
     Time key_pressed_in_parallel(Time current_time);
 
     Bool key_forked(KeyCode code);
 
-    void do_confirm_non_fork_by(key_event *ev, PluginInstance* plugin);
-    void apply_event_to_normal(key_event *ev, PluginInstance* plugin);
+    void do_confirm_non_fork_by(key_event *ev);
+    void apply_event_to_normal(key_event *ev);
 
 
-    void output_event(key_event* ev, PluginInstance* plugin);
+    void output_event(key_event* ev);
 };
 
 extern fork_configuration* machine_new_config(void);

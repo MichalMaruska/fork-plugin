@@ -28,7 +28,7 @@ mouse_emulation_on(DeviceIntPtr keybd)
 /* The machine is locked here:
  * Push as many as possible from the OUTPUT queue to the next layer */
 void
-machineRec::try_to_output(PluginInstance* plugin)
+machineRec::try_to_output()
 {
     // todo: lock in this scope only?
     check_locked();
@@ -48,7 +48,7 @@ machineRec::try_to_output(PluginInstance* plugin)
         mxfree(ev, sizeof(key_event));
 
         unlock();
-        hand_over_event_to_next_plugin(event, plugin);
+        hand_over_event_to_next_plugin(event, mPlugin);
         lock();
     };
 
@@ -86,14 +86,13 @@ machineRec::try_to_output(PluginInstance* plugin)
 
 /* note, that after this EV could point to a deallocated memory! */
 void
-machineRec::output_event(key_event* ev, PluginInstance* plugin)
+machineRec::output_event(key_event* ev)
 {
     assert(ev->event);
+
     output_queue.push(ev);
-    try_to_output(plugin);
+    try_to_output();
 };
-
-
 
 /**
  * Operations on the machine
@@ -149,7 +148,7 @@ machineRec::rewind_machine()
  * fixme: locking?
  */
 void
-machineRec::activate_fork(PluginInstance* plugin)
+machineRec::activate_fork()
 {
     assert(!internal_queue.empty());
 
@@ -169,7 +168,7 @@ machineRec::activate_fork(PluginInstance* plugin)
         describe_machine_state());
 
     rewind_machine();
-    output_event(ev,plugin);
+    output_event(ev);
 }
 
 
@@ -180,7 +179,7 @@ machineRec::activate_fork(PluginInstance* plugin)
  * If in Suspect or Verify state, force the fork. (todo: should be configurable)
  */
 void
-machineRec::step_fork_automaton_by_force(PluginInstance* plugin)
+machineRec::step_fork_automaton_by_force()
 {
     if (state == st_normal) {
         return;
@@ -202,13 +201,12 @@ machineRec::step_fork_automaton_by_force(PluginInstance* plugin)
 
     // todo: move it inside?
     decision_time = 0;
-    activate_fork(plugin);
+    activate_fork();
 }
 
 // so the ev proves, that the current event is not forked.
 void
-machineRec::do_confirm_non_fork_by(key_event *ev,
-                       PluginInstance* plugin)
+machineRec::do_confirm_non_fork_by(key_event *ev)
 {
     assert(decision_time == 0);
     change_state(st_deactivated);
@@ -219,12 +217,12 @@ machineRec::do_confirm_non_fork_by(key_event *ev,
     mdb("this is not a fork! %d\n", detail_of(non_forked_event->event));
     rewind_machine();
 
-    output_event(non_forked_event,plugin);
+    output_event(non_forked_event);
 }
 
 // so EV confirms fork of the current event.
 void
-machineRec::do_confirm_fork(key_event *ev, PluginInstance* plugin)
+machineRec::do_confirm_fork(key_event *ev)
 {
     decision_time = 0;
 
@@ -232,7 +230,7 @@ machineRec::do_confirm_fork(key_event *ev, PluginInstance* plugin)
        of queue (which is confirmed to fork) */
     mdb("confirm:\n");
     internal_queue.push(ev);
-    activate_fork(plugin);
+    activate_fork();
 }
 
 /*
@@ -294,8 +292,7 @@ machineRec::key_pressed_in_parallel(Time current_time)
 
 
 bool
-machineRec::step_fork_automaton_by_time(PluginInstance* plugin,
-                            Time current_time)
+machineRec::step_fork_automaton_by_time(Time current_time)
 {
     // confirm fork:
     int reason;
@@ -312,7 +309,7 @@ machineRec::step_fork_automaton_by_time(PluginInstance* plugin,
     if (0 == (decision_time =
               key_pressed_too_long(current_time))) {
         reason = machineRec::reason_total;
-        activate_fork(plugin);
+        activate_fork();
         return true;
     };
 
@@ -323,7 +320,7 @@ machineRec::step_fork_automaton_by_time(PluginInstance* plugin,
 
         if (decision_time == 0) {
             reason = machineRec::reason_overlap;
-            activate_fork(plugin);
+            activate_fork();
             return true;
         }
 
@@ -343,9 +340,9 @@ machineRec::step_fork_automaton_by_time(PluginInstance* plugin,
 
 /** apply_event_to_{STATE} */
 void
-machineRec::apply_event_to_normal(key_event *ev, PluginInstance* plugin)
+machineRec::apply_event_to_normal(key_event *ev)
 {
-    DeviceIntPtr keybd = plugin->device;
+    DeviceIntPtr keybd = mPlugin->device;
 
     InternalEvent* event = ev->event;
     KeyCode key = detail_of(event);
@@ -387,7 +384,7 @@ machineRec::apply_event_to_normal(key_event *ev, PluginInstance* plugin)
             // .- trick: (fixme: or self-forked)
             mdb("re-pressed very quickly\n");
             forkActive[key] = key; // fixme: why??
-            output_event(ev,plugin);
+            output_event(ev);
             return;
         };
     } else if (release_p(event) && (key_forked(key))) {
@@ -412,14 +409,14 @@ machineRec::apply_event_to_normal(key_event *ev, PluginInstance* plugin)
         // this is the state (of the keyboard, not the machine).... better to
         // say of the machine!!!
         forkActive[key] = 0;
-        output_event(ev,plugin);
+        output_event(ev);
     } else {
         if (release_p (event)) {
             last_released = detail_of(event);
             last_released_time = time_of(event);
         };
         // pass along the un-forkable event.
-        output_event(ev,plugin);
+        output_event(ev);
     };
 };
 
@@ -429,7 +426,7 @@ machineRec::apply_event_to_normal(key_event *ev, PluginInstance* plugin)
  *  Second    <-- we are here.
  */
 void
-machineRec::apply_event_to_suspect(key_event *ev, PluginInstance* plugin)
+machineRec::apply_event_to_suspect(key_event *ev)
 {
     InternalEvent* event = ev->event;
     Time simulated_time = time_of(event);
@@ -448,7 +445,7 @@ machineRec::apply_event_to_suspect(key_event *ev, PluginInstance* plugin)
     // todo: check the ranges (long vs. int)
     if ((decision_time =
          key_pressed_too_long(simulated_time)) == 0) {
-        do_confirm_fork(ev, plugin);
+        do_confirm_fork(ev);
         return;
     };
 
@@ -459,7 +456,7 @@ machineRec::apply_event_to_suspect(key_event *ev, PluginInstance* plugin)
              suspect, (int)(simulated_time - suspect_time));
         if (key == suspect) {
             decision_time = 0; // might be useless!
-            do_confirm_non_fork_by(ev, plugin);
+            do_confirm_non_fork_by(ev);
             return;
             /* fixme:  here we confirm, that it was not a user error.....
                bad synchro. i.e. the suspected key was just released  */
@@ -483,7 +480,7 @@ machineRec::apply_event_to_suspect(key_event *ev, PluginInstance* plugin)
                 mdb("The suspected key is configured to repeat, so ...\n");
                 forkActive[suspect] = suspect;
                 decision_time = 0;
-                do_confirm_non_fork_by(ev, plugin);
+                do_confirm_non_fork_by(ev);
                 return;
             } else {
                 // fixme: this keycode is repeating, but we still don't know what to do.
@@ -524,7 +521,7 @@ machineRec::apply_event_to_suspect(key_event *ev, PluginInstance* plugin)
  * Now we have the 3rd key.
  *  We wait only for time, and for the release of the key */
 void
-machineRec::apply_event_to_verify(key_event *ev, PluginInstance* plugin)
+machineRec::apply_event_to_verify(key_event *ev)
 {
     InternalEvent* event = ev->event;
     Time simulated_time = time_of(event);
@@ -557,7 +554,7 @@ machineRec::apply_event_to_verify(key_event *ev, PluginInstance* plugin)
 
     if ((decision_time = key_pressed_too_long(simulated_time)) == 0)
     {
-        do_confirm_fork(ev, plugin);
+        do_confirm_fork(ev);
         return;
     }
 
@@ -567,7 +564,7 @@ machineRec::apply_event_to_verify(key_event *ev, PluginInstance* plugin)
     // well, this is an abuse ... this should never be 0.
     if (decision_time == 0)
     {
-        do_confirm_fork(ev, plugin);
+        do_confirm_fork(ev);
         return;
     }
     if (decision_time < decision_time)
@@ -580,7 +577,7 @@ machineRec::apply_event_to_verify(key_event *ev, PluginInstance* plugin)
              config->verification_interval_of(suspect,
                                       verificator));
         decision_time = 0; // useless fixme!
-        do_confirm_non_fork_by(ev, plugin);
+        do_confirm_non_fork_by(ev);
 
     } else if (release_p(event) && (verificator == key)){
         // todo: we might be interested in percentage, Then here we should do the work!
@@ -608,11 +605,11 @@ machineRec::apply_event_to_verify(key_event *ev, PluginInstance* plugin)
  *   the head of internal_queue may be pushed to the output-queue as well.
  */
 void
-machineRec::step_fork_automaton_by_key(key_event *ev, PluginInstance* plugin)
+machineRec::step_fork_automaton_by_key(key_event *ev)
 {
     assert (ev);
 
-    DeviceIntPtr keybd = plugin->device;
+    DeviceIntPtr keybd = mPlugin->device;
     InternalEvent* event = ev->event;
     KeyCode key = detail_of(event);
 
@@ -661,16 +658,16 @@ machineRec::step_fork_automaton_by_key(key_event *ev, PluginInstance* plugin)
 
     switch (state) {
         case st_normal:
-            apply_event_to_normal(ev, plugin);
+            apply_event_to_normal(ev);
             return;
         case st_suspect:
         {
-            apply_event_to_suspect(ev, plugin);
+            apply_event_to_suspect(ev);
             return;
         }
         case st_verify:
         {
-            apply_event_to_verify(ev, plugin);
+            apply_event_to_verify(ev);
             return;
         }
         default:

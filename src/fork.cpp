@@ -143,18 +143,18 @@ try_to_play(PluginInstance* plugin, Bool force)
         if (! input_queue.empty()) {
             key_event *ev = input_queue.pop();
             // if time is enough...
-            machine->step_fork_automaton_by_key(ev, plugin);
+            machine->step_fork_automaton_by_key(ev);
         } else {
             // at the end ... add the final time event:
             if (machine->current_time && (machine->state != st_normal)) {
                 // was final_state_p
-                if (!machine->step_fork_automaton_by_time(plugin, machine->current_time))
+                if (!machine->step_fork_automaton_by_time(machine->current_time))
                     // If this time helped to decide -> machine rewound,
                     // we have to try again.
                     // Otherwise, this is the end for now:
                     return;
             } else if (force && (machine->state != st_normal)) {
-                machine->step_fork_automaton_by_force(plugin);
+                machine->step_fork_automaton_by_force();
             } else
                 return;
         }
