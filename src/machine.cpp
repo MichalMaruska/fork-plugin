@@ -36,16 +36,15 @@ machineRec::try_to_output(PluginInstance* plugin)
     // todo: lock in this scope only?
     check_locked();
 
-    list_with_tail &queue = output_queue;
     PluginInstance* const next = plugin->next;
 
     mdb("%s: Queues: output: %d\t internal: %d\t input: %d \n", __FUNCTION__,
-         queue.length (),
+         output_queue.length (),
          internal_queue.length (),
          input_queue.length ());
 
-    while((!plugin_frozen(next)) && (!queue.empty ())) {
-        key_event* ev = queue.pop();
+    while((!plugin_frozen(next)) && (!output_queue.empty ())) {
+        key_event* ev = output_queue.pop();
 
         last_events->push_back(make_archived_events(ev));
         InternalEvent* event = ev->event;
@@ -62,8 +61,8 @@ machineRec::try_to_output(PluginInstance* plugin)
     if (!plugin_frozen(next)) {
         // we should push the time!
         Time now;
-        if (!queue.empty()) {
-            now = time_of(queue.front()->event);
+        if (!output_queue.empty()) {
+            now = time_of(output_queue.front()->event);
         } else if (!internal_queue.empty()) {
             now = time_of(internal_queue.front()->event);
         } else if (!input_queue.empty()) {
@@ -80,8 +79,8 @@ machineRec::try_to_output(PluginInstance* plugin)
         }
 
     }
-    if (!queue.empty ())
-        mdb("%s: still %d events to output\n", __FUNCTION__, queue.length ());
+    if (!output_queue.empty ())
+        mdb("%s: still %d events to output\n", __FUNCTION__, output_queue.length ());
 }
 
 // Another event has been determined. So:
