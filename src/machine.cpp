@@ -33,6 +33,7 @@ mouse_emulation_on(DeviceIntPtr keybd)
 void
 machineRec::try_to_output(PluginInstance* plugin)
 {
+    // todo: lock in this scope only?
     check_locked();
 
     list_with_tail &queue = output_queue;
