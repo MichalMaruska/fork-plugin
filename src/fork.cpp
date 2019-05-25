@@ -480,7 +480,7 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
 
     if (event->any.type == ET_Motion)
     {
-        if (machine->lock)
+        if (machine->mLock)
             ErrorF("%s running, while the machine is locked!\n", __FUNCTION__);
         /* else */
         LOCK(machine);
