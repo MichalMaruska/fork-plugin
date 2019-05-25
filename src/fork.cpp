@@ -1403,7 +1403,7 @@ fork_plug(void          *options,
 // my old way of loading modules?
 void __attribute__((constructor)) on_init()
 {
-    ErrorF("%s:\n", __FUNCTION__); /* impossible */
+    ErrorF("%s: %s\n", __FUNCTION__, VERSION); /* impossible */
     fork_plug(NULL,NULL,NULL);
 }
 
