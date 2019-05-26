@@ -148,8 +148,8 @@ machineRec::rewind_machine()
 
     /* reset the machine */
     mdb("== Resetting the fork machine (internal %d, input %d)\n",
-         internal_queue.length (),
-         input_queue.length ());
+        internal_queue.length (),
+        input_queue.length ());
 
     change_state(st_normal);
     verificator = 0;
