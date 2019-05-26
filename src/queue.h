@@ -127,7 +127,7 @@ public:
   // const char* name = NULL
   my_queue<T>(string name) : m_name(name)
   {
-    DB(("constructor\n"));
+    DB("constructor\n");
     last_node = list.end();
   };
 

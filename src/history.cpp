@@ -114,7 +114,7 @@ dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n)
                         function);
 #endif
 
-   DB(("sending %d events: + %d!\n", n, appendix_len));
+   DB("sending %d events: + %d!\n", n, appendix_len);
 
    int r = xkb_plugin_send_reply(client, plugin, start, appendix_len);
    if (r == 0)

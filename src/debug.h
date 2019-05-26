@@ -25,13 +25,11 @@
 // ....
 #endif // USE_COLORS
 
-#define MDB(x) do {if (machine->config->debug) {ErrorF x;} } while (0)
-#define DB(x)     ErrorF x
-
+#define DB(fmt, ...)     ErrorF(fmt, ##__VA_ARGS__)
+// #define DB(...)     ErrorF(__VA_ARGS__)
 
 # else  /* DEBUG */
 #define DB(x)  do { ; } while (0)
-#define MDB(x) do { ; } while (0)
 #endif /* DEBUG */
 
 

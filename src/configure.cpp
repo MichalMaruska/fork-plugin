@@ -246,8 +246,8 @@ machine_configure_global(PluginInstance* plugin, machineRec* machine, int type,
       if (set)
          {
             //  here we force, rather than using MDB !
-            DB(("fork_configure_debug set: %d -> %d\n", machine->config->debug,
-                value));
+            DB("fork_configure_debug set: %d -> %d\n", machine->config->debug,
+                value);
             machine->config->debug = value;
          }
       else
@@ -362,15 +362,15 @@ void
 machine_command(ClientPtr client, PluginInstance* plugin, int cmd, int data1,
                 int data2, int data3, int data4)
 {
-  DB(("%s cmd %d, data %d ...\n", __FUNCTION__, cmd, data1));
+  DB("%s cmd %d, data %d ...\n", __FUNCTION__, cmd, data1);
   switch (cmd)
     {
     case fork_client_dump_keys:
-      /* DB(("%s %d %.3s\n", __FUNCTION__, len, data)); */
+      /* DB("%s %d %.3s\n", __FUNCTION__, len, data); */
       dump_last_events_to_client(plugin, client, data1);
       break;
     default:
-      DB(("%s Unknown command!\n", __FUNCTION__));
+      DB("%s Unknown command!\n", __FUNCTION__);
       break;
       /* What XReply to send?? */
     }

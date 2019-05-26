@@ -1090,8 +1090,8 @@ create_handle_for_event(InternalEvent *event, bool owner)
 
     memcpy(qe, event, event->any.length);
 #if DEBUG > 1
-    DB(("+++ accepted new event: %s\n",
-        event_names[event->any.type - 2 ]));
+    DB("+++ accepted new event: %s\n",
+        event_names[event->any.type - 2 ]);
 #endif
     ev->event = qe;
     ev->forked = 0;
@@ -1129,9 +1129,9 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
 
 #if DEBUG
     if (((machineRec*) plugin_machine(plugin))->config->debug) {
-        DB(("%s>>> ", key_io_color));
-        DB(("%s", describe_key(keybd, ev->event)));
-        DB(("%s\n", color_reset));
+        DB("%s>>> ", key_io_color);
+        DB("%s", describe_key(keybd, ev->event));
+        DB("%s\n", color_reset);
     }
 #endif
 
@@ -1250,8 +1250,8 @@ make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class);
 PluginInstance*
 make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
 {
-    DB(("%s @%lu\n", __FUNCTION__, keybd));
-    DB(("%s @%lu\n", __FUNCTION__, keybd->name));
+    DB("%s @%lu\n", __FUNCTION__, keybd);
+    DB("%s @%lu\n", __FUNCTION__, keybd->name);
 
     assert (strcmp(plugin_class->name, FORK_PLUGIN_NAME) == 0);
 
