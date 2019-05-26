@@ -280,7 +280,6 @@ private:
             state_description[new_state], color_reset);
     }
 
-    void do_enqueue_event(key_event *ev);
     void do_confirm_fork(key_event *ev, PluginInstance* plugin);
     void apply_event_to_verify(key_event *ev, PluginInstance* plugin);
 

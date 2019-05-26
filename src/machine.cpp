@@ -209,14 +209,6 @@ machineRec::step_fork_automaton_by_force(PluginInstance* plugin)
     activate_fork(plugin);
 }
 
-void
-machineRec::do_enqueue_event(key_event *ev)
-{
-    internal_queue.push(ev);
-    // when replaying no need to show this:
-    // MDB(("enqueue_event: time left: %u\n", machine->decision_time));
-}
-
 // so the ev proves, that the current event is not forked.
 void
 machineRec::do_confirm_non_fork_by(key_event *ev,
@@ -393,7 +385,7 @@ machineRec::apply_event_to_normal(key_event *ev, PluginInstance* plugin)
             suspect_time = time_of(event);
             decision_time = suspect_time +
                 config->verification_interval_of(key, 0);
-            do_enqueue_event(ev);
+            internal_queue.push(ev);
             return;
         } else {
             // .- trick: (fixme: or self-forked)
@@ -478,13 +470,13 @@ machineRec::apply_event_to_suspect(key_event *ev, PluginInstance* plugin)
         } else {
             /* something released, but not verificating, b/c we are in `suspect',
              * not `confirm'  */
-            do_enqueue_event(ev); // the `key'
+            internal_queue.push(ev);
             return;
         };
     } else {
         if (!press_p (event)) {
             // RawPress & Device events.
-            do_enqueue_event(ev);
+            internal_queue.push(ev);
             return;
         }
 
@@ -519,7 +511,7 @@ machineRec::apply_event_to_suspect(key_event *ev, PluginInstance* plugin)
             if (decision_time < decision_time)
                 decision_time = decision_time;
 
-            do_enqueue_event(ev);
+            internal_queue.push(ev);
             return;
         };
     }
@@ -600,10 +592,10 @@ machineRec::apply_event_to_verify(key_event *ev, PluginInstance* plugin)
         // we should change state:
         change_state(st_suspect);
         verificator = 0;   // we _should_ take the next possible verificator
-        do_enqueue_event(ev);
+        internal_queue.push(ev);
     } else {               // fixme: a (repeated) press of the verificator ?
         // fixme: we pressed another key: but we should tell XKB to repeat it !
-        do_enqueue_event(ev);
+        internal_queue.push(ev);
     };
 }
 
