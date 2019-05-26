@@ -251,6 +251,8 @@ private:
 
     fork_configuration** find_configuration_n(int n);
 
+    void log_state(const char* message) const;
+
     static void reverse_slice(list_with_tail &pre, list_with_tail &post);
 
     void try_to_play(Bool force);

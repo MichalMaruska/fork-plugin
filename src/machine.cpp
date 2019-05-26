@@ -371,10 +371,7 @@ machineRec::step_fork_automaton_by_force()
 
     /* so, the state is one of: verify, suspect or activated. */
 
-    mdb("%s%s%s state: %s, queue: %d .... FORCE\n",
-         fork_color, __FUNCTION__, color_reset,
-         describe_machine_state(),
-         internal_queue.length ());
+    log_state(__FUNCTION__);
 
     // todo: move it inside?
     decision_time = 0;
