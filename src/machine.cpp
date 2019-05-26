@@ -198,13 +198,13 @@ machineRec::step_fork_automaton_by_force(PluginInstance* plugin)
         return;
 
     /* so, the state is one of: verify, suspect or activated. */
-    list_with_tail& queue = internal_queue;
 
     mdb("%s%s%s state: %s, queue: %d .... FORCE\n",
          fork_color, __FUNCTION__, color_reset,
          describe_machine_state(),
-         queue.length ());
+         internal_queue.length ());
 
+    // todo: move it inside?
     decision_time = 0;
     activate_fork(plugin);
 }
