@@ -25,8 +25,7 @@
 // ....
 #endif // USE_COLORS
 
-#define DB(x)     ErrorF x
-
+#define DB(fmt, ...)     ErrorF(fmt, ##__VA_ARGS__)
 
 # else  /* DEBUG */
 #define DB(x)  do { ; } while (0)

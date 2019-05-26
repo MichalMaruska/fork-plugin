@@ -262,8 +262,8 @@ create_handle_for_event(InternalEvent *event, bool owner)
 
     memcpy(qe, event, event->any.length);
 #if DEBUG > 1
-    DB(("+++ accepted new event: %s\n",
-        event_names[event->any.type - 2 ]));
+    DB("+++ accepted new event: %s\n",
+        event_names[event->any.type - 2 ]);
 #endif
     ev->event = qe;
     ev->forked = 0;
@@ -394,8 +394,8 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
 PluginInstance*
 make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
 {
-    DB(("%s @%lu\n", __FUNCTION__, keybd));
-    DB(("%s @%lu\n", __FUNCTION__, keybd->name));
+    DB("%s @%lu\n", __FUNCTION__, keybd);
+    DB("%s @%lu\n", __FUNCTION__, keybd->name);
 
     assert (strcmp(plugin_class->name, FORK_PLUGIN_NAME) == 0);
 
