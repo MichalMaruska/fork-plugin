@@ -1,6 +1,8 @@
 #define USE_LOCKING 1
 
 #include "fork.h"
+// uses:
+// void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* nextPlugin);
 #include "debug.h"
 
 
@@ -108,6 +110,7 @@ machineRec::flush_to_next()
         key_event* ev = output_queue.pop();
 
         last_events->push_back(make_archived_events(ev));
+
         InternalEvent* event = ev->event;
         mxfree(ev, sizeof(key_event));
 
@@ -123,6 +126,7 @@ machineRec::flush_to_next()
     // interesting: after handing over, the nextPlugin might need to be refreshed.
     // if that plugin is gone. todo!
 
+    // now we still have time:
     if (!plugin_frozen(nextPlugin)) {
         // we should push the time!
         Time now;
