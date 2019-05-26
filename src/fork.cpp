@@ -103,21 +103,11 @@ size_t memory_balance = 0;
 
 /* Push the event to the next plugin. Ownership is handed over! */
 void
-hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* plugin)
+hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* const nextPlugin)
 {
-    PluginInstance* const next = plugin->next;
-
-#if DEBUG
-    if (((machineRec*) plugin_machine(plugin))->config->debug) {
-        DeviceIntPtr keybd = plugin->device;
-        DB(("%s<<<", keysym_color));
-        DB(("%s", describe_key(keybd, event)));
-        DB(("%s\n", color_reset));
-    }
-#endif
-    assert (!plugin_frozen(next));
+    assert (!plugin_frozen(nextPlugin));
     memory_balance -= event->any.length;
-    PluginClass(next)->ProcessEvent(next, event, TRUE); // we always own the event (up to now)
+    PluginClass(nextPlugin)->ProcessEvent(nextPlugin, event, TRUE); // we always own the event (up to now)
 }
 
 /*
