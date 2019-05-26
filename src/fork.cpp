@@ -67,9 +67,6 @@ extern "C" {
 #include <xorg/xf86Module.h>
 }
 
-const char* describe_key(DeviceIntPtr keybd, InternalEvent *event);
-
-
 // is it available from somewhere else?
 const char* event_names[] = {
     "KeyPress",
