@@ -655,7 +655,7 @@ machineRec::apply_event_to_suspect(key_event *ev)
  * Now we have the 3rd key.
  *  We wait only for time, and for the release of the key */
 void
-machineRec::apply_event_to_verify(key_event *ev)
+machineRec::apply_event_to_verify_state(key_event *ev)
 {
     InternalEvent* event = ev->event;
     Time simulated_time = time_of(event);
@@ -802,7 +802,7 @@ machineRec::step_fork_automaton_by_key(key_event *ev)
         }
         case st_verify:
         {
-            apply_event_to_verify(ev);
+            apply_event_to_verify_state(ev);
             return;
         }
         default:
