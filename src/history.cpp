@@ -69,7 +69,7 @@ machine_set_last_events_count(machineRec* machine, int new_max) // fixme:  lock 
  * --------------------
  */
 int
-dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n)
+dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int max_requested)
 {
    machineRec* machine = plugin_machine(plugin);
    int queue_count = machine->max_last;           // I don't need to count them! last_events_count
@@ -82,12 +82,12 @@ dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n)
    // how many in the store?
    // upper bound
    // trim/clamp?
-   if (n > queue_count) {
-      n = queue_count;
+   if (max_requested > queue_count) {
+       max_requested = queue_count;
    };
 
    // allocate the appendix buffer:
-   int appendix_len = sizeof(fork_events_reply) + (n * sizeof(archived_event));
+   int appendix_len = sizeof(fork_events_reply) + (max_requested * sizeof(archived_event));
    /* no alignment! */
 
    /* fork_events_reply; */
@@ -105,16 +105,17 @@ dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n)
    start = (char *)alloca(appendix_len);
    buf = (fork_events_reply*) start;
 
-   buf->count = n;              /* fixme: BYTE SWAP if needed! */
+   buf->count = max_requested;              /* fixme: BYTE SWAP if needed! */
 
 #if 0
+   // todo:
    // fixme: we need to increase an iterator .. pointer .... to the C array!
    last_events.for_each(begin(),
                         end(),
                         function);
 #endif
 
-   DB("sending %d events: + %d!\n", n, appendix_len);
+   DB("sending %d events: + %d!\n", max_requested, appendix_len);
 
    int r = xkb_plugin_send_reply(client, plugin, start, appendix_len);
    if (r == 0)
