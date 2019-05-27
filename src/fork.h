@@ -117,6 +117,7 @@ struct machineRec
         reason_force                // mouse-button was pressed & triggered fork.
     };
 
+private:
     /* used only for debugging */
     char const * const state_description[5] = {
         "normal",
@@ -126,7 +127,6 @@ struct machineRec
         "activated"
     };
 
-private:
     volatile int mLock;           /* the mouse interrupt handler should ..... err!  `volatile'
                                   *
                                   * useless mmc!  But i want to avoid any caching it.... SMP ??*/
@@ -161,8 +161,8 @@ public:
      *
      * This means I cannot do this trick w/ 2 keys, only 1 is the last/considered! */
     KeyCode last_released; // .- trick
+private:
     int last_released_time;
-
     KeyCode suspect;
     KeyCode verificator;
 
@@ -172,6 +172,7 @@ public:
     // calculated:
     Time decision_time;         /* Time to wait... so that the current event queue could decide more*/
     Time current_time;
+
 
     /* we cannot hold only a Bool, since when we have to reconfigure, we need the original
        forked keycode for the release event. */
