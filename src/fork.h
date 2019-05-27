@@ -164,7 +164,7 @@ public:
 private:
     int last_released_time;
     KeyCode suspect;
-    KeyCode verificator;
+    KeyCode verificator_keycode;
 
     // these are "registers"
     Time suspect_time;           /* time of the 1st event in the queue. */

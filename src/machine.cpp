@@ -200,7 +200,7 @@ machineRec::rewind_machine()
         input_queue.length ());
 
     change_state(st_normal);
-    verificator = 0;
+    verificator_keycode = 0;
 
     if (!(internal_queue.empty())) {
         reverse_slice(internal_queue, input_queue);
@@ -383,7 +383,7 @@ machineRec::key_pressed_too_long(Time current_time)
     int verification_interval =
         config->verification_interval_of(suspect,
                                  // this can be 0 (& should be, unless)
-                                 verificator);
+                                 verificator_keycode);
     Time decision_time = suspect_time + verification_interval;
 
     mdb("time: verification_interval = %dms elapsed so far =%dms\n",
@@ -403,7 +403,7 @@ machineRec::key_pressed_in_parallel(Time current_time)
 {
     // verify overlap
     int overlap_tolerance = config->overlap_tolerance_of(suspect,
-                                                                  verificator);
+                                                                  verificator_keycode);
     Time decision_time =  verificator_time + overlap_tolerance;
 
     if (decision_time <= current_time) {
@@ -413,8 +413,8 @@ machineRec::key_pressed_in_parallel(Time current_time)
              overlap_tolerance,
              (int) (current_time - verificator_time));
 
-        mdb("suspected = %d, verificator %d. Times: overlap %lu, "
-             "still needed: %lu (ms)\n", suspect, verificator,
+        mdb("suspected = %d, verificator_keycode %d. Times: overlap %lu, "
+             "still needed: %lu (ms)\n", suspect, verificator_keycode,
              current_time - verificator_time,
              decision_time - current_time);
 
@@ -624,7 +624,7 @@ machineRec::apply_event_to_suspect(key_event *ev)
             // another key pressed
             change_state(st_verify);
             verificator_time = simulated_time;
-            verificator = key; /* if already we had one -> we are not in this state!
+            verificator_keycode = key; /* if already we had one -> we are not in this state!
                                            if the verificator becomes a modifier ?? fixme:*/
             // verify overlap
             Time decision_time = key_pressed_in_parallel(simulated_time);
@@ -707,16 +707,16 @@ machineRec::apply_event_to_verify(key_event *ev)
         mdb("fork-key released on time: %dms is a tolerated error (< %lu)\n",
              (int)(simulated_time -  suspect_time),
              config->verification_interval_of(suspect,
-                                      verificator));
+                                      verificator_keycode));
         decision_time = 0; // useless fixme!
         do_confirm_non_fork_by(ev);
 
-    } else if (release_p(event) && (verificator == key)){
+    } else if (release_p(event) && (verificator_keycode == key)){
         // todo: we might be interested in percentage, Then here we should do the work!
 
         // we should change state:
         change_state(st_suspect);
-        verificator = 0;   // we _should_ take the next possible verificator
+        verificator_keycode = 0;   // we _should_ take the next possible verificator
         internal_queue.push(ev);
     } else {               // fixme: a (repeated) press of the verificator ?
         // fixme: we pressed another key: but we should tell XKB to repeat it !
