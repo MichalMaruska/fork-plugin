@@ -170,7 +170,7 @@ machine_configure_global(PluginInstance* plugin, machineRec* machine, int type,
 
    case fork_configure_last_events:
       if (set)
-         machine_set_last_events_count(machine, value);
+         machine->set_last_events_count(value);
       else
          return machine->max_last;
       break;

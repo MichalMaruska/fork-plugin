@@ -210,6 +210,23 @@ private:
  * ....
  */
 
+    int set_last_events_count(int new_max) // fixme:  lock ??
+    {
+        mdb("%s: allocating %d events\n", __FUNCTION__, new_max);
+
+        if (max_last > new_max)
+        {
+            // shrink. todo! in the circular.h!
+        }
+        else
+        {
+            last_events->reserve(new_max);
+        }
+
+        max_last = new_max;
+        return 0;
+    }
+
 private:
     static Bool
     forkable_p(fork_configuration* config, KeyCode code)
@@ -319,7 +336,6 @@ public:
 };
 
 extern fork_configuration* machine_new_config(void);
-extern int machine_set_last_events_count(machineRec* machine, int new_max);
 
 extern int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n);
 
