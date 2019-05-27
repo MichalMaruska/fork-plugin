@@ -342,7 +342,7 @@ step_in_time_locked(PluginInstance* plugin)
     /* push the time ! */
     machine->try_to_play(FALSE);
 
-    /* i should take the minimum of time and the time of the 1st event in the
+    /* I should take the minimum of time and the time of the 1st event in the
        (output) internal queue */
     if (machine->internal_queue.empty() && machine->input_queue.empty()
         && !plugin_frozen(next))
