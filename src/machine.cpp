@@ -175,15 +175,8 @@ machineRec::output_event(key_event* ev)
 
 
 
-/* Now the operations on the Dynamic state */
-
-/* Return the keycode into which CODE has forked _last_ time.
-   Returns code itself, if not forked. */
-Bool
-machineRec::key_forked(KeyCode code)
-{
-    return (forkActive[code]);
-}
+/**
+ * Now the operations on the Dynamic state */
 
 void
 machineRec::reverse_slice(list_with_tail &pre, list_with_tail &post)
