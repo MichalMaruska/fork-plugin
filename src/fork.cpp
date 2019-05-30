@@ -208,23 +208,29 @@ filter_config_key_maybe(PluginInstance* plugin,const InternalEvent *event)
     return 0;
 }
 
+static Time
+min_non_zero(Time a, Time b)
+{
+    if (a==0)
+        return b;
+    if (a < b)
+        return a;
+    return b;
+}
+
 // NOW is useless
 static void
 set_wakeup_time(PluginInstance* plugin, Time now)
 {
     machineRec* machine = plugin_machine(plugin);
     machine->check_locked();
+
     if ((machine->state == st_verify)
           || (machine->state == st_suspect))
         // we are indeed waiting, so take the minimum.
         plugin->wakeup_time =
             // fixme:  but ZERO has certain meaning!
-            (plugin->next->wakeup_time == 0)?
-            machine->decision_time :
-            // MIN
-            ((machine->decision_time < plugin->next->wakeup_time)
-             ? machine->decision_time:
-             plugin->next->wakeup_time);
+            min_non_zero(plugin->next->wakeup_time, machine->next_decision_time());
     else
         plugin->wakeup_time = plugin->next->wakeup_time;
     // (machine->internal_queue.empty())? plugin->next->wakeup_time:0;
