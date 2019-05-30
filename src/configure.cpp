@@ -1,4 +1,5 @@
 // In this file: processing X11 requests to configure the plugin.
+// It accesses: ->config and ->max_last
 
 #include "config.h"
 #include "debug.h"
@@ -172,7 +173,7 @@ machine_configure_global(PluginInstance* plugin, machineRec* machine, int type,
       if (set)
          machine->set_last_events_count(value);
       else
-         return machine->max_last;
+         return machine->max_last; // mmc!
       break;
 
    case fork_configure_debug:
