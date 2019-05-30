@@ -471,7 +471,7 @@ stop_and_exhaust_machine(PluginInstance* plugin)
 
 
 static int
-destroy_machine(PluginInstance* plugin)
+destroy_plugin(PluginInstance* plugin)
 {
     machineRec* machine = plugin_machine(plugin);
     // should be locked from the STOP call?
@@ -519,7 +519,7 @@ fork_plug(void          *options,
     _B(module, NULL),
     _B(ref_count, 0),
     _B(stop,       stop_and_exhaust_machine),
-    _B(terminate,  destroy_machine)
+    _B(terminate,  destroy_plugin)
   };
   plugin_class.ref_count = 0;
   ErrorF("assigning %p\n", dynamic_module);
