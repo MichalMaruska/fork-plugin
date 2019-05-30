@@ -111,7 +111,7 @@ machine_configure_twins (machineRec* machine, int type, KeyCode key, KeyCode twi
 static int
 machine_configure_key(machineRec* machine, int type, KeyCode key, int value, Bool set)
 {
-   MDB(("%s: keycode %d -> value %d, function %d\n", __FUNCTION__, key, value, type));
+   machine->mdb("%s: keycode %d -> value %d, function %d\n", __FUNCTION__, key, value, type);
 
    switch (type)
       {
@@ -185,7 +185,7 @@ machine_configure_global(PluginInstance* plugin, machineRec* machine, int type,
          }
       else
          {
-            MDB(("fork_configure_debug get: %d\n", machine->config->debug));
+            machine->mdb("fork_configure_debug get: %d\n", machine->config->debug);
             return machine->config->debug; // (Bool) ?True:FALSE
          }
 
@@ -199,7 +199,7 @@ machine_configure_global(PluginInstance* plugin, machineRec* machine, int type,
    case fork_configure_switch:
       assert (set);
 
-      MDB(("fork_configure_switch: %d\n", value));
+      machine->mdb("fork_configure_switch: %d\n", value);
       machine->switch_config(value);
       return 0;
    }
@@ -232,8 +232,8 @@ machine_configure_get(PluginInstance* plugin, int values[5], int return_config[3
       type: local & global
    */
 
-   MDB(("%s: %d operands, command %d: %d %d\n", __FUNCTION__, subtype_n_args(type),
-        type_subtype(type), values[1], values[2]));
+   machine->mdb("%s: %d operands, command %d: %d %d\n", __FUNCTION__, subtype_n_args(type),
+                type_subtype(type), values[1], values[2]);
 
    switch (subtype_n_args(type)){
    case 0:
@@ -265,9 +265,9 @@ machine_configure(PluginInstance* plugin, int values[5])
    machineRec* machine = plugin_machine(plugin);
 
    int type = values[0];
-   MDB(("%s: %d operands, command %d: %d %d %d\n", __FUNCTION__,
-        subtype_n_args(type), type_subtype(type),
-        values[1], values[2],values[3]));
+   machine->mdb("%s: %d operands, command %d: %d %d %d\n", __FUNCTION__,
+                subtype_n_args(type), type_subtype(type),
+                values[1], values[2],values[3]);
 
    switch (subtype_n_args(type)) {
    case 0:

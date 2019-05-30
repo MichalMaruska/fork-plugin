@@ -297,6 +297,17 @@ private:
     void output_event(key_event* ev);
 
 public:
+    // static
+    void mdb(const char* format...) const
+    {
+        if (config->debug) {
+            va_list argptr;
+            va_start(argptr, format);
+            VErrorF(format, argptr);
+            va_end(argptr);
+        }
+    };
+
 
     ~machineRec()
         {

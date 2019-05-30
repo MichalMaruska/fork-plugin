@@ -235,8 +235,8 @@ set_wakeup_time(PluginInstance* plugin, Time now)
         plugin->wakeup_time = plugin->next->wakeup_time;
     // (machine->internal_queue.empty())? plugin->next->wakeup_time:0;
 
-    MDB(("%s %s wakeup_time = %d, next wants: %u, we %lu\n", FORK_PLUGIN_NAME, __FUNCTION__,
-         (int)plugin->wakeup_time, (int)plugin->next->wakeup_time,machine->decision_time));
+    machine->mdb("%s %s wakeup_time = %d, next wants: %u, we %lu\n", FORK_PLUGIN_NAME, __FUNCTION__,
+         (int)plugin->wakeup_time, (int)plugin->next->wakeup_time,machine->decision_time);
 }
 
 
@@ -326,7 +326,7 @@ step_in_time_locked(PluginInstance* plugin)
     machineRec* machine = plugin_machine(plugin);
     PluginInstance* const next = plugin->next;
 
-    MDB(("%s:\n", __FUNCTION__));
+    machine->mdb("%s:\n", __FUNCTION__);
 
     /* is this necessary?   I think not: if the next plugin was frozen,
      * and now it's not, then it must have warned us that it thawed */
@@ -354,7 +354,7 @@ static void
 step_in_time(PluginInstance* plugin, Time now)
 {
     machineRec* machine = plugin_machine(plugin);
-    MDB(("%s:\n", __FUNCTION__));
+    machine->mdb("%s:\n", __FUNCTION__);
     machine->lock();
     machine->current_time = now;
     step_in_time_locked(plugin);
@@ -367,7 +367,7 @@ static void
 fork_thaw_notify(PluginInstance* plugin, Time now)
 {
     machineRec* machine = plugin_machine(plugin);
-    MDB(("%s @ time %u\n", __FUNCTION__, (int)now));
+    machine->mdb("%s @ time %u\n", __FUNCTION__, (int)now);
 
     machine->lock();
     machine->flush_to_next();
@@ -380,14 +380,14 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
         /* thaw the previous! */
         set_wakeup_time(plugin, machine->current_time);
         machine->unlock();
-        MDB(("%s -- sending thaw Notify upwards!\n", __FUNCTION__));
+        machine->mdb("%s -- sending thaw Notify upwards!\n", __FUNCTION__);
         /* fixme:  Tail-recursion! */
         PluginClass(plugin->prev)->NotifyThaw(plugin->prev, now);
         /* I could move now to the time of our event. */
         /* step_in_time_locked(plugin); */
     } else {
-        MDB(("%s -- NOT sending thaw Notify upwards %s!\n", __FUNCTION__,
-             plugin_frozen(plugin->next)?"next is frozen":"prev has not NotifyThaw"));
+        machine->mdb("%s -- NOT sending thaw Notify upwards %s!\n", __FUNCTION__,
+             plugin_frozen(plugin->next)?"next is frozen":"prev has not NotifyThaw");
         machine->unlock();
     }
 }
@@ -494,7 +494,7 @@ stop_and_exhaust_machine(PluginInstance* plugin)
 {
     machineRec* machine = plugin_machine(plugin);
     machine->lock();
-    MDB(("%s: what to do?\n", __FUNCTION__));
+    machine->mdb("%s: what to do?\n", __FUNCTION__);
     // free all the stuff, and then:
     xkb_remove_plugin(plugin);
     return 1;
@@ -511,7 +511,7 @@ destroy_machine(PluginInstance* plugin)
     // delete machine->last_events;
     DeleteCallback(&DeviceEventCallback, (CallbackProcPtr) mouse_call_back,
                    (void*) plugin);
-    MDB(("%s: what to do?\n", __FUNCTION__));
+    machine->mdb("%s: what to do?\n", __FUNCTION__);
     return 1;
 }
 
