@@ -747,14 +747,17 @@ machineRec::apply_event_to_suspect(key_event *ev)
 
 
 /*
+ * Timeline:
+ * ========
  * first
  * second
  * third  < we are here now.
+ *
  * ???? how long?
  * second Released.
  * So, already 2 keys have been pressed, and still no decision.
  * Now we have the 3rd key.
- *  We wait only for time, and for the release of the key */
+ * We wait only for time, and for the release of the key */
 void
 machineRec::apply_event_to_verify_state(key_event *ev)
 {
@@ -762,7 +765,7 @@ machineRec::apply_event_to_verify_state(key_event *ev)
     Time simulated_time = time_of(event);
     KeyCode key = detail_of(event);
 
-    /* We pressed the forkable key, and another one (which could possibly
+    /* We pressed a forkable key, and another one (which could possibly
        use the modifier). Now, either the forkable key was intended
        to be `released' before the press of the other key (and we have an
        error due to mis-synchronization), or in fact, the forkable
@@ -771,14 +774,17 @@ machineRec::apply_event_to_verify_state(key_event *ev)
        This should not be fork:
        I----I
        E--E
+
        This should be a fork:
        I-----I
        E--E
+
        Motivation:  we want to press the modifier for short time (simultaneously
        pressing other keys). But sometimes writing quickly, we
        press before we release the previous letter. We handle this, ignoring
        a short overlay. I.e. we wait for the verification key
        to be down in parallel for at least X ms.
+
        There might be a matrix of values! How to train it?
     */
 
@@ -860,15 +866,15 @@ machineRec::step_fork_automaton_by_key(key_event *ev)
         && (key != forkActive[key])) // not `self_forked'
     {
         mdb("%s: the key is forked, ignoring\n", __FUNCTION__);
+
         mxfree(ev->event, ev->event->any.length);
         mxfree(ev, sizeof(key_event));
         return;
     }
 #endif
 
-    // A currently forked keycode cannot be (suddenly) pressed 2nd time. But any pressed
-    // key cannot be pressed once more:
-    // assert (release_p(event) || (key < MAX_KEYCODE && forkActive[key] == 0));
+    // A currently forked keycode cannot be (suddenly) pressed 2nd time.
+    // assert(release_p(event) || (key < MAX_KEYCODE && forkActive[key] == 0));
 
 #if DEBUG
     if (press_p(event) || release_p(event)) {
