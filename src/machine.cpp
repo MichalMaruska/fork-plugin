@@ -686,7 +686,7 @@ machineRec::apply_event_to_verify_state(key_event *ev)
        are slow to release, when we press a specific one afterwards. So in this case fork slower!
     */
 
-    if ((decision_time = key_pressed_too_long(simulated_time)) == 0)
+    if (0 == (decision_time = key_pressed_too_long(simulated_time)))
     {
         do_confirm_fork_by(ev);
         return;
