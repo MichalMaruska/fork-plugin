@@ -316,8 +316,7 @@ step_in_time(PluginInstance* plugin, Time now)
     machine->mdb("%s:\n", __FUNCTION__);
     machine->lock();
 
-    machine->mCurrent_time = now;
-    machine->step_in_time_locked();
+    machine->step_in_time_locked(now);
     // todo: we could push the time before the first event in internal queue!
     set_wakeup_time(plugin, machine->mCurrent_time);
     machine->unlock();
@@ -332,10 +331,7 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
     machine->mdb("%s @ time %u\n", __FUNCTION__, (int)now);
 
     machine->lock();
-    machine->flush_to_next();
-    // is this correct?
-
-    machine->try_to_play(FALSE);
+    machine->step_in_time_locked(now);
 
     if (!plugin_frozen(plugin->next) && PluginClass(plugin->prev)->NotifyThaw)
     {

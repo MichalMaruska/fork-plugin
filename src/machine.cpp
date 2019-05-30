@@ -524,11 +524,16 @@ machineRec::step_fork_automaton_by_time(Time current_time)
 // this is an internal call.
 // fixme: still necessary?
 void
-machineRec::step_in_time_locked()
+machineRec::step_in_time_locked(Time now)
 {
+    mdb("%s:\n", __FUNCTION__);
+
     PluginInstance* const nextPlugin = mPlugin->next;
 
-    mdb("%s:\n", __FUNCTION__);
+    if (mCurrent_time > now)
+        mdb("bug: time moved backwards!");
+
+    mCurrent_time = now;
 
     /* is this necessary?   I think not: if the next plugin was frozen,
      * and now it's not, then it must have warned us that it thawed */
@@ -550,9 +555,6 @@ machineRec::step_in_time_locked()
         lock();
     }
 }
-
-
-
 
 
 /** apply_event_to_{STATE} */

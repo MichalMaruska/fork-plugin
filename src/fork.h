@@ -328,7 +328,7 @@ public:
 
     void switch_config(int id);
 
-    void step_in_time_locked();
+    void step_in_time_locked(Time now);
 
     void step_fork_automaton_by_force();
 
