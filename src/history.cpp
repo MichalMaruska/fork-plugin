@@ -199,7 +199,8 @@ void
 dump_last_events(PluginInstance* plugin)
 {
   machineRec* machine = plugin_machine(plugin);
-  ErrorF("%s(%s) %" SIZE_FMT "\n", __FUNCTION__, plugin->device->name,
+  ErrorF("%s(%s) %" SIZE_FMT "\n", __FUNCTION__,
+         plugin->device->name,
          machine->last_events->size());
 
   for_each(machine->last_events->begin(),
