@@ -120,33 +120,6 @@ hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* plugin)
     PluginClass(next)->ProcessEvent(next, event, TRUE); // we always own the event (up to now)
 }
 
-/* note: used only in configure.c!
- * Resets the machine, so as to reconsider the events on the
- * `internal' queue.
- * Apparently the criteria/configuration has changed!
- * Reasonably this is in response to a key event. So we are in Final state.
- */
-void
-replay_events(PluginInstance* plugin, Bool force)
-{
-    machineRec* machine= plugin_machine(plugin);
-    MDB(("%s\n", __FUNCTION__));
-    machine->check_locked();
-
-    if (!machine->internal_queue.empty()) {
-        // fixme: worth it?
-        machineRec::reverse_slice(machine->internal_queue, machine->input_queue);
-    }
-    machine->state = st_normal;
-    // todo: what else?
-    // last_released & last_released_time no more available.
-    machine->last_released = 0; // bug!
-    machine->decision_time = 0;     // we are not waiting for anything
-
-    try_to_play(plugin, force);
-}
-
-
 /*
  *  react to some `hot_keys':
  *  Pause  Pause  -> dump

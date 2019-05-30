@@ -250,6 +250,7 @@ public:
         };
 
     void try_to_play(Bool force);
+    void replay_events(Bool force_also);
 
     void switch_config(int id);
 
@@ -303,7 +304,6 @@ private:
 
 extern fork_configuration* machine_new_config(void);
 extern int machine_set_last_events_count(machineRec* machine, int new_max);
-extern void replay_events(PluginInstance* plugin, Bool force);
 
 extern int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n);
 

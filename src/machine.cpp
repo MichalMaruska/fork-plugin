@@ -240,6 +240,31 @@ machineRec::activate_fork()
     output_event(ev);
 }
 
+/* note: used only in configure.c!
+ * Resets the machine, so as to reconsider the events on the
+ * `internal' queue.
+ * Apparently the criteria/configuration has changed!
+ * Reasonably this is in response to a key event. So we are in Final state.
+ */
+void
+machineRec::replay_events(Bool force_also)
+{
+    mdb("%s\n", __FUNCTION__);
+    check_locked();
+
+    if (!internal_queue.empty()) {
+        // fixme: worth it?
+        reverse_slice(internal_queue, input_queue);
+    }
+    change_state(st_normal);
+    // todo: what else?
+    // last_released & last_released_time no more available.
+    last_released = 0; // bug!
+    decision_time = 0;     // we are not waiting for anything
+
+    try_to_play(force_also);
+}
+
 /*
  * Take from input_queue, + the current_time + force   -> run the machine.
  * After that you have to:   cancel the timer!!!
