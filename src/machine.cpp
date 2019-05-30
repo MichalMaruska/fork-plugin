@@ -141,10 +141,7 @@ machineRec::flush_to_next()
 {
     // todo: lock in this scope only?
     check_locked();
-    mdb("%s: Queues: output: %d\t internal: %d\t input: %d \n", __FUNCTION__,
-         output_queue.length (),
-         internal_queue.length (),
-         input_queue.length ());
+    log_queues(__FUNCTION__);
 
     PluginInstance* const nextPlugin = mPlugin->next;
     while(!plugin_frozen(nextPlugin) && !output_queue.empty()) {
@@ -318,11 +315,11 @@ machineRec::try_to_play(Bool force_also)
     // fixme: maybe All I need is the nextPlugin?
     PluginInstance* const nextPlugin = mPlugin->next;
 
+    // log_queues_and_nextplugin(message)
     mdb("%s: next %s: internal %d, input: %d\n", __FUNCTION__,
          (plugin_frozen(nextPlugin)?"frozen":"NOT frozen"),
          internal_queue.length (),
          input_queue.length ());
-
 
     while (!plugin_frozen(nextPlugin)) {
 
