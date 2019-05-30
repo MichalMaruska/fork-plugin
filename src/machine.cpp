@@ -290,16 +290,14 @@ machineRec::try_to_play(Bool force_also)
 void
 machineRec::step_fork_automaton_by_force()
 {
-    if (state == st_normal) {
+    if ((state == st_normal) || (internal_queue.empty())) {
+        // doe  this imply  that ^^^ ?
         return;
     }
     if (state == st_deactivated) {
         ErrorF("%s: BUG.\n", __FUNCTION__);
         return;
     }
-
-    if (internal_queue.empty())
-        return;
 
     /* so, the state is one of: verify, suspect or activated. */
 
