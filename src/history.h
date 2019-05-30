@@ -35,5 +35,4 @@ extern int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, 
 
 void dump_last_events(PluginInstance* plugin);
 
-
 #endif
