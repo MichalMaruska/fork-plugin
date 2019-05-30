@@ -497,11 +497,6 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
  * register hooks to other devices,
  *
  * returns: erorr of Success. Should attach stuff by side effect ! */
-extern "C"
-{
-PluginInstance*
-make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class);
-}
 
 PluginInstance*
 make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
