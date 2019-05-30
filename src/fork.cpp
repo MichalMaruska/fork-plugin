@@ -319,7 +319,7 @@ step_in_time(PluginInstance* plugin, Time now)
 };
 
 
-/* Called from AllowEvents, after all events from following plugins have been pushed: . */
+/* Called from AllowEvents, after all events from the next plugin have been pushed. */
 static void
 fork_thaw_notify(PluginInstance* plugin, Time now)
 {
@@ -459,6 +459,7 @@ static int
 destroy_machine(PluginInstance* plugin)
 {
     machineRec* machine = plugin_machine(plugin);
+    // should be locked from the STOP call?
     machine->lock();
 
     delete machine;
