@@ -44,6 +44,7 @@ typedef int keycode_parameter_matrix[MAX_KEYCODE][MAX_KEYCODE];
 /* We can switch between configs. */
 typedef struct _fork_configuration fork_configuration;
 
+// todo: use a C++ <list> ?
 struct _fork_configuration
 {
     /* static data of the machine: i.e.  `configuration' */
