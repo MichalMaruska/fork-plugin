@@ -521,6 +521,40 @@ machineRec::step_fork_automaton_by_time(Time current_time)
     return false;
 }
 
+// this is an internal call.
+// fixme: still necessary?
+void
+machineRec::step_in_time_locked()
+{
+    PluginInstance* const nextPlugin = mPlugin->next;
+
+    mdb("%s:\n", __FUNCTION__);
+
+    /* is this necessary?   I think not: if the next plugin was frozen,
+     * and now it's not, then it must have warned us that it thawed */
+    flush_to_next();
+
+    /* push the time ! */
+    try_to_play(FALSE);
+
+    /* I should take the minimum of time and the time of the 1st event in the
+       (output) internal queue */
+
+    // todo: should be method of machine! machine.empty()
+    if (internal_queue.empty() && input_queue.empty()
+        && !plugin_frozen(nextPlugin))
+    {
+        unlock();
+        /* might this be invoked several times?  */
+        PluginClass(nextPlugin)->ProcessTime(nextPlugin, mCurrent_time);
+        lock();
+    }
+}
+
+
+
+
+
 /** apply_event_to_{STATE} */
 
 // is mDecision_time always recalculated?

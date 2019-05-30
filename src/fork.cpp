@@ -308,36 +308,6 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
     machine->unlock();
 };
 
-// this is an internal call.
-static void
-step_in_time_locked(PluginInstance* plugin)
-{
-    machineRec* machine = plugin_machine(plugin);
-    PluginInstance* const next = plugin->next;
-
-    machine->mdb("%s:\n", __FUNCTION__);
-
-    /* is this necessary?   I think not: if the next plugin was frozen,
-     * and now it's not, then it must have warned us that it thawed */
-    machine->flush_to_next();
-
-    /* push the time ! */
-    machine->try_to_play(FALSE);
-
-    /* I should take the minimum of time and the time of the 1st event in the
-       (output) internal queue */
-    if (machine->internal_queue.empty() && machine->input_queue.empty()
-        && !plugin_frozen(next))
-    {
-        machine->unlock();
-        /* might this be invoked several times?  */
-        PluginClass(next)->ProcessTime(next, machine->current_time);
-        machine->lock();
-    }
-    // todo: we could push the time before the first event in internal queue!
-    set_wakeup_time(plugin, machine->current_time);
-}
-
 // external API
 static void
 step_in_time(PluginInstance* plugin, Time now)
@@ -345,8 +315,11 @@ step_in_time(PluginInstance* plugin, Time now)
     machineRec* machine = plugin_machine(plugin);
     machine->mdb("%s:\n", __FUNCTION__);
     machine->lock();
-    machine->current_time = now;
-    step_in_time_locked(plugin);
+
+    machine->mCurrent_time = now;
+    machine->step_in_time_locked();
+    // todo: we could push the time before the first event in internal queue!
+    set_wakeup_time(plugin, machine->mCurrent_time);
     machine->unlock();
 };
 
