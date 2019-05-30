@@ -122,8 +122,32 @@ struct machineRec
     /* used only for debugging */
     static char const *state_description[];
 
+private:
     volatile int mLock;           /* the mouse interrupt handler should ..... err!  `volatile'
+                                  *
                                   * useless mmc!  But i want to avoid any caching it.... SMP ??*/
+public:
+#if USE_LOCKING
+    void check_locked()
+    {
+        assert(mLock);
+    }
+    void check_unlocked()
+    {
+        assert(mLock == 0);
+    }
+
+    void lock()
+    {
+        mLock=1;
+    }
+    void unlock()
+    {
+        mLock=0;
+    }
+#endif
+
+
     // fork_state_t
     unsigned char state;
 

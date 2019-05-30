@@ -18,11 +18,11 @@
 
 
 #define USE_LOCKING 1
+
 /* What does the lock protect?  ... access to the  queues,state
  * mouse signal handler cannot just make "fork", while a key event is being analyzed.
  */
 
-#include "lock.h"
 
 /* Locking is broken: but it's not used now:
  *
@@ -175,7 +175,7 @@ replay_events(PluginInstance* plugin, Bool force)
 {
     machineRec* machine= plugin_machine(plugin);
     MDB(("%s\n", __FUNCTION__));
-    CHECK_LOCKED(machine);
+    machine->check_locked();
 
     if (!machine->internal_queue.empty()) {
         machineRec::reverse_slice(machine->internal_queue, machine->input_queue);
@@ -204,15 +204,15 @@ filter_config_key(PluginInstance* plugin,const InternalEvent *event)
         switch (detail_of(event)) {
             case 110:
                 machine = plugin_machine(plugin);
-                LOCK(machine);
+                machine->lock();
                 dump_last_events(plugin);
-                UNLOCK(machine);
+                machine->unlock();
                 break;
             case 19:
                 machine = plugin_machine(plugin);
-                LOCK(machine);
+                machine->lock();
                 machine_switch_config(plugin, machine,0); // current ->toggle ?
-                UNLOCK(machine);
+                machine->unlock();
 
                 /* fixme: but this is default! */
                 machine->forkActive[detail_of(event)] = 0; /* ignore the release as well. */
@@ -220,9 +220,9 @@ filter_config_key(PluginInstance* plugin,const InternalEvent *event)
             case 10:
                 machine = plugin_machine(plugin);
 
-                LOCK(machine);
+                machine->lock();
                 machine_switch_config(plugin, machine,1); // current ->toggle ?
-                UNLOCK(machine);
+                machine->unlock();
                 machine->forkActive[detail_of(event)] = 0;
                 break;
             default:            /* todo: remove this: */
@@ -296,7 +296,7 @@ static void
 set_wakeup_time(PluginInstance* plugin, Time now)
 {
     machineRec* machine = plugin_machine(plugin);
-    CHECK_LOCKED(machine);
+    machine->check_locked();
     if ((machine->state == st_verify)
           || (machine->state == st_suspect))
         // we are indeed waiting, so take the minimum.
@@ -372,8 +372,8 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
     };
     machineRec* machine = plugin_machine(plugin);
 
-    CHECK_UNLOCKED(machine);
-    LOCK(machine);           // fixme: mouse must not interrupt us.
+    machine->check_unlocked();
+    machine->lock();           // fixme: mouse must not interrupt us.
 
     machine->current_time = time_of(event);
     key_event* ev = create_handle_for_event(event, owner);
@@ -393,7 +393,7 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
     try_to_play(plugin, FALSE);
 
     set_wakeup_time(plugin, machine->current_time);
-    UNLOCK(machine);
+    machine->unlock();
 };
 
 // this is an internal call.
@@ -407,7 +407,7 @@ step_in_time_locked(PluginInstance* plugin)
 
     /* is this necessary?   I think not: if the next plugin was frozen,
      * and now it's not, then it must have warned us that it thawed */
-    machine->try_to_output(plugin);
+    machine->try_to_output();
 
     /* push the time ! */
     try_to_play(plugin, FALSE);
@@ -417,10 +417,10 @@ step_in_time_locked(PluginInstance* plugin)
     if (machine->internal_queue.empty() && machine->input_queue.empty()
         && !plugin_frozen(next))
     {
-        UNLOCK(machine);
+        machine->unlock();
         /* might this be invoked several times?  */
         PluginClass(next)->ProcessTime(next, machine->current_time);
-        LOCK(machine);
+        machine->lock();
     }
     // todo: we could push the time before the first event in internal queue!
     set_wakeup_time(plugin, machine->current_time);
@@ -432,10 +432,10 @@ step_in_time(PluginInstance* plugin, Time now)
 {
     machineRec* machine = plugin_machine(plugin);
     MDB(("%s:\n", __FUNCTION__));
-    LOCK(machine);
+    machine->lock();
     machine->current_time = now;
     step_in_time_locked(plugin);
-    UNLOCK(machine);
+    machine->unlock();
 };
 
 
@@ -446,8 +446,8 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
     machineRec* machine = plugin_machine(plugin);
     MDB(("%s @ time %u\n", __FUNCTION__, (int)now));
 
-    LOCK(machine);
-    machine->try_to_output(plugin);
+    machine->lock();
+    machine->try_to_output();
     // is this correct?
 
     try_to_play(plugin, FALSE);
@@ -456,7 +456,7 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
     {
         /* thaw the previous! */
         set_wakeup_time(plugin, machine->current_time);
-        UNLOCK(machine);
+        machine->unlock();
         MDB(("%s -- sending thaw Notify upwards!\n", __FUNCTION__));
         /* fixme:  Tail-recursion! */
         PluginClass(plugin->prev)->NotifyThaw(plugin->prev, now);
@@ -465,7 +465,7 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
     } else {
         MDB(("%s -- NOT sending thaw Notify upwards %s!\n", __FUNCTION__,
              plugin_frozen(plugin->next)?"next is frozen":"prev has not NotifyThaw"));
-        UNLOCK(machine);
+        machine->unlock();
     }
 }
 
@@ -483,12 +483,12 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
         if (machine->mLock)
             ErrorF("%s running, while the machine is locked!\n", __FUNCTION__);
         /* else */
-        LOCK(machine);
+        machine->lock();
         /* bug: if we were frozen, then we have a sequence of keys, which
          * might be already released, so the head is not to be forked!
          */
-        machine->step_fork_automaton_by_force(plugin);
-        UNLOCK(machine);
+        machine->step_fork_automaton_by_force();
+        machine->unlock();
     }
 }
 
@@ -540,7 +540,7 @@ make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
     // set_wakeup_time(plugin, 0);
     plugin->wakeup_time = 0;
 
-    UNLOCK(forking_machine);
+    forking_machine->unlock();
 
     config->debug = 1;
     forking_machine->config = config;
@@ -564,7 +564,7 @@ static int
 stop_and_exhaust_machine(PluginInstance* plugin)
 {
     machineRec* machine = plugin_machine(plugin);
-    LOCK(machine);
+    machine->lock();
     MDB(("%s: what to do?\n", __FUNCTION__));
     // free all the stuff, and then:
     xkb_remove_plugin(plugin);
@@ -576,7 +576,7 @@ static int
 destroy_machine(PluginInstance* plugin)
 {
     machineRec* machine = plugin_machine(plugin);
-    LOCK(machine);
+    machine->lock();
 
     delete machine;
     // delete machine->last_events;

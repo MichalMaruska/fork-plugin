@@ -1,8 +1,6 @@
-#include "fork.h"
-
 #define USE_LOCKING 1
-#include "lock.h"
 
+#include "fork.h"
 #include "debug.h"
 
 
@@ -45,7 +43,7 @@ mouse_emulation_on(DeviceIntPtr keybd)
 void
 machineRec::try_to_output(PluginInstance* plugin)
 {
-    CHECK_LOCKED(this);
+    check_locked();
 
     list_with_tail &queue = output_queue;
     PluginInstance* const next = plugin->next;
@@ -62,9 +60,9 @@ machineRec::try_to_output(PluginInstance* plugin)
         InternalEvent* event = ev->event;
         mxfree(ev, sizeof(key_event));
 
-        UNLOCK(this);
+        unlock();
         hand_over_event_to_next_plugin(event, plugin);
-        LOCK(this);
+        lock();
     };
 
     // interesting: after handing over, the NEXT might need to be refreshed.
@@ -85,9 +83,9 @@ machineRec::try_to_output(PluginInstance* plugin)
 
         if (now) {
             // this can thaw, freeze,?
-            UNLOCK(this);
+            unlock();
             PluginClass(next)->ProcessTime(next, now);
-            LOCK(this);
+            lock();
         }
 
     }
