@@ -241,7 +241,7 @@ machineRec::reverse_slice(list_with_tail &pre, list_with_tail &post)
     pre.swap(post);
 }
 
-/* investigation finished, now reset for the next key */
+/** one key-event investigation finished, now reset for the next one */
 void
 machineRec::rewind_machine()
 {
@@ -393,7 +393,7 @@ machineRec::step_fork_automaton_by_force()
     activate_fork();
 }
 
-// so the ev. proves, that the current event is not forked.
+// So the event proves, that the current event is not forked.
 void
 machineRec::do_confirm_non_fork_by(key_event *ev)
 {
@@ -457,6 +457,7 @@ machineRec::key_pressed_too_long(Time current_time)
 
 // return 0 if enough, otherwise the time when it will be enough/proving a fork.
 Time
+// dangerous to name it current_time, like the member variable!
 machineRec::key_pressed_in_parallel(Time current_time)
 {
     // verify overlap
@@ -464,7 +465,7 @@ machineRec::key_pressed_in_parallel(Time current_time)
                                                                   verificator_keycode);
     Time decision_time =  verificator_time + overlap_tolerance;
 
-    if (current_time > decision_time) {
+    if (decision_time <= current_time) {
         // already "parallel"
         return 0;
     } else {
@@ -483,6 +484,7 @@ machineRec::key_pressed_in_parallel(Time current_time)
 
 
 bool
+// dangerous to name it current_time, like the member variable!
 machineRec::step_fork_automaton_by_time(Time current_time)
 {
     // confirm fork:
