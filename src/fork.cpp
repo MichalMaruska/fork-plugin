@@ -353,10 +353,10 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
                 DeviceEventInfoRec* dei)
 {
     InternalEvent *event = dei->event;
-    machineRec* machine = plugin_machine(plugin);
-
     if (event->any.type == ET_Motion)
     {
+
+        machineRec* machine = plugin_machine(plugin);
 #if 0
         // fixme:
         if (machine->mLock)
@@ -450,7 +450,9 @@ stop_and_exhaust_machine(PluginInstance* plugin)
     machine->lock();
     machine->mdb("%s: what to do?\n", __FUNCTION__);
     // free all the stuff, and then:
-    xkb_remove_plugin(plugin);
+    // machine->unlock();
+
+    xkb_remove_plugin(plugin); // will this lead to destroy_plugin()?
     return 1;
 }
 
