@@ -473,8 +473,8 @@ machineRec::key_pressed_in_parallel(Time current_time)
              overlap_tolerance,
              (int) (current_time - verificator_time));
 
-        mdb("suspected = %d, verificator_keycode %d. Times: overlap %lu, "
-             "still needed: %lu (ms)\n", suspect, verificator_keycode,
+        mdb("suspected = %d, verificator_keycode %d. Times: overlap %" TIME_FMT ", "
+             "still needed: %" TIME_FMT " (ms)\n", suspect, verificator_keycode,
              current_time - verificator_time,
              decision_time - current_time);
 
