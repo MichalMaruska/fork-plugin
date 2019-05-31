@@ -500,7 +500,7 @@ machineRec::step_fork_automaton_by_time(Time current_time)
     // notice, how mDecision_time is rewritten here:
     if (0 == (mDecision_time =
               key_pressed_too_long(current_time))) {
-        reason = machineRec::reason_total;
+        reason = reason_total;
 
         activate_fork();
         return true;
@@ -512,7 +512,7 @@ machineRec::step_fork_automaton_by_time(Time current_time)
         Time decision_time = key_pressed_in_parallel(current_time);
 
         if (decision_time == 0) {
-            reason = machineRec::reason_overlap;
+            reason = reason_overlap;
             activate_fork();
             return true;
         }
