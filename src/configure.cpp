@@ -32,73 +32,6 @@ extern "C"
 #include <xorg/misc.h>
 }
 
-//
-//  pointer->  |  next|-> |   next| ->
-//    ^            ^
-//    |    or      |
-//  return a _pointer_ to the pointer  on a searched-for item.
-
-static fork_configuration**
-find_before_n(machineRec* machine, int n)
-{
-    fork_configuration** config_p = &(machine->config);
-
-    while (((*config_p)->next) && ((*config_p)->id != n))
-    {
-        ErrorF("%s skipping over %d\n", __FUNCTION__, (*config_p)->id);
-        config_p = &((*config_p) -> next);
-    }
-    return ((*config_p)->id == n)? config_p: NULL;      // ??? &(config->next);
-}
-
-void
-machine_switch_config(PluginInstance* plugin, machineRec* machine,int id)
-{
-
-    ErrorF("%s %d\n", __FUNCTION__, id);
-
-    fork_configuration** config_p = find_before_n(machine, id);
-    /* (device_machine(dev))->config; */
-
-    ErrorF("%s found\n", __FUNCTION__);
-
-    // fixme:   `move_to_top'   find an element in a linked list, and move it to the head.
-    /*if (config->id == id)
-      no need for replay!
-    */
-
-
-    if ((config_p) && (*config_p) && (*config_p != machine->config))           // found
-    {
-        // change it:
-        //   |machine|  -> 1 k.... n->-> n -> n+1
-
-        //   |machine|  -> n 1 k2....n-1 -> n+1
-
-        DB(("switching configs %d -> %d\n", machine->config->id, id));
-
-        fork_configuration* new_current = *config_p;
-
-
-        //fixme:  this sequence works at the beginning too!!!
-
-        // remove from the list:
-        *config_p = new_current->next; //   n-1 -> n + 1
-
-        // reinsert at the beginning:
-        new_current->next = machine->config; //    n -> 1
-        machine->config = new_current; //     -> n
-
-        DB(("switching configs %d -> %d\n", machine->config->id, id));
-        replay_events(plugin, FALSE);
-    } else
-    {
-        ErrorF("config remains %d\n", machine->config->id);
-    }
-    // ->debug = (stuff->value?True:False); // (Bool)
-}
-
-
 static int config_counter = 0;
 
 // nothing active (forkable) in this configuration
@@ -267,7 +200,7 @@ machine_configure_global(PluginInstance* plugin, machineRec* machine, int type,
       assert (set);
 
       MDB(("fork_configure_switch: %d\n", value));
-      machine_switch_config(plugin, machine, value);
+      machine->switch_config(value);
       return 0;
    }
 

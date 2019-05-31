@@ -223,6 +223,8 @@ private:
 
     PluginInstance* mPlugin;
 
+    fork_configuration** find_configuration_n(int n);
+
 public:
 
     ~machineRec()
@@ -248,6 +250,8 @@ public:
         };
 
     void try_to_play(Bool force);
+
+    void switch_config(int id);
 
     void step_fork_automaton_by_force();
 
@@ -298,7 +302,6 @@ private:
 };
 
 extern fork_configuration* machine_new_config(void);
-extern void machine_switch_config(PluginInstance* plugin, machineRec* machine,int id);
 extern int machine_set_last_events_count(machineRec* machine, int new_max);
 extern void replay_events(PluginInstance* plugin, Bool force);
 

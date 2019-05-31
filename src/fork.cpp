@@ -167,7 +167,7 @@ filter_config_key(PluginInstance* plugin,const InternalEvent *event)
             case 19:
                 machine = plugin_machine(plugin);
                 machine->lock();
-                machine_switch_config(plugin, machine,0); // current ->toggle ?
+                machine->switch_config(0); // current ->toggle ?
                 machine->unlock();
 
                 /* fixme: but this is default! */
@@ -177,7 +177,7 @@ filter_config_key(PluginInstance* plugin,const InternalEvent *event)
                 machine = plugin_machine(plugin);
 
                 machine->lock();
-                machine_switch_config(plugin, machine,1); // current ->toggle ?
+                machine->switch_config(1); // current ->toggle ?
                 machine->unlock();
                 machine->forkActive[detail_of(event)] = 0;
                 break;

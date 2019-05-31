@@ -25,6 +25,72 @@ mouse_emulation_on(DeviceIntPtr keybd)
     return (xkb->ctrls->enabled_ctrls & XkbMouseKeysMask);
 }
 
+//
+//  pointer->  |  next|-> |   next| ->
+//    ^            ^
+//    |    or      |
+//  return a _pointer_ to the pointer  on a searched-for item.
+
+fork_configuration**
+machineRec::find_configuration_n(int n)
+{
+    fork_configuration** config_p = &config;
+
+    while (((*config_p)->next) && ((*config_p)->id != n))
+    {
+        ErrorF("%s skipping over %d\n", __FUNCTION__, (*config_p)->id);
+        config_p = &((*config_p) -> next);
+    }
+    return ((*config_p)->id == n)? config_p: NULL;      // ??? &(config->next);
+}
+
+// and replay whatever is inside the machine!
+// locked?
+void
+machineRec::switch_config(int id)
+{
+
+    ErrorF("%s %d\n", __FUNCTION__, id);
+    fork_configuration** config_p = find_configuration_n(id);
+    ErrorF("%s found\n", __FUNCTION__);
+
+    // fixme:   `move_to_top'   find an element in a linked list, and move it to the head.
+    /*if (config->id == id)
+      no need for replay!
+    */
+
+    if ((config_p)
+        // useless:
+        && (*config_p)
+        && (*config_p != config))
+    {
+        // change it (linked -list):
+        //   |machine|  -> 1 2.... n-1 -> n -> n+1
+
+        //   |machine|  -> n 1 2....n-1-> n+1
+
+        DB("switching configs %d -> %d\n", config->id, id);
+
+        fork_configuration* new_current = *config_p;
+
+        //fixme: this sequence works at the beginning too!!!
+
+        // remove from the list:
+        *config_p = new_current->next; //   n-1 -> n + 1
+
+        // reinsert at the beginning:
+        new_current->next = config; //    n -> 1
+        config = new_current; //     -> n
+
+        DB("switched configs %d -> %d\n", config->id, id);
+        replay_events(FALSE);
+    } else
+    {
+        ErrorF("config remains %d\n", config->id);
+    }
+    // ->debug = (stuff->value?True:False); // (Bool)
+}
+
 /* The machine is locked here:
  * Push as many as possible from the OUTPUT queue to the next layer */
 void
