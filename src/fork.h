@@ -354,10 +354,12 @@ public:
 
 };
 
+// configure.cpp
 extern fork_configuration* machine_new_config(void);
 
 extern int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n);
 
+// fork.cpp
 void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* plugin);
 
 enum {
