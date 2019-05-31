@@ -77,6 +77,8 @@
 #include "configure.h"
 #include "history.h"
 #include "fork.h"
+#include "memory.h"
+
 
 extern "C" {
 #include "event_ops.h"
