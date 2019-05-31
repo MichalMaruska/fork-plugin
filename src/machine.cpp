@@ -59,24 +59,14 @@ machineRec::switch_config(int id)
     ErrorF("%s found\n", __FUNCTION__);
 
     // fixme:   `move_to_top'   find an element in a linked list, and move it to the head.
-    /*if (config->id == id)
-      no need for replay!
-    */
-
     if ((config_p)
         // useless:
         && (*config_p)
         && (*config_p != config))
     {
-        // change it (linked -list):
-        //   |machine|  -> 1 2.... n-1 -> n -> n+1
-
-        //   |machine|  -> n 1 2....n-1-> n+1
-
         DB("switching configs %d -> %d\n", config->id, id);
 
         fork_configuration* new_current = *config_p;
-
         //fixme: this sequence works at the beginning too!!!
 
         // remove from the list:
@@ -91,7 +81,6 @@ machineRec::switch_config(int id)
     } else {
         ErrorF("config remains %d\n", config->id);
     }
-    // ->debug = (stuff->value?True:False); // (Bool)
 }
 
 void machineRec::log_event(const key_event *event, DeviceIntPtr keybd)
