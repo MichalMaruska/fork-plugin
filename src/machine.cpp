@@ -318,6 +318,8 @@ machineRec::try_to_play(Bool force_also)
          internal_queue.length (),
          input_queue.length ());
 
+    // notice that instead of recursion, all the calls to `rewind_machine' are
+    // followed by return to this cycle!
     while (!plugin_frozen(nextPlugin)) {
 
         if (! input_queue.empty()) {
