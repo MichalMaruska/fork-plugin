@@ -593,8 +593,8 @@ machineRec::apply_event_to_normal(key_event *ev)
              /*todo: time_difference_more(last_released_time,simulated_time,
               * config->repeat_max) */
              (simulated_time - last_released_time) >
-             (Time) config->repeat_max)) {
-            /* Emacs indenting bug: */
+             (Time) config->repeat_max))
+        {
             change_state(st_suspect);
             suspect = key;
             suspect_time = time_of(event);
