@@ -303,8 +303,7 @@ machineRec::replay_events(Bool force_also)
 }
 
 /*
- * Take from input_queue, + the current_time + force   -> run the machine.
- * After that you have to:   cancel the timer!!!
+ * Take from input_queue, + the mCurrent_time + force   -> run the machine.
  */
 void
 machineRec::try_to_play(Bool force_also)
@@ -324,12 +323,9 @@ machineRec::try_to_play(Bool force_also)
 
         if (! input_queue.empty()) {
             key_event *ev = input_queue.pop();
-            // if time is enough...
             step_fork_automaton_by_key(ev);
         } else {
-            // at the end ... add the final time event:
-            if (current_time && (state != st_normal)) {
-                // was final_state_p
+            if (mCurrent_time && (state != st_normal)) {
                 if (! step_fork_automaton_by_time(mCurrent_time))
                     // If this time helped to decide -> machine rewound,
                     // we have to try again.
