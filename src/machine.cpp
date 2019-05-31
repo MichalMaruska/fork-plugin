@@ -2,6 +2,7 @@
 
 #include "fork.h"
 #include "memory.h"
+#include "history.h"
 // uses:
 // void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* nextPlugin);
 #include "debug.h"
@@ -161,7 +162,7 @@ machineRec::flush_to_next()
     while(!plugin_frozen(nextPlugin) && !output_queue.empty()) {
         key_event* ev = output_queue.pop();
 
-        last_events->push_back(make_archived_events(ev));
+        last_events->push_back(make_archived_event(ev));
 
         InternalEvent* event = ev->event;
         mxfree(ev, sizeof(key_event));

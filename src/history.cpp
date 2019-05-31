@@ -26,7 +26,7 @@ extern "C" {
 #include "event_ops.h"
 
 archived_event*
-make_archived_events (key_event* ev)
+make_archived_event(const key_event* const ev)
 {
   archived_event* event = MALLOC(archived_event);
 
