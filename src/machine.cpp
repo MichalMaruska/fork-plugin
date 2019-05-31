@@ -266,6 +266,7 @@ machineRec::activate_fork()
     /* Change the keycode, but remember the original: */
     forkActive[forked_key] =
         ev->event->device_event.detail.key = config->fork_keycode[forked_key];
+    output_event(ev);
 
     change_state(st_activated);
     mdb("%s the key %d-> forked to: %d. Internal queue has %d events. %s\n", __FUNCTION__,
@@ -274,7 +275,6 @@ machineRec::activate_fork()
         describe_machine_state());
 
     rewind_machine();
-    output_event(ev);
 }
 
 /* note: used only in configure.c!
