@@ -88,8 +88,7 @@ machineRec::switch_config(int id)
 
         DB("switched configs %d -> %d\n", config->id, id);
         replay_events(FALSE);
-    } else
-    {
+    } else {
         ErrorF("config remains %d\n", config->id);
     }
     // ->debug = (stuff->value?True:False); // (Bool)
