@@ -218,9 +218,8 @@ min_non_zero(Time a, Time b)
     return b;
 }
 
-// NOW is useless
 static void
-set_wakeup_time(PluginInstance* plugin, Time now)
+set_wakeup_time(PluginInstance* plugin)
 {
     machineRec* machine = plugin_machine(plugin);
     machine->check_locked();
@@ -302,7 +301,7 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
 
     machine->accept_event(ev);
 
-    set_wakeup_time(plugin, machine->current_time);
+    set_wakeup_time(plugin);
     machine->unlock();
 };
 
@@ -316,7 +315,7 @@ step_in_time(PluginInstance* plugin, Time now)
 
     machine->step_in_time_locked(now);
     // todo: we could push the time before the first event in internal queue!
-    set_wakeup_time(plugin, machine->mCurrent_time);
+    set_wakeup_time(plugin);
     machine->unlock();
 };
 
@@ -334,7 +333,7 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
     if (!plugin_frozen(plugin->next) && PluginClass(plugin->prev)->NotifyThaw)
     {
         /* thaw the previous! */
-        set_wakeup_time(plugin, machine->current_time);
+        set_wakeup_time(plugin);
         machine->unlock();
         machine->mdb("%s -- sending thaw Notify upwards!\n", __FUNCTION__);
         /* fixme:  Tail-recursion! */
