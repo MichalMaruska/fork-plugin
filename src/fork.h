@@ -168,16 +168,25 @@ private:
 
     // these are "registers"
     Time suspect_time;           /* time of the 1st event in the queue. */
-    Time verificator_time;       /* press of the `verificator' */
+
+    Time verificator_time = 0;       /* press of the `verificator' */
+
     // calculated:
-    Time decision_time;         /* Time to wait... so that the current event queue could decide more*/
-    Time current_time;
+    Time mDecision_time;         /* Time to wait... so that the HEAD event in queue could decide more*/
+public:
+    // calculated:
+    Time next_decision_time()
+        {
+            return mDecision_time;
+        }
 
 
     /* we cannot hold only a Bool, since when we have to reconfigure, we need the original
        forked keycode for the release event. */
     KeyCode          forkActive[MAX_KEYCODE];
 
+    Time mCurrent_time;          // the last time we received from previous plugin/device
+private:
     list_with_tail internal_queue;
     /* Still undecided events: these events alone don't decide what event is the 1st on the
        queue.*/
@@ -225,6 +234,47 @@ private:
 
     fork_configuration** find_configuration_n(int n);
 
+    static void reverse_slice(list_with_tail &pre, list_with_tail &post);
+
+    void try_to_play(Bool force);
+
+    void replay_events(Bool force_also);
+
+    void apply_event_to_suspect(key_event *ev);
+
+    void rewind_machine();
+    void activate_fork();
+
+    void
+    change_state(fork_state_t new_state)
+    {
+        this->state = new_state;
+        mdb(" --->%s[%dm%s%s\n", escape_sequence, 32 + new_state,
+            state_description[new_state], color_reset);
+    }
+
+    void do_enqueue_event(key_event *ev);
+    void do_confirm_fork_by(key_event *ev);
+    void apply_event_to_verify_state(key_event *ev);
+
+
+    Time key_pressed_too_long(Time current_time);
+    Time key_pressed_in_parallel(Time current_time);
+
+    /* Return the keycode into which CODE has forked _last_ time.
+   Returns code itself, if not forked. */
+    Bool
+    key_forked(KeyCode code)
+    {
+        return (forkActive[code]);
+    }
+
+    void do_confirm_non_fork_by(key_event *ev);
+    void apply_event_to_normal(key_event *ev);
+
+
+    void output_event(key_event* ev);
+
 public:
 
     ~machineRec()
@@ -249,10 +299,8 @@ public:
             };
         };
 
-    void try_to_play(Bool force);
-    void replay_events(Bool force_also);
-
     void switch_config(int id);
+    void step_in_time_locked();
 
     void step_fork_automaton_by_force();
 
@@ -260,46 +308,14 @@ public:
 
     bool step_fork_automaton_by_time(Time current_time);
 
-    static void reverse_slice(list_with_tail &pre, list_with_tail &post);
-
     void flush_to_next();
-private:
-    void apply_event_to_suspect(key_event *ev);
 
-    void rewind_machine();
-    void activate_fork();
-
-
-    void mdb(const char* format...)
+        // calculated:
+    Time next_decision_time()
     {
-        va_list argptr;
-        // if (config->debug) {ErrorF(x, ...);}
-        va_start(argptr, format);
-        VErrorF(format, argptr);
-        va_end(argptr);
-    };
-
-    void
-    change_state(fork_state_t new_state)
-    {
-        this->state = new_state;
-        mdb(" --->%s[%dm%s%s\n", escape_sequence, 32 + new_state,
-            state_description[new_state], color_reset);
+        return mDecision_time;
     }
 
-    void do_confirm_fork_by(key_event *ev);
-    void apply_event_to_verify(key_event *ev);
-
-    Time key_pressed_too_long(Time current_time);
-    Time key_pressed_in_parallel(Time current_time);
-
-    Bool key_forked(KeyCode code);
-
-    void do_confirm_non_fork_by(key_event *ev);
-    void apply_event_to_normal(key_event *ev);
-
-
-    void output_event(key_event* ev);
 };
 
 extern fork_configuration* machine_new_config(void);
