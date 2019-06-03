@@ -546,8 +546,11 @@ machineRec::step_in_time_locked(Time now)
        (output) internal queue */
 
     // todo: should be method of machine! machine.empty()
-    if (internal_queue.empty() && input_queue.empty()
-        && !plugin_frozen(nextPlugin))
+    if (!plugin_frozen(nextPlugin)
+        // this is guaranteed!
+        // && input_queue.empty()
+        && internal_queue.empty() // i.e. state == st_normal (or st_deactivated?)
+        )
     {
         unlock();
         /* might this be invoked several times?  */
