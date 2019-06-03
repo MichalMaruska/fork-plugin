@@ -79,8 +79,11 @@ public:
      fixme: we need better. a ration between `before'/`overlap'/`after' */
   keycode_parameter_matrix overlap_tolerance;
 
-  /* after how many m-secs, we decide for the modifier.
-     Should be around the key-repeatition rate (1st pause) */
+  /* After how many m-secs, we decide for the modifier.
+     (x,0) just by pressing the X key
+     (x,y) pressing x while y also pressed.
+
+     hint: should be around the key-repetition rate (1st pause) */
   keycode_parameter_matrix verification_interval;
 
   int clear_interval;
