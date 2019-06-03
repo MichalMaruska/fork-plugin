@@ -147,7 +147,6 @@ machineRec::flush_to_next()
             // this can thaw, freeze,?
             PluginClass(nextPlugin)->ProcessTime(nextPlugin, now);
         }
-
     }
     if (!output_queue.empty ())
         mdb("%s: still %d events to output\n", __FUNCTION__, output_queue.length ());
@@ -192,7 +191,7 @@ machineRec::reverse_slice(list_with_tail &pre, list_with_tail &post)
     // Slice with a reversed semantic:
     // A.slice(B) --> ()  (AB)
     // traditional is (AB) ()
-    pre.slice(post);
+    pre.slice(post); // mmc:? splice?
     pre.swap(post);
 }
 
@@ -325,6 +324,7 @@ machineRec::step_fork_automaton_by_force()
         // doe  this imply  that ^^^ ?
         return;
     }
+
     if (state == st_deactivated) {
         ErrorF("%s: BUG.\n", __FUNCTION__);
         return;
@@ -342,19 +342,20 @@ machineRec::step_fork_automaton_by_force()
     activate_fork();
 }
 
-// so the ev proves, that the current event is not forked.
+// so the ev. proves, that the current event is not forked.
 void
 machineRec::do_confirm_non_fork_by(key_event *ev)
 {
     assert(decision_time == 0);
+
     change_state(st_deactivated);
     internal_queue.push(ev); //  this  will be re-processed!!
 
-
     key_event* non_forked_event = internal_queue.pop();
+    // todo: improve this log:
     mdb("this is not a fork! %d\n", detail_of(non_forked_event->event));
-    rewind_machine();
 
+    rewind_machine();
     output_event(non_forked_event);
 }
 
