@@ -487,7 +487,7 @@ machineRec::apply_event_to_suspect(key_event *ev, PluginInstance* plugin)
      * was not enough. */
     if (release_p(event)) {
         mdb("suspect/release: suspected = %d, time diff: %d\n",
-             suspect, (int)(simulated_time  -  suspect_time));
+             suspect, (int)(simulated_time - suspect_time));
         if (key == suspect) {
             decision_time = 0; // might be useless!
             do_confirm_non_fork_by(ev, plugin);
