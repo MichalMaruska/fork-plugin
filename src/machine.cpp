@@ -416,9 +416,6 @@ machineRec::do_confirm_fork_by(key_event *ev)
   machine->mDecision_time   ... for another timer.
 */
 
-#define time_difference_less(start,end,difference)   (end < (start + difference))
-#define time_difference_more(start,end,difference)   (end > (start + difference))
-
 
 // return 0  if the current/first key is pressed enough time to fork.
 // or time when this will happen.
