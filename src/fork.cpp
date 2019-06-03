@@ -571,10 +571,6 @@ make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
 
     UNLOCK(forking_machine);
 
-    for (int i=0;i<256;i++){                   // keycode 0 is unused!
-        forking_machine->forkActive[i] = 0; /* 0 = not active */
-    };
-
     config->debug = 1;
     forking_machine->config = config;
 

@@ -213,6 +213,10 @@ public:
           state(st_normal)
         {
             last_events = new last_events_type(max_last);
+
+            for (int i=0;i<256;i++){                   // keycode 0 is unused!
+                forkActive[i] = 0; /* 0 = not active */
+            };
         };
 
     void rewind_machine();
