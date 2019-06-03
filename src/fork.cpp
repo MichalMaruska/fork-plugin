@@ -540,31 +540,7 @@ make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
     ErrorF("%s: constructing the machine %d (official release: %s)\n",
            __FUNCTION__, PLUGIN_VERSION, VERSION_STRING);
 
-#if 0
-    forking_machine = (machineRec* )mmalloc(sizeof(machineRec));
-    bzero(forking_machine, sizeof (machineRec));
-
-    if (! forking_machine){
-        ErrorF("%s: malloc failed (for forking_machine)\n",__FUNCTION__);
-        // free all the previous ....!
-        return NULL;              // BadAlloc
-    }
-
-    // now, if something goes wrong, we have to free it!!
-    forking_machine->internal_queue.set_name(string("internal"));
-    forking_machine->input_queue.set_name(string("input"));
-    forking_machine->output_queue.set_name(string("output"));
-    forking_machine->max_last = 100;
-    forking_machine->last_events = new last_events_type(forking_machine->max_last);
-
-    forking_machine->last_released = 0;
-    forking_machine->decision_time = 0;
-    forking_machine->current_time = 0;
-    forking_machine->state = st_normal;
-
-#else
     forking_machine = new machineRec(plugin);
-#endif
 
     // set_wakeup_time(plugin, 0);
     plugin->wakeup_time = 0;
