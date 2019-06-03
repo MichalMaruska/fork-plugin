@@ -420,7 +420,8 @@ machineRec::do_confirm_fork_by(key_event *ev)
 #define time_difference_more(start,end,difference)   (end > (start + difference))
 
 
-// return 0 ... elapsed, or time when will happen
+// return 0  if the current/first key is pressed enough time to fork.
+// or time when this will happen.
 Time
 machineRec::key_pressed_too_long(Time current_time)
 {
@@ -823,8 +824,7 @@ machineRec::apply_event_to_verify_state(key_event *ev)
  *      sets: `mDecision_time'
  *
  * input:
- *   internal-queue  <+      input-queue
- *                   ev
+ *   internal-queue  +      input-queue + ev
  * output:
  *   either the ev  is pushed on internal_queue, or to the output-queue
  *   the head of internal_queue may be pushed to the output-queue as well.
