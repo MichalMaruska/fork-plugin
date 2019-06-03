@@ -383,7 +383,11 @@ machineRec::step_fork_automaton_by_force()
 void
 machineRec::do_confirm_non_fork_by(key_event *ev)
 {
-    assert(mDecision_time == 0);
+    assert(state == st_suspect || state == st_verify);
+
+    if (mDecision_time != 0)
+        mdb("BUG/assert %u\n", mDecision_time);
+    // assert(mDecision_time == 0);
 
     change_state(st_deactivated);
     internal_queue.push(ev); //  this  will be re-processed!!
@@ -422,6 +426,8 @@ machineRec::do_confirm_fork_by(key_event *ev)
 Time
 machineRec::key_pressed_too_long(Time current_time)
 {
+    assert(state== st_verify || state == st_suspect);
+
     int verification_interval =
         config->verification_interval_of(suspect,
                                  // this can be 0 (& should be, unless)
