@@ -214,11 +214,9 @@ machineRec::output_event(key_event* ev)
  * (for when a repeated event arrives), i fork it to its own keycode
  */
 
-
-
 /**
- * Now the operations on the Dynamic state */
-
+ * Now the operations on the Dynamic state
+ */
 void
 machineRec::reverse_slice(list_with_tail &pre, list_with_tail &post)
 {
@@ -430,8 +428,8 @@ machineRec::key_pressed_too_long(Time current_time)
 
     int verification_interval =
         config->verification_interval_of(suspect,
-                                 // this can be 0 (& should be, unless)
-                                 verificator_keycode);
+                                         // note: this can be 0 (& should be, unless)
+                                         verificator_keycode);
     Time decision_time = suspect_time + verification_interval;
 
     mdb("time: verification_interval = %dms elapsed so far =%dms\n",
@@ -474,7 +472,6 @@ machineRec::key_pressed_in_parallel(Time current_time)
 
 
 bool
-// dangerous to name it current_time, like the member variable!
 machineRec::step_fork_automaton_by_time(Time current_time)
 {
     // confirm fork:
@@ -523,8 +520,7 @@ machineRec::step_fork_automaton_by_time(Time current_time)
     return false;
 }
 
-// this is an internal call.
-// fixme: still necessary?
+// This is a public api!
 void
 machineRec::step_in_time_locked(Time now)
 {
@@ -537,8 +533,7 @@ machineRec::step_in_time_locked(Time now)
 
     mCurrent_time = now;
 
-    /* is this necessary?   I think not: if the next plugin was frozen,
-     * and now it's not, then it must have warned us that it thawed */
+    /* this is run also when thawn, so this is the right moment to retry: */
     flush_to_next();
 
     /* push the time ! */
@@ -740,8 +735,8 @@ machineRec::apply_event_to_suspect(key_event *ev)
  * Timeline:
  * ========
  * first
- * second
- * third  < we are here now.
+ * second .. verifier
+ * third-event  < we are here now.
  *
  * ???? how long?
  * second Released.
@@ -762,11 +757,11 @@ machineRec::apply_event_to_verify_state(key_event *ev)
        was actually `used' as a modifier.
 
        This should not be fork:
-       I----I
+       I----I (short)
        E--E
 
        This should be a fork:
-       I-----I
+       I-----I (long)
        E--E
 
        Motivation:  we want to press the modifier for short time (simultaneously
