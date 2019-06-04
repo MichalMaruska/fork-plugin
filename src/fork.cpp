@@ -209,15 +209,12 @@ filter_config_key_maybe(PluginInstance* plugin,const InternalEvent *event)
 }
 
 static Time
-min_non_zero(Time a, Time b)
+first_non_zero(Time a, Time b)
 {
-    if (a==0)
-        return b;
-    if (a < b)
-        return a;
-    return b;
+    return (a==0)?b:a;
 }
 
+// set plugin->wakeup_time
 static void
 set_wakeup_time(PluginInstance* plugin)
 {
@@ -226,7 +223,8 @@ set_wakeup_time(PluginInstance* plugin)
 
     plugin->wakeup_time =
         // fixme:  but ZERO has certain meaning!
-        min_non_zero(plugin->next->wakeup_time, machine->next_decision_time());
+        // this is wrong: if machine waits, it cannot pass to the next-plugin!
+        first_non_zero(machine->next_decision_time(), plugin->next->wakeup_time);
 
     // (machine->internal_queue.empty())? plugin->next->wakeup_time:0;
     machine->mdb("%s %s wakeup_time = %d, next wants: %u, we %lu\n", FORK_PLUGIN_NAME, __FUNCTION__,
