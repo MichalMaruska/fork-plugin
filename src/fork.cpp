@@ -274,7 +274,7 @@ create_handle_for_event(InternalEvent *event, bool owner)
     it's a trampoline for the automaton.
     Should it return some Time?
 */
-static void
+static Bool
 ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
 {
     DeviceIntPtr keybd = plugin->device;
@@ -284,7 +284,7 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
         // fixme: I should at least push the time of (plugin->next)!
         if (owner)
             free(event);
-        return;
+        goto exit;
     };
     machineRec* machine = plugin_machine(plugin);
 
@@ -302,10 +302,12 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
 
     set_wakeup_time(plugin);
     machine->unlock();
+  exit:
+    return PLUGIN_NON_FROZEN;
 };
 
 // external API
-static void
+static Bool
 step_in_time(PluginInstance* plugin, Time now)
 {
     machineRec* machine = plugin_machine(plugin);
@@ -316,6 +318,8 @@ step_in_time(PluginInstance* plugin, Time now)
     // todo: we could push the time before the first event in internal queue!
     set_wakeup_time(plugin);
     machine->unlock();
+
+    return PLUGIN_NON_FROZEN;
 };
 
 
