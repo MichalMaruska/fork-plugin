@@ -53,6 +53,7 @@ install(FILES ../include/fork_requests.h
   )
 
 install(TARGETS fork
+  EXPORT fork
   LIBRARY    DESTINATION ${moduledir}
   # CMAKE_INSTALL_PREFIX CMAKE_INSTALL_LIBDIR
   )
