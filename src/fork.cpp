@@ -286,22 +286,29 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
             free(event);
         goto exit;
     };
-    machineRec* machine = plugin_machine(plugin);
 
-    machine->check_unlocked();
-    machine->lock();           // fixme: mouse must not interrupt us.
+    {
+        machineRec* machine = plugin_machine(plugin);
 
-    key_event* ev = create_handle_for_event(event, owner);
-    if (!ev)			// memory problems
-        // what to do with `event' !!
-        return;
+        machine->check_unlocked();
+        machine->lock();           // fixme: mouse must not interrupt us.
 
-    machine->log_event(ev, keybd);
+        {
+            key_event* ev = create_handle_for_event(event, owner);
+            if (!ev)			// memory problems
+                // what to do with `event' !!
+                goto exit;
 
-    machine->accept_event(ev);
+            machine->log_event(ev, keybd);
 
-    set_wakeup_time(plugin);
-    machine->unlock();
+            machine->accept_event(ev);
+        }
+
+        set_wakeup_time(plugin);
+        machine->unlock();
+    }
+
+    // always:
   exit:
     return PLUGIN_NON_FROZEN;
 };
