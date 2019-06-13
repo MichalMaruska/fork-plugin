@@ -811,7 +811,9 @@ machineRec::step_fork_automaton_by_key(key_event *ev)
     // assert (release_p(event) || (key < MAX_KEYCODE && forkActive[key] == 0));
 
 #if DEBUG
-    log_state_and_event(ev);
+    if (press_p(event) || release_p(event)) {
+        log_state_and_event(__FUNCTION__, ev);
+    }
 #endif
 
     switch (state) {
