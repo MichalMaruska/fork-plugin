@@ -294,12 +294,14 @@ machineRec::try_to_play(Bool force_also)
                 if (! step_fork_automaton_by_time(current_time))
                     // If this time helped to decide -> machine rewound,
                     // we have to try again.
-                    // Otherwise, this is the end for now:
-                    return;
-            } else if (force_also && (state != st_normal)) {
+                    continue;
+            }
+
+            if (force_also && (state != st_normal)) {
                 step_fork_automaton_by_force();
-            } else
+            } else {
                 return;
+            }
         }
     }
     /* assert(!plugin_frozen(plugin->next)   --->
