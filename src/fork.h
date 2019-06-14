@@ -55,12 +55,16 @@ struct _fork_configuration
 private:
     static Time
     get_value_from_matrix (keycode_parameter_matrix matrix, KeyCode code, KeyCode verificator)
-        {
-            return (matrix[code][verificator]?
-                    matrix[code][verificator]:
-                    (matrix[code][0]?
-                     matrix[code][0]: matrix[0][0]));
-        }
+    {
+        return (matrix[code][verificator]?
+                // code/verificator specific:
+                matrix[code][verificator]:
+                (matrix[code][0]?
+                 // default for code:
+                 matrix[code][0]:
+                 // global fallback
+                 matrix[0][0]));
+    }
 
 public:
     // note: depending on verificator is strange. There might be none!
@@ -200,7 +204,7 @@ public:
     last_events_type *last_events; // history
     int max_last = 100; // can be updated!
 
-    fork_configuration  *config;
+    fork_configuration  *config; // list<fork_configuration>
 
 /* The Static state = configuration.
  * This is the matrix with some Time values:
