@@ -96,10 +96,11 @@ public:
   int clear_interval;
   int repeat_max;
   Bool consider_forks_for_repeat;
-  int debug;
 
-  const char*  name;
+  int debug;
+  const char* name;
   int id;
+
   fork_configuration*   next;
 };
 
