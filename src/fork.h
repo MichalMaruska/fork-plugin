@@ -336,6 +336,8 @@ public:
 
     bool step_fork_automaton_by_time(Time current_time);
 
+    void accept_event(key_event* ev);
+
     void flush_to_next();
 
     // calculated:

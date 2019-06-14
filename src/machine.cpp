@@ -355,6 +355,14 @@ machineRec::try_to_play(Bool force_also)
      *              queue_empty(machine->input_queue)) */
 }
 
+void
+machineRec::accept_event(key_event* ev)
+{
+    mCurrent_time = 0; // time_of(ev->event);
+    input_queue.push(ev);
+    try_to_play(FALSE);
+}
+
 /*
  * Called by mouse button press processing.
  * Make all the forkable (pressed)  forked! (i.e. confirm them all)

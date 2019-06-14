@@ -293,7 +293,6 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
     machine->check_unlocked();
     machine->lock();           // fixme: mouse must not interrupt us.
 
-    machine->current_time = time_of(event);
     key_event* ev = create_handle_for_event(event, owner);
     if (!ev)			// memory problems
         // what to do with `event' !!
@@ -301,8 +300,7 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
 
     machine->log_event(ev, keybd);
 
-    machine->input_queue.push(ev);
-    machine->try_to_play(FALSE);
+    machine->accept_event(ev);
 
     set_wakeup_time(plugin, machine->current_time);
     machine->unlock();
