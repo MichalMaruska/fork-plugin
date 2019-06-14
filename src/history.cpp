@@ -25,10 +25,6 @@ extern "C" {
 
 #include "event_ops.h"
 
-#define TIME_FMT  "lu"
-#define SIZE_FMT  "lu"
-
-
 archived_event*
 make_archived_events (key_event* ev)
 {
