@@ -25,7 +25,7 @@ extern "C" {
 
 #include "event_ops.h"
 
-#define TIME_FMT  "u"
+#define TIME_FMT  "lu"
 #define SIZE_FMT  "lu"
 
 
@@ -143,7 +143,7 @@ dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
             sym = (KeySym*) " ";
         } else {
             static char keysymname[15];
-            sprintf(keysymname, "%c", (*sym));
+            sprintf(keysymname, "%c",(* (char*)sym)); // fixme!
             sname = keysymname;
         };
     };
@@ -202,8 +202,7 @@ dump_last_events(PluginInstance* plugin)
   ErrorF("%s(%s) %" SIZE_FMT "\n", __FUNCTION__, plugin->device->name,
          machine->last_events->size());
 
-  event_dumper function(plugin);
   for_each(machine->last_events->begin(),
            machine->last_events->end(),
-           function);
+           event_dumper(plugin));
 }

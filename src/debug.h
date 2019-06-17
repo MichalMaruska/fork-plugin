@@ -3,6 +3,8 @@
 
 #include "config.h"
 
+// #ifndef NDEBUG
+#define DEBUG 1
 #if DEBUG
 
 #if USE_COLORS
@@ -14,23 +16,44 @@
 #define warning_color "\x1b[38;5;160m"
 #define key_io_color "\x1b[38;5;226m"
 #define color_reset "\x1b[0m"
-#else
+# else // USE_COLORS
 #define info_color ""
 #define key_color  ""
 #define warning_color  ""
 #define color_reset ""
 #define escape_sequence ""
 // ....
-#endif
+#endif // USE_COLORS
 
 #define MDB(x) do {if (machine->config->debug) {ErrorF x;} } while (0)
 #define DB(x)     ErrorF x
 
 
-#else  /* DEBUG */
-#define DB(x) do { ; } while (0)
+# else  /* DEBUG */
+#define DB(x)  do { ; } while (0)
 #define MDB(x) do { ; } while (0)
 #endif /* DEBUG */
 
+
+#if 0
+extern "C" {
+// need:
+    // keysym:
+#include <X11/X.h>
+// #include <X11/keysym.h>
+#include <X11/Xdefs.h>
+
+#include <X11/Xproto.h>
+// _XFUNCPROTOBEGIN:
+#include <xorg/inputstr.h>
+
+/* I use it only to print out the keysym in debugging stuff*/
+// #include <xorg/xkbsrv.h>
+// #include <xorg/xf86Module.h>
+}
+
+const char*
+describe_key(DeviceIntPtr keybd, InternalEvent *event);
+#endif
 
 #endif /* _DEBUG_H_ */

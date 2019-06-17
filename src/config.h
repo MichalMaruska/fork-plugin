@@ -4,10 +4,10 @@
 
 // I want the version string settable from the command line!!
 #ifndef VERSION_STRING
-#define VERSION_STRING "(unknown version)"
+# define VERSION_STRING "(unknown version)"
 #endif
 
-#define PLUGIN_VERSION 34
+#define PLUGIN_VERSION 35
 
 
 // use -DNDEBUG to avoid asserts!
