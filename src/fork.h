@@ -237,7 +237,7 @@ private:
 
     static const int BufferLength = 200;
     const char*
-    describe_machine_state()
+    describe_machine_state() const
     {
         static char buffer[BufferLength];
 
