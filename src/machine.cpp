@@ -766,7 +766,6 @@ machineRec::apply_event_to_verify(key_event *ev)
     };
 }
 
-
 /* Apply event EV to (state, internal-queue, time).
  * This can append to the output-queue
  *      sets: `decision_time'
@@ -783,7 +782,6 @@ machineRec::step_fork_automaton_by_key(key_event *ev)
 {
     assert (ev);
 
-    DeviceIntPtr keybd = mPlugin->device;
     InternalEvent* event = ev->event;
     KeyCode key = detail_of(event);
 
@@ -813,22 +811,7 @@ machineRec::step_fork_automaton_by_key(key_event *ev)
     // assert (release_p(event) || (key < MAX_KEYCODE && forkActive[key] == 0));
 
 #if DEBUG
-    /* describe the (state, key) */
-    if (keybd->key)
-    {
-        XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
-        KeySym *sym = XkbKeySymsPtr(xkbi->desc,key);
-        if ((!sym) || (! isalpha(* (unsigned char*) sym)))
-            sym = (KeySym*) " ";
-
-        mdb("%s%s%s state: %s, queue: %d, event: %d %s%c %s %s\n",
-            info_color,__FUNCTION__,color_reset,
-            describe_machine_state(),
-            internal_queue.length (),
-            key,
-            key_color, (char)*sym, color_reset,
-            event_type_brief(event));
-    }
+    log_state_and_event(ev);
 #endif
 
     switch (state) {

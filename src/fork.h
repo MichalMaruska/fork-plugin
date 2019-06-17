@@ -252,6 +252,7 @@ private:
     fork_configuration** find_configuration_n(int n);
 
     void log_state(const char* message) const;
+    void log_state_and_event(const key_event *ev);
 
     static void reverse_slice(list_with_tail &pre, list_with_tail &post);
 
