@@ -555,7 +555,6 @@ machineRec::apply_event_to_normal(key_event *ev)
 };
 
 
-
 /*  First (press)
  *  Second    <-- we are here.
  */
@@ -703,7 +702,6 @@ machineRec::apply_event_to_verify_state(key_event *ev)
     }
     if (decision_time < decision_time)
         decision_time = decision_time;
-
 
     if (release_p(event) && (key == suspect)){ // fixme: is release_p(event) useless?
         mdb("fork-key released on time: %dms is a tolerated error (< %lu)\n",
