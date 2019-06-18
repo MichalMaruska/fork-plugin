@@ -91,6 +91,49 @@ machineRec::switch_config(int id)
     // ->debug = (stuff->value?True:False); // (Bool)
 }
 
+void
+machineRec::log_state(const char* message) const
+{
+    mdb("%s%s%s state: %s, queue: %d .... %s\n",
+        fork_color, __FUNCTION__, color_reset,
+        describe_machine_state(),
+        internal_queue.length (),
+        message);
+}
+
+void
+machineRec::log_state_and_event(const char* message, const key_event *ev)
+{
+    DeviceIntPtr keybd = mPlugin->device;
+    InternalEvent* event = ev->event;
+    KeyCode key = detail_of(event);
+
+    if (keybd->key)
+    {
+        XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
+        KeySym *sym = XkbKeySymsPtr(xkbi->desc, key);
+        if ((!sym) || (! isalpha(* (unsigned char*) sym)))
+            sym = (KeySym*) " ";
+
+        mdb("%s%s%s state: %s, queue: %d, event: %d %s%c %s %s\n",
+            info_color,message,color_reset,
+            describe_machine_state(),
+            internal_queue.length (),
+            key,
+            key_color, (char)*sym, color_reset,
+            event_type_brief(event));
+    }
+}
+
+void
+machineRec::log_queues(const char* message)
+{
+    mdb("%s: Queues: output: %d\t internal: %d\t input: %d \n", message,
+        output_queue.length (),
+        internal_queue.length (),
+        input_queue.length ());
+}
+
 /* The machine is locked here:
  * Push as many as possible from the OUTPUT queue to the next layer */
 void
