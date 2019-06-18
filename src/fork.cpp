@@ -134,6 +134,7 @@ replay_events(PluginInstance* plugin, Bool force)
     machine->check_locked();
 
     if (!machine->internal_queue.empty()) {
+        // fixme: worth it?
         machineRec::reverse_slice(machine->internal_queue, machine->input_queue);
     }
     machine->state = st_normal;
@@ -518,7 +519,10 @@ make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
 /* fixme!
    This is a wrong API: there is no guarantee we can do this.
    The pipeline can get frozen, and we have to wait on thaw.
-   So, it's better to have a callback. */
+   So, it's better to have a callback.
+
+the plugin should not pass more events.
+   */
 static int
 stop_and_exhaust_machine(PluginInstance* plugin)
 {
