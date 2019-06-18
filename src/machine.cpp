@@ -188,10 +188,10 @@ machineRec::flush_to_next()
         } else if (!input_queue.empty()) {
             now = time_of(input_queue.front()->event);
         } else {
-            // fixme: this is accessed & written to directly by fork.cpp: machine->current_time = now;
-            now = current_time;
+            // fixme: this is accessed & written to directly by fork.cpp: machine->mCurrent_time = now;
+            now = mCurrent_time;
             // in this case we might:
-            current_time = 0;
+            mCurrent_time = 0;
         }
 
         if (now) {
@@ -307,7 +307,7 @@ machineRec::replay_events(Bool force_also)
     // todo: what else?
     // last_released & last_released_time no more available.
     last_released = 0; // bug!
-    decision_time = 0;     // we are not waiting for anything
+    mDecision_time = 0;     // we are not waiting for anything
 
     try_to_play(force_also);
 }
@@ -338,7 +338,7 @@ machineRec::try_to_play(Bool force_also)
             // at the end ... add the final time event:
             if (current_time && (state != st_normal)) {
                 // was final_state_p
-                if (! step_fork_automaton_by_time(current_time))
+                if (! step_fork_automaton_by_time(mCurrent_time))
                     // If this time helped to decide -> machine rewound,
                     // we have to try again.
                     continue;
@@ -379,7 +379,7 @@ machineRec::step_fork_automaton_by_force()
     log_state(__FUNCTION__);
 
     // todo: move it inside?
-    decision_time = 0;
+    mDecision_time = 0;
     activate_fork();
 }
 
@@ -387,7 +387,7 @@ machineRec::step_fork_automaton_by_force()
 void
 machineRec::do_confirm_non_fork_by(key_event *ev)
 {
-    assert(decision_time == 0);
+    assert(mDecision_time == 0);
 
     change_state(st_deactivated);
     internal_queue.push(ev); //  this  will be re-processed!!
@@ -404,12 +404,12 @@ machineRec::do_confirm_non_fork_by(key_event *ev)
 void
 machineRec::do_confirm_fork_by(key_event *ev)
 {
-    decision_time = 0;
-
     /* fixme: ev is the just-read event. But that is surely not the head
        of queue (which is confirmed to fork) */
     mdb("confirm:\n");
     internal_queue.push(ev);
+
+    mDecision_time = 0;
     activate_fork();
 }
 
@@ -417,7 +417,7 @@ machineRec::do_confirm_fork_by(key_event *ev)
   returns:
   state  (in the `machine')
   output_event   possibly, othewise 0
-  machine->decision_time   ... for another timer.
+  machine->mDecision_time   ... for another timer.
 */
 
 #define time_difference_less(start,end,difference)   (end < (start + difference))
@@ -454,7 +454,8 @@ machineRec::key_pressed_in_parallel(Time current_time)
                                                                   verificator_keycode);
     Time decision_time =  verificator_time + overlap_tolerance;
 
-    if (decision_time <= current_time) {
+    if (current_time > decision_time) {
+        // already "parallel"
         return 0;
     } else {
         mdb("time: overlay interval = %dms elapsed so far =%dms\n",
@@ -486,9 +487,11 @@ machineRec::step_fork_automaton_by_time(Time current_time)
      * If that works, -> fork! Otherwise, I try w/ 2-key forking, overlapping.
      */
 
-    if (0 == (decision_time =
+    // notice, how mDecision_time is rewritten here:
+    if (0 == (mDecision_time =
               key_pressed_too_long(current_time))) {
         reason = machineRec::reason_total;
+
         activate_fork();
         return true;
     };
@@ -504,8 +507,8 @@ machineRec::step_fork_automaton_by_time(Time current_time)
             return true;
         }
 
-        if (decision_time < decision_time)
-            decision_time = decision_time;
+        if (decision_time < mDecision_time)
+            mDecision_time = decision_time;
     }
     // so, now we are surely in the replay_mode. All we need is to
     // get an estimate on time still needed:
@@ -513,12 +516,14 @@ machineRec::step_fork_automaton_by_time(Time current_time)
 
     /* So, we were woken too early. */
     mdb("*** %s: returning with some more time-to-wait: %lu"
-         "(prematurely woken)\n", __FUNCTION__,
-         decision_time - current_time);
+        "(prematurely woken)\n", __FUNCTION__,
+        mDecision_time - current_time);
     return false;
 }
 
 /** apply_event_to_{STATE} */
+
+// is mDecision_time always recalculated?
 void
 machineRec::apply_event_to_normal(key_event *ev)
 {
@@ -556,7 +561,7 @@ machineRec::apply_event_to_normal(key_event *ev)
             change_state(st_suspect);
             suspect = key;
             suspect_time = time_of(event);
-            decision_time = suspect_time +
+            mDecision_time = suspect_time +
                 config->verification_interval_of(key, 0);
             internal_queue.push(ev);
             return;
@@ -622,8 +627,8 @@ machineRec::apply_event_to_suspect(key_event *ev)
     assert(!queue.empty() && state == st_suspect);
 
     // todo: check the ranges (long vs. int)
-    if ((decision_time =
-         key_pressed_too_long(simulated_time)) == 0) {
+    if (0 == (mDecision_time =
+              key_pressed_too_long(simulated_time))) {
         do_confirm_fork_by(ev);
         return;
     };
@@ -634,7 +639,7 @@ machineRec::apply_event_to_suspect(key_event *ev)
         mdb("suspect/release: suspected = %d, time diff: %d\n",
              suspect, (int)(simulated_time - suspect_time));
         if (key == suspect) {
-            decision_time = 0; // might be useless!
+            mDecision_time = 0; // might be useless!
             do_confirm_non_fork_by(ev);
             return;
             /* fixme:  here we confirm, that it was not a user error.....
@@ -658,13 +663,13 @@ machineRec::apply_event_to_suspect(key_event *ev)
             if (config->fork_repeatable[key]) {
                 mdb("The suspected key is configured to repeat, so ...\n");
                 forkActive[suspect] = suspect;
-                decision_time = 0;
+                mDecision_time = 0;
                 do_confirm_non_fork_by(ev);
                 return;
             } else {
                 // fixme: this keycode is repeating, but we still don't know what to do.
                 // ..... `discard' the event???
-                // fixme: but we should recalc the decision_time !!
+                // fixme: but we should recalc the mDecision_time !!
                 return;
             }
         } else {
@@ -680,8 +685,8 @@ machineRec::apply_event_to_suspect(key_event *ev)
             if (decision_time == 0) {
                 mdb("absurd\n"); // this means that verificator key verifies immediately!
             }
-            if (decision_time < decision_time)
-                decision_time = decision_time;
+            if (decision_time < mDecision_time)
+                mDecision_time = decision_time;
 
             internal_queue.push(ev);
             return;
@@ -731,7 +736,7 @@ machineRec::apply_event_to_verify_state(key_event *ev)
        are slow to release, when we press a specific one afterwards. So in this case fork slower!
     */
 
-    if (0 == (decision_time = key_pressed_too_long(simulated_time)))
+    if (0 == (mDecision_time = key_pressed_too_long(simulated_time)))
     {
         do_confirm_fork_by(ev);
         return;
@@ -746,15 +751,15 @@ machineRec::apply_event_to_verify_state(key_event *ev)
         do_confirm_fork_by(ev);
         return;
     }
-    if (decision_time < decision_time)
-        decision_time = decision_time;
+    if (decision_time < mDecision_time)
+        mDecision_time = decision_time;
 
     if (release_p(event) && (key == suspect)){ // fixme: is release_p(event) useless?
         mdb("fork-key released on time: %dms is a tolerated error (< %lu)\n",
              (int)(simulated_time -  suspect_time),
              config->verification_interval_of(suspect,
                                       verificator_keycode));
-        decision_time = 0; // useless fixme!
+        mDecision_time = 0; // useless fixme!
         do_confirm_non_fork_by(ev);
 
     } else if (release_p(event) && (verificator_keycode == key)){
@@ -772,7 +777,7 @@ machineRec::apply_event_to_verify_state(key_event *ev)
 
 /* Apply event EV to (state, internal-queue, time).
  * This can append to the output-queue
- *      sets: `decision_time'
+ *      sets: `mDecision_time'
  *
  * input:
  *   internal-queue  <+      input-queue
@@ -792,7 +797,7 @@ machineRec::step_fork_automaton_by_key(key_event *ev)
     /* Please, first change the state, then enqueue, and then EMIT_EVENT.
      * fixme: should be a function then  !!!*/
 
-    // decision_time = 0;
+    // mDecision_time = 0;
 
 #if DDX_REPEATS_KEYS || 1
     /* `quick_ignore': I want to ignore _quickly_ the hw-repeated unfiltered (forked) modifiers.

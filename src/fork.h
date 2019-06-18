@@ -174,12 +174,7 @@ private:
 
     // calculated:
     Time mDecision_time;         /* Time to wait... so that the HEAD event in queue could decide more*/
-public:
-    // calculated:
-    Time next_decision_time()
-        {
-            return mDecision_time;
-        }
+    Time mCurrent_time;          // the last time we received from previous plugin/device
 
 
     /* we cannot hold only a Bool, since when we have to reconfigure, we need the original
@@ -321,8 +316,8 @@ public:
           output_queue("output_queue"),
           mPlugin(plugin),
           last_released(0),
-          decision_time(0),
-          current_time(0),
+          mDecision_time(0),
+          mCurrent_time(0),
           state(st_normal)
         {
             last_events = new last_events_type(max_last);
@@ -343,7 +338,7 @@ public:
 
     void flush_to_next();
 
-        // calculated:
+    // calculated:
     Time next_decision_time()
     {
         return mDecision_time;
