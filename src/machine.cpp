@@ -124,12 +124,11 @@ machineRec::reverse_slice(list_with_tail &pre, list_with_tail &post)
     pre.swap(post);
 }
 
-#define final_state_p(state)  ((state == st_deactivated) || (state == st_activated))
-
+/* investigation finished, now reset for the next key */
 void
 machineRec::rewind_machine()
 {
-    assert (final_state_p(state));
+    assert ((state == st_deactivated) || (state == st_activated));
 
     /* reset the machine */
     mdb("== Resetting the fork machine (internal %d, input %d)\n",
