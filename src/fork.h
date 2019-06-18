@@ -190,6 +190,7 @@ private:
                                   * events to resume processing (Grab is active-frozen) */
     list_with_tail output_queue; /* We have decided, but externals don't accept, so we keep them. */
 
+public:
     last_events_type *last_events; // history
     int max_last = 100; // can be updated!
 
