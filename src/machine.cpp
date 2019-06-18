@@ -111,12 +111,16 @@ machineRec::flush_to_next()
         InternalEvent* event = ev->event;
         mxfree(ev, sizeof(key_event));
 
-        unlock();
-        hand_over_event_to_next_plugin(event, mPlugin);
-        lock();
-    };
+        // this block (hand_over_event_to_next_plugin) can re-enter into this
+        // machine. fixme: it's not true -- it cannot!
+        // so ... this is front_lock?
+        {
+            log_event(ev, mPlugin->device);
+            hand_over_event_to_next_plugin(event, nextPlugin);
+        };
+    }
 
-    // interesting: after handing over, the NEXT might need to be refreshed.
+    // interesting: after handing over, the nextPlugin might need to be refreshed.
     // if that plugin is gone. todo!
 
     if (!plugin_frozen(nextPlugin)) {
@@ -137,9 +141,7 @@ machineRec::flush_to_next()
 
         if (now) {
             // this can thaw, freeze,?
-            unlock();
             PluginClass(nextPlugin)->ProcessTime(nextPlugin, now);
-            lock();
         }
 
     }
