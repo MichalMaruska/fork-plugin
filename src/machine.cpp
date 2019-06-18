@@ -149,37 +149,30 @@ machineRec::rewind_machine()
 };
 
 
-/* Fork the 1st element on the internal_queue. Remove it from the queue
- * and push to the output_queue.
- *
- * todo: Should I have a link back from machine to the plugin? Here useful!
- * todo:  do away with the `forked_key' argument --- it's useless!
+/* we concluded the key is forked. "output" it and prepare for the next one.
+ * fixme: locking?
  */
 void
 machineRec::activate_fork(PluginInstance* plugin)
 {
-    list_with_tail &queue = internal_queue;
-    assert(!queue.empty());
+    assert(!internal_queue.empty());
 
-    key_event* ev = queue.pop();
-
+    key_event* ev = internal_queue.pop();
     KeyCode forked_key = detail_of(ev->event);
-    // assert (forked_key == machine->suspect)
+    // assert(forked_key == suspect);
 
-    /* change the keycode, but remember the original: */
-    ev->forked =  forked_key;
+    ev->forked = forked_key;
+    /* Change the keycode, but remember the original: */
     forkActive[forked_key] =
         ev->event->device_event.detail.key = config->fork_keycode[forked_key];
 
     change_state(st_activated);
-    mdb("%s suspected: %d-> forked to: %d,  internal queue is long: %d, %s\n", __FUNCTION__,
-         forked_key,
-         config->fork_keycode[forked_key],
-         internal_queue.length (),
-         describe_machine_state()
-         );
-    rewind_machine();
+    mdb("%s the key %d-> forked to: %d. Internal queue has %d events. %s\n", __FUNCTION__,
+        forked_key, forkActive[forked_key],
+        internal_queue.length (),
+        describe_machine_state());
 
+    rewind_machine();
     output_event(ev,plugin);
 }
 
