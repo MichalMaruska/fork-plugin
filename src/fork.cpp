@@ -120,50 +120,6 @@ hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* plugin)
     PluginClass(next)->ProcessEvent(next, event, TRUE); // we always own the event (up to now)
 }
 
-/*
- * Take from input_queue, + the current_time + force   -> run the machine.
- * After that you have to:   cancel the timer!!!
- */
-static void
-try_to_play(PluginInstance* plugin, Bool force)
-{
-    PluginInstance* const next = plugin->next;
-    machineRec *machine = plugin_machine(plugin);
-
-    machineRec::list_with_tail &input_queue = machine->input_queue;
-
-    MDB(("%s: next %s: internal %d, input: %d\n", __FUNCTION__,
-         (plugin_frozen(next)?"frozen":"NOT frozen"),
-         machine->internal_queue.length (),
-         input_queue.length ()));
-
-
-    while (!plugin_frozen(next)) {
-
-        if (! input_queue.empty()) {
-            key_event *ev = input_queue.pop();
-            // if time is enough...
-            machine->step_fork_automaton_by_key(ev);
-        } else {
-            // at the end ... add the final time event:
-            if (machine->current_time && (machine->state != st_normal)) {
-                // was final_state_p
-                if (!machine->step_fork_automaton_by_time(machine->current_time))
-                    // If this time helped to decide -> machine rewound,
-                    // we have to try again.
-                    // Otherwise, this is the end for now:
-                    return;
-            } else if (force && (machine->state != st_normal)) {
-                machine->step_fork_automaton_by_force();
-            } else
-                return;
-        }
-    }
-    /* assert(!plugin_frozen(plugin->next)   --->
-     *              queue_empty(machine->input_queue)) */
-}
-
-
 /* note: used only in configure.c!
  * Resets the machine, so as to reconsider the events on the
  * `internal' queue.
@@ -390,7 +346,7 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
 #endif
 
     machine->input_queue.push(ev);
-    try_to_play(plugin, FALSE);
+    machine->try_to_play(FALSE);
 
     set_wakeup_time(plugin, machine->current_time);
     machine->unlock();
@@ -410,7 +366,7 @@ step_in_time_locked(PluginInstance* plugin)
     machine->try_to_output();
 
     /* push the time ! */
-    try_to_play(plugin, FALSE);
+    machine->try_to_play(FALSE);
 
     /* i should take the minimum of time and the time of the 1st event in the
        (output) internal queue */
@@ -450,7 +406,7 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
     machine->try_to_output();
     // is this correct?
 
-    try_to_play(plugin, FALSE);
+    machine->try_to_play(FALSE);
 
     if (!plugin_frozen(plugin->next) && PluginClass(plugin->prev)->NotifyThaw)
     {

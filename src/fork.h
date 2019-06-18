@@ -247,6 +247,8 @@ public:
             };
         };
 
+    void try_to_play(Bool force);
+
     void step_fork_automaton_by_force();
 
     void step_fork_automaton_by_key(key_event *ev);

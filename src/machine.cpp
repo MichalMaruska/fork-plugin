@@ -171,6 +171,46 @@ machineRec::activate_fork()
     output_event(ev);
 }
 
+/*
+ * Take from input_queue, + the current_time + force   -> run the machine.
+ * After that you have to:   cancel the timer!!!
+ */
+void
+machineRec::try_to_play(Bool force_also)
+{
+    // fixme: maybe All I need is the nextPlugin?
+    PluginInstance* const nextPlugin = mPlugin->next;
+
+    mdb("%s: next %s: internal %d, input: %d\n", __FUNCTION__,
+         (plugin_frozen(nextPlugin)?"frozen":"NOT frozen"),
+         internal_queue.length (),
+         input_queue.length ());
+
+
+    while (!plugin_frozen(nextPlugin)) {
+
+        if (! input_queue.empty()) {
+            key_event *ev = input_queue.pop();
+            // if time is enough...
+            step_fork_automaton_by_key(ev);
+        } else {
+            // at the end ... add the final time event:
+            if (current_time && (state != st_normal)) {
+                // was final_state_p
+                if (! step_fork_automaton_by_time(current_time))
+                    // If this time helped to decide -> machine rewound,
+                    // we have to try again.
+                    // Otherwise, this is the end for now:
+                    return;
+            } else if (force_also && (state != st_normal)) {
+                step_fork_automaton_by_force();
+            } else
+                return;
+        }
+    }
+    /* assert(!plugin_frozen(plugin->next)   --->
+     *              queue_empty(machine->input_queue)) */
+}
 
 /*
  * Called by mouse button press processing.
