@@ -152,8 +152,17 @@ public:
 #endif
 
 
+private:
     // fork_state_t
     unsigned char state;
+    // only for certain states we keep (updated):
+
+    KeyCode suspect;
+    KeyCode verificator_keycode;
+
+    // these are "registers"
+    Time suspect_time;           /* time of the 1st event in the queue. */
+    Time verificator_time = 0;       /* press of the `verificator' */
 
     /* To allow AR for forkable keys:
      * When we press a key the second time in a row, we might avoid forking:
@@ -161,15 +170,7 @@ public:
      *
      * This means I cannot do this trick w/ 2 keys, only 1 is the last/considered! */
     KeyCode last_released; // .- trick
-private:
     int last_released_time;
-    KeyCode suspect;
-    KeyCode verificator_keycode;
-
-    // these are "registers"
-    Time suspect_time;           /* time of the 1st event in the queue. */
-
-    Time verificator_time = 0;       /* press of the `verificator' */
 
     // calculated:
     Time mDecision_time;         /* Time to wait... so that the HEAD event in queue could decide more*/
