@@ -1,6 +1,7 @@
 #define USE_LOCKING 1
 
 #include "fork.h"
+#include "memory.h"
 // uses:
 // void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* nextPlugin);
 #include "debug.h"
