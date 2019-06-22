@@ -176,7 +176,6 @@ private:
     Time mDecision_time;         /* Time to wait... so that the HEAD event in queue could decide more*/
     Time mCurrent_time;          // the last time we received from previous plugin/device
 
-
     /* we cannot hold only a Bool, since when we have to reconfigure, we need the original
        forked keycode for the release event. */
     KeyCode          forkActive[MAX_KEYCODE];
@@ -341,7 +340,11 @@ public:
     // calculated:
     Time next_decision_time()
     {
-        return mDecision_time;
+        if ((state == st_verify)
+            || (state == st_suspect))
+        // we are indeed waiting:
+            return mDecision_time;
+        else return 0;
     }
 
 };
