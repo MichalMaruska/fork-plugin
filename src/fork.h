@@ -185,9 +185,9 @@ public:
     /* we cannot hold only a Bool, since when we have to reconfigure, we need the original
        forked keycode for the release event. */
     KeyCode          forkActive[MAX_KEYCODE];
+private:
 
     Time mCurrent_time;          // the last time we received from previous plugin/device
-private:
     list_with_tail internal_queue;
     /* Still undecided events: these events alone don't decide what event is the 1st on the
        queue.*/
