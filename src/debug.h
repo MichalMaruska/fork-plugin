@@ -33,10 +33,11 @@
 #endif /* DEBUG */
 
 
-#if 0
 extern "C" {
 // need:
+#include <xorg-server.h>
     // keysym:
+
 #include <X11/X.h>
 // #include <X11/keysym.h>
 #include <X11/Xdefs.h>
@@ -52,6 +53,5 @@ extern "C" {
 
 const char*
 describe_key(DeviceIntPtr keybd, InternalEvent *event);
-#endif
 
 #endif /* _DEBUG_H_ */

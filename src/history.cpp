@@ -26,7 +26,7 @@ extern "C" {
 #include "event_ops.h"
 
 archived_event*
-make_archived_events (key_event* ev)
+make_archived_event(const key_event* const ev)
 {
   archived_event* event = MALLOC(archived_event);
 
@@ -37,25 +37,6 @@ make_archived_events (key_event* ev)
 
   return event;
 }
-
-int
-machine_set_last_events_count(machineRec* machine, int new_max) // fixme:  lock ??
-{
-  DB(("%s: allocating %d events\n",__FUNCTION__, new_max));
-
-  if (machine->max_last > new_max)
-    {
-      // shrink. to be done in the circular.h!
-    }
-  else
-    {
-      machine->last_events->reserve(new_max);
-    }
-
-  machine->max_last = new_max;
-  return 0;
-}
-
 
 /* ---------------------
  * Return the message to send as Xreply, len is filled with the length.

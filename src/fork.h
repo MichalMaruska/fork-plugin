@@ -44,6 +44,7 @@ typedef int keycode_parameter_matrix[MAX_KEYCODE][MAX_KEYCODE];
 /* We can switch between configs. */
 typedef struct _fork_configuration fork_configuration;
 
+// todo: use a C++ <list> ?
 struct _fork_configuration
 {
     /* static data of the machine: i.e.  `configuration' */
@@ -82,8 +83,11 @@ public:
      fixme: we need better. a ration between `before'/`overlap'/`after' */
   keycode_parameter_matrix overlap_tolerance;
 
-  /* after how many m-secs, we decide for the modifier.
-     Should be around the key-repeatition rate (1st pause) */
+  /* After how many m-secs, we decide for the modifier.
+     (x,0) just by pressing the X key
+     (x,y) pressing x while y also pressed.
+
+     hint: should be around the key-repetition rate (1st pause) */
   keycode_parameter_matrix verification_interval;
 
   int clear_interval;
@@ -108,8 +112,6 @@ typedef enum {
   st_activated
 } fork_state_t;
 
-extern char const *state_description[];
-
 /* `machine': the dynamic `state' */
 
 // typedef
@@ -124,13 +126,52 @@ struct machineRec
         reason_force                // mouse-button was pressed & triggered fork.
     };
 
+private:
     /* used only for debugging */
-    static char const *state_description[];
+    char const * const state_description[5] = {
+        "normal",
+        "suspect",
+        "verify",
+        "deactivated",
+        "activated"
+    };
 
-    volatile int lock;           /* the mouse interrupt handler should ..... err!  `volatile'
+    volatile int mLock;           /* the mouse interrupt handler should ..... err!  `volatile'
+                                  *
                                   * useless mmc!  But i want to avoid any caching it.... SMP ??*/
+public:
+#if USE_LOCKING
+    void check_locked()
+    {
+        assert(mLock);
+    }
+    void check_unlocked()
+    {
+        assert(mLock == 0);
+    }
+
+    void lock()
+    {
+        mLock=1;
+    }
+    void unlock()
+    {
+        mLock=0;
+    }
+#endif
+
+
+private:
     // fork_state_t
     unsigned char state;
+    // only for certain states we keep (updated):
+
+    KeyCode suspect;
+    KeyCode verificator_keycode;
+
+    // these are "registers"
+    Time suspect_time;           /* time of the 1st event in the queue. */
+    Time verificator_time = 0;       /* press of the `verificator' */
 
     /* To allow AR for forkable keys:
      * When we press a key the second time in a row, we might avoid forking:
@@ -140,20 +181,16 @@ struct machineRec
     KeyCode last_released; // .- trick
     int last_released_time;
 
-    KeyCode suspect;
-    KeyCode verificator;
-
-    // these are "registers"
-    Time suspect_time;           /* time of the 1st event in the queue. */
-    Time verificator_time;       /* press of the `verificator' */
     // calculated:
-    Time decision_time;         /* Time to wait... so that the current event queue could decide more*/
-    Time current_time;
+    Time mDecision_time;         /* Time to wait... so that the HEAD event in queue could decide more*/
+    Time mCurrent_time;          // the last time we received from previous plugin/device
 
     /* we cannot hold only a Bool, since when we have to reconfigure, we need the original
        forked keycode for the release event. */
     KeyCode          forkActive[MAX_KEYCODE];
+private:
 
+    Time mCurrent_time;          // the last time we received from previous plugin/device
     list_with_tail internal_queue;
     /* Still undecided events: these events alone don't decide what event is the 1st on the
        queue.*/
@@ -161,15 +198,52 @@ struct machineRec
                                   * events to resume processing (Grab is active-frozen) */
     list_with_tail output_queue; /* We have decided, but externals don't accept, so we keep them. */
 
+public:
     last_events_type *last_events; // history
-    int max_last;
+    int max_last = 100; // can be updated!
 
     fork_configuration  *config; // list<fork_configuration>
+
+/* The Static state = configuration.
+ * This is the matrix with some Time values:
+ * using the fact, that valid KeyCodes are non zero, we use
+ * the 0 column for `code's global values
+
+ * Global      xxxxxxxx unused xxxxxx
+ * key-wise   per-pair per-pair ....
+ * key-wise   per-pair per-pair ....
+ * ....
+ */
+
+    int set_last_events_count(int new_max) // fixme:  lock ??
+    {
+        mdb("%s: allocating %d events\n", __FUNCTION__, new_max);
+
+        if (max_last > new_max)
+        {
+            // shrink. todo! in the circular.h!
+        }
+        else
+        {
+            last_events->reserve(new_max);
+        }
+
+        max_last = new_max;
+        return 0;
+    }
+
+    void log_event(const key_event *event, const DeviceIntPtr keybd);
+private:
+    static Bool
+    forkable_p(fork_configuration* config, KeyCode code)
+    {
+        return (config->fork_keycode[code]);
+    }
 
 
     static const int BufferLength = 200;
     const char*
-    describe_machine_state()
+    describe_machine_state() const
     {
         static char buffer[BufferLength];
 
@@ -179,38 +253,122 @@ struct machineRec
         return buffer;
     }
 
-    machineRec()
-        : internal_queue("internal"),
-          input_queue("input_queue"),
-          output_queue("output_queue")
-        {};
+    PluginInstance* mPlugin;
 
-    void rewind_machine();
+    fork_configuration** find_configuration_n(int n);
 
-    void activate_fork(PluginInstance* plugin);
-    void step_fork_automaton_by_force(PluginInstance* plugin);
-    void apply_event_to_suspect(key_event *ev, PluginInstance* plugin);
-    void step_fork_automaton_by_key(key_event *ev, PluginInstance* plugin);
-
-    void mdb(const char* format...)
-    {
-        va_list argptr;
-        // if (config->debug) {ErrorF(x, ...);}
-        va_start(argptr, format);
-        VErrorF(format, argptr);
-        va_end(argptr);
-    };
+    void log_state(const char* message) const;
+    void log_state_and_event(const char* message, const key_event *ev);
+    void log_queues(const char* message);
 
     static void reverse_slice(list_with_tail &pre, list_with_tail &post);
+
+    void try_to_play(Bool force);
+
+    void replay_events(Bool force_also);
+
+    void apply_event_to_suspect(key_event *ev);
+
+    void rewind_machine();
+    void activate_fork();
+
+    void
+    change_state(fork_state_t new_state)
+    {
+        this->state = new_state;
+        mdb(" --->%s[%dm%s%s\n", escape_sequence, 32 + new_state,
+            state_description[new_state], color_reset);
+    }
+
+    void do_confirm_fork_by(key_event *ev);
+    void apply_event_to_verify_state(key_event *ev);
+
+
+    Time key_pressed_too_long(Time current_time);
+    Time key_pressed_in_parallel(Time current_time);
+
+    /* Return the keycode into which CODE has forked _last_ time.
+   Returns code itself, if not forked. */
+    Bool
+    key_forked(KeyCode code)
+    {
+        return (forkActive[code]);
+    }
+
+    void do_confirm_non_fork_by(key_event *ev);
+    void apply_event_to_normal(key_event *ev);
+
+
+    void output_event(key_event* ev);
+
+public:
+    // static
+    void mdb(const char* format...) const
+    {
+        if (config->debug) {
+            va_list argptr;
+            va_start(argptr, format);
+            VErrorF(format, argptr);
+            va_end(argptr);
+        }
+    };
+
+
+    ~machineRec()
+        {
+            delete last_events;
+        };
+
+    machineRec(PluginInstance* plugin)
+        : internal_queue("internal"),
+          input_queue("input_queue"),
+          output_queue("output_queue"),
+          mPlugin(plugin),
+          last_released(0),
+          mDecision_time(0),
+          mCurrent_time(0),
+          state(st_normal)
+        {
+            last_events = new last_events_type(max_last);
+
+            for (int i=0;i<256;i++){                   // keycode 0 is unused!
+                forkActive[i] = 0; /* 0 = not active */
+            };
+        };
+
+    void switch_config(int id);
+
+    void step_in_time_locked(Time now);
+
+    void step_fork_automaton_by_force();
+
+    void step_fork_automaton_by_key(key_event *ev);
+
+    bool step_fork_automaton_by_time(Time current_time);
+
+    void accept_event(key_event* ev);
+
+    void flush_to_next();
+
+    // calculated:
+    Time next_decision_time()
+    {
+        if ((state == st_verify)
+            || (state == st_suspect))
+        // we are indeed waiting:
+            return mDecision_time;
+        else return 0;
+    }
+
 };
 
+// configure.cpp
 extern fork_configuration* machine_new_config(void);
-extern void machine_switch_config(PluginInstance* plugin, machineRec* machine,int id);
-extern int machine_set_last_events_count(machineRec* machine, int new_max);
-extern void replay_events(PluginInstance* plugin, Bool force);
 
 extern int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n);
 
+// fork.cpp
+void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* plugin);
 
 enum {
   PAUSE_KEYCODE = 127
