@@ -93,6 +93,17 @@ machineRec::switch_config(int id)
     // ->debug = (stuff->value?True:False); // (Bool)
 }
 
+void machineRec::log_event(const key_event *event, DeviceIntPtr keybd)
+{
+#if 0 // fixme: DEBUG
+            if (config->debug) {
+                DB("%s<<<", keysym_color);
+                DB("%s", describe_key(keybd, event->ev));
+                DB("%s\n", color_reset);
+            }
+#endif
+}
+
 void
 machineRec::log_state(const char* message) const
 {

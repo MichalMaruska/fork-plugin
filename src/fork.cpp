@@ -304,13 +304,7 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
         // what to do with `event' !!
         return;
 
-#if DEBUG
-    if (machine->config->debug) {
-        DB(("%s>>> ", key_io_color));
-        DB(("%s", describe_key(keybd, ev->event)));
-        DB(("%s\n", color_reset));
-    }
-#endif
+    machine->log_event(ev, keybd);
 
     machine->input_queue.push(ev);
     machine->try_to_play(FALSE);
