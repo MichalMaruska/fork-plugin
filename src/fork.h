@@ -185,12 +185,6 @@ private:
     Time mDecision_time;         /* Time to wait... so that the HEAD event in queue could decide more*/
     Time mCurrent_time;          // the last time we received from previous plugin/device
 
-    /* we cannot hold only a Bool, since when we have to reconfigure, we need the original
-       forked keycode for the release event. */
-    KeyCode          forkActive[MAX_KEYCODE];
-private:
-
-    Time mCurrent_time;          // the last time we received from previous plugin/device
     list_with_tail internal_queue;
     /* Still undecided events: these events alone don't decide what event is the 1st on the
        queue.*/
@@ -199,6 +193,11 @@ private:
     list_with_tail output_queue; /* We have decided, but externals don't accept, so we keep them. */
 
 public:
+    /* we cannot hold only a Bool, since when we have to reconfigure, we need the original
+       forked keycode for the release event. */
+    KeyCode          forkActive[MAX_KEYCODE];
+
+
     last_events_type *last_events; // history
     int max_last = 100; // can be updated!
 
