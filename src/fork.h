@@ -156,10 +156,12 @@ public:
     void lock()
     {
         mLock=1;
+        mdb("/--\n");
     }
     void unlock()
     {
         mLock=0;
+        mdb("\\__\n");
     }
 #endif
 
@@ -307,10 +309,14 @@ public:
     // static
     void mdb(const char* format...) const
     {
+        char* new_format = (char*) alloca(strlen(format) + 1);
+        new_format[0] = ' ';
+        strcpy(new_format + 1, format);
+
         if (config->debug) {
             va_list argptr;
             va_start(argptr, format);
-            VErrorF(format, argptr);
+            VErrorF(new_format, argptr);
             va_end(argptr);
         }
     };
