@@ -324,7 +324,7 @@ machineRec::try_to_play(Bool force_also)
             step_fork_automaton_by_key(ev);
         } else {
             if (mCurrent_time && (state != st_normal)) {
-                if (! step_fork_automaton_by_time(mCurrent_time))
+                if (step_fork_automaton_by_time(mCurrent_time))
                     // If this time helped to decide -> machine rewound,
                     // we have to try again.
                     continue;
