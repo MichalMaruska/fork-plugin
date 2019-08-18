@@ -24,8 +24,12 @@ set(sources
   )
 
 add_library(fork MODULE ${sources})
+
 target_compile_definitions(fork PRIVATE VERSION_STRING="git-local-2")
+target_compile_options(fork PRIVATE "-g")
 set_property(TARGET fork PROPERTY NO_SONAME)
+# set_property(TARGET fork PROPERTY OUTPUT_NAME fork.so)
+set_target_properties(fork PROPERTIES PREFIX "")
 # SHARED
 
 pkg_search_module(xorg-server REQUIRED xorg-server
