@@ -54,7 +54,7 @@ install(FILES ../include/fork_requests.h
   DESTINATION ${includedir}
   )
 
-install(EXPORT_module fork DESTINATION ${moduledir}/)
+install(EXPORT EXPORT_module DESTINATION ${moduledir}/)
 
 install(TARGETS fork
   EXPORT EXPORT_module
