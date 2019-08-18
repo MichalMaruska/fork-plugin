@@ -8,4 +8,4 @@ set(CMAKE_DEBUG_TARGET_PROPERTIES
 add_compile_options (-fdiagnostics-color=always)
 add_subdirectory(src)
 
-export(EXPORT fork FILE dump.cmake)
+export(EXPORT EXPORT_module FILE dump.cmake)

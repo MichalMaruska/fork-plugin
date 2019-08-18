@@ -54,8 +54,13 @@ install(FILES ../include/fork_requests.h
   DESTINATION ${includedir}
   )
 
+install(EXPORT_module fork DESTINATION ${moduledir}/)
+
 install(TARGETS fork
-  EXPORT fork
-  LIBRARY    DESTINATION ${moduledir}
+  EXPORT EXPORT_module
+  # LIBRARY
+  OBJECTS
+  DESTINATION ${moduledir}/
+  RENAME fork.so
   # CMAKE_INSTALL_PREFIX CMAKE_INSTALL_LIBDIR
   )
