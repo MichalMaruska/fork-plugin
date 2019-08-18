@@ -58,8 +58,8 @@ install(EXPORT EXPORT_module DESTINATION ${moduledir}/)
 
 install(TARGETS fork
   EXPORT EXPORT_module
-  # LIBRARY
-  OBJECTS
+  LIBRARY
+  # OBJECTS
   DESTINATION ${moduledir}/
   RENAME fork.so
   # CMAKE_INSTALL_PREFIX CMAKE_INSTALL_LIBDIR
