@@ -435,10 +435,11 @@ make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
     // set_wakeup_time(plugin, 0);
     plugin->wakeup_time = 0;
 
-    forking_machine->unlock();
-
+    // fixme: dangerous: this should be part of the ctor!
     config->debug = 1;
     forking_machine->config = config;
+
+    forking_machine->unlock();
 
     plugin->data = (void*) forking_machine;
     ErrorF("%s:@%s returning %d\n", __FUNCTION__, keybd->name, Success);
