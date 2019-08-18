@@ -20,7 +20,7 @@
 #define STATIC_LAST 1
 
 // inside the X server: #define TIME_FORMAT PRIu32
-#define TIME_FMT  "lu"
+#define TIME_FMT  "u"
 #define SIZE_FMT  "lu"
 
 #endif
