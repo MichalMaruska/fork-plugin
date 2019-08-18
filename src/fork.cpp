@@ -394,8 +394,8 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
 PluginInstance*
 make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
 {
-    DB("%s @%lu\n", __FUNCTION__, keybd);
-    DB("%s @%lu\n", __FUNCTION__, keybd->name);
+    DB("%s @%p\n", __FUNCTION__, keybd);
+    DB("%s @%p\n", __FUNCTION__, (void*) keybd->name);
 
     assert (strcmp(plugin_class->name, FORK_PLUGIN_NAME) == 0);
 
