@@ -156,12 +156,12 @@ public:
     void lock()
     {
         mLock=1;
-        mdb("/--\n");
+        mdb_raw("/--\n");
     }
     void unlock()
     {
         mLock=0;
-        mdb("\\__\n");
+        mdb_raw("\\__\n");
     }
 #endif
 
@@ -306,17 +306,32 @@ private:
     void output_event(key_event* ev);
 
 public:
-    // static
+    // prefix with a space.
     void mdb(const char* format...) const
     {
-        char* new_format = (char*) alloca(strlen(format) + 1);
-        new_format[0] = ' ';
-        strcpy(new_format + 1, format);
-
         if (config->debug) {
+
+            // alloca()
+            char* new_format = (char*) malloc(strlen(format) + 2);
+            new_format[0] = ' ';
+            strcpy(new_format + 1, format);
+
             va_list argptr;
             va_start(argptr, format);
             VErrorF(new_format, argptr);
+            va_end(argptr);
+
+            free(new_format);
+        }
+    };
+
+    // without the leading space
+    void mdb_raw(const char* format...) const
+    {
+        if (config->debug) {
+            va_list argptr;
+            va_start(argptr, format);
+            VErrorF(format, argptr);
             va_end(argptr);
         }
     };
