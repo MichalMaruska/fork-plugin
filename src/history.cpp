@@ -20,7 +20,8 @@ extern "C" {
 #include <X11/keysym.h>
 
 /* `probably' I use it only to print out the keysym in debugging stuff*/
-#include <xorg/eventstr.h>
+  // xorg:
+#include <eventstr.h>
 }
 
 #include "event_ops.h"

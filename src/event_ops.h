@@ -5,7 +5,7 @@ extern "C"
 
     // this must precede!
 #include <xorg-server.h>
-#include <xorg/eventstr.h>
+#include <eventstr.h>
 
 Bool release_p(const InternalEvent* event);
 Bool press_p(const InternalEvent* event);
