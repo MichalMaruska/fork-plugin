@@ -140,7 +140,7 @@ machineRec::log_queues(const char* message)
 /* The machine is locked here:
  * Push as many as possible from the OUTPUT queue to the next layer */
 void
-machineRec::flush_to_next()
+machineRec::flush_to_next()  // unlocks!
 {
     // todo: lock in this scope only?
     check_locked();
@@ -157,10 +157,13 @@ machineRec::flush_to_next()
 
         // this block (hand_over_event_to_next_plugin) can re-enter into this
         // machine. fixme: it's not true -- it cannot!
+        // 2020: it can!
         // so ... this is front_lock?
         {
             log_event(ev, mPlugin->device);
+            unlock();
             hand_over_event_to_next_plugin(event, nextPlugin);
+            lock();
         };
     }
 
