@@ -255,7 +255,7 @@ machineRec::rewind_machine()
  * fixme: locking?
  */
 void
-machineRec::activate_fork()
+machineRec::activate_fork() // possibly unlocks
 {
     assert(!internal_queue.empty());
 
@@ -382,7 +382,7 @@ machineRec::step_fork_automaton_by_force()
 
 // So the event proves, that the current event is not forked.
 void
-machineRec::do_confirm_non_fork_by(key_event *ev)
+machineRec::do_confirm_non_fork_by(key_event *ev) // possibly unlocks
 {
     assert(state == st_suspect || state == st_verify);
 
@@ -564,7 +564,7 @@ machineRec::step_in_time_locked(Time now) // unlocks possibly!
 
 // is mDecision_time always recalculated?
 void
-machineRec::apply_event_to_normal(key_event *ev)
+machineRec::apply_event_to_normal(key_event *ev) // possibly unlocks
 {
     DeviceIntPtr keybd = mPlugin->device;
 
