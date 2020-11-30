@@ -338,6 +338,7 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
 {
     machineRec* machine = plugin_machine(plugin);
     machine->mdb("%s @ time %u\n", __FUNCTION__, (int)now);
+    machine->check_unlocked();
 
     machine->lock();
     machine->step_in_time_locked(now);
