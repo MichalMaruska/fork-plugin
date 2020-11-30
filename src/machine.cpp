@@ -202,7 +202,7 @@ machineRec::flush_to_next()  // unlocks!
 
 /* note, that after this EV could point to a deallocated memory! */
 void
-machineRec::output_event(key_event* ev)
+machineRec::output_event(key_event* ev) // unlocks possibly!
 {
     assert(ev->event);
 
@@ -525,7 +525,7 @@ machineRec::step_fork_automaton_by_time(Time current_time)
 
 // This is a public api!
 void
-machineRec::step_in_time_locked(Time now)
+machineRec::step_in_time_locked(Time now) // unlocks possibly!
 {
     mdb("%s:\n", __FUNCTION__);
 
