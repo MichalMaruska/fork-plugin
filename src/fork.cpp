@@ -325,7 +325,7 @@ step_in_time(PluginInstance* plugin, Time now)
     machine->mdb("%s:\n", __FUNCTION__);
     machine->lock();
 
-    machine->step_in_time_locked(now);
+    machine->step_in_time_locked(now); // possibly unlocks
     // todo: we could push the time before the first event in internal queue!
     set_wakeup_time(plugin);
     machine->unlock();
@@ -343,7 +343,7 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
     machine->check_unlocked();
 
     machine->lock();
-    machine->step_in_time_locked(now);
+    machine->step_in_time_locked(now); // possibly unlocks
 
     if (!plugin_frozen(plugin->next) && PluginClass(plugin->prev)->NotifyThaw)
     {
