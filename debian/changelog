@@ -1,3 +1,127 @@
+fork-plugin (2.13) unstable; urgency=medium
+
+  [ Michal Maruska ]
+  * space
+  * spaces
+  * space
+  * spaces
+  * spaces
+  * format
+  * format
+  * format
+  * format
+  * untabify
+  * format() fix
+  * use TIME_FORMAT
+  * drop duplicated archived_event def.
+  * provide the dummy lock macros
+  * fix the macro
+  * inline the function object
+  * bump up the version
+  * useless
+  * useless histor
+  * force debug
+  * git ignore build
+  * drop autotools
+  * the cmake scripts
+  * debian: use cmake (& ninja)
+  * disable "ninja test"
+  * debug cmake!
+  * build a MODULE not shared library.
+  * declare the dependency symbolically.
+  * cmake: reorder a bit
+  * require newer cmake
+  * rules: export GCC colors
+  * useless
+  * cmake: soname, sources
+  * cmake drop
+  * how to build
+  * add debug.cpp
+  * reformat
+  * format
+  * Drop SetLastKeysCountReq comment .. it's configured via fork_configure_last_events
+  * Create a regular module: provide ModuleData
+  * queue: put the method bodies inside the class, hence inline
+  * format (queue)
+  * order the c++ includes
+  * inline all
+  * Move the includes where needed: configure.h -> fork_requests.h
+  * rename fork_requests guard
+  * clean up: comments, format
+  * configure.h should not depend on the public api -- fork_requests.h
+  * fork_requests is a C header
+  * so get all of the X headers ...
+  * clean up fork. includes/defines
+  * simplify the header -- namespaces & "C"
+  * history.h clean includes.
+  * Constructor for machineRec -- no typedef, create the queues (or std::move)
+  * create make_machine via C++
+  * rename to fork_state_t
+  * make event_ops independent -- fix its includes -- fixme!
+  * Move describe_key() away to debug.cpp + debug.h: all headers needed????
+  * drop useless inclu. debug.h
+  * avoid the includes of debug.h
+  * FIX: Verify that xorg-server.h must be included BEFORE xorg/inputstr.h ???
+  * make describe_machine_state a method
+  * config ops as methods!
+  * fix comments/docs
+  * encapsulate the enum and state_description
+  * move list_with_tail into machineRec -- will be private.
+  * mouse_emulation_on on broken xkpi
+  * another fix for xkbi broken
+  * debug.cpp: retrieve the keysym for broken xkbi FIXME: incomplete headers
+  * Mark static filter_config_key_maybe and filter_config_key
+  * mdb() method
+  * Turn functions into methods, and fix list_with_tail.
+  * avoid any chance
+  * cmake: add event_ops
+  * event_ops.h includes fix: xorg-server.h must come first.
+  * fix debug.cpp headers: _xserver64 from xorg-server.h must come before
+  * fork.cpp headers still incomplete, as event_ops.h pulls them in.
+  * now complete, so restore?
+  * event_ops.h includes fix: xorg-server.h must come first.
+  * split off event_ops
+  * cmake: color output
+  * cmake: try to EXPORT
+  * missing symbol ... event_type_brief & _Z7press_pPK14_InternalEvent
+  * continue the extern C confusion
+  * maybe a fix?
+  * comment the config
+  * format
+  * Disable the dlopen-constructor function, and use SetupProc to store the module.
+  * report the version ...
+  * bump the build version
+  * space
+  * format
+  * Fix the DB() macro vararg --- and drop MDB()
+  * dump_last_events_to_client: clean up, rename var
+  * rename destroy_plugin
+  * introduce memory.h
+  * move TIME_FMT, and hint at...
+  * merge
+  * drop double mCurrent_time,
+  * debug cmake
+  * log by lock blocks
+  * fix bug: exit the while(true) cycle when nothing changed
+  * change the export-set to EXPORT_module, LIBRARY->OBJECTS, and RENAME!
+  * unlock later
+  * bracket the output by lock/unlock by prefixing other mdb() with 1-indentation.
+  * fix the install
+  * OBJECTS -> LIBRARY
+  * add target_compile_options and set_target_properties
+  * TIME is now not long?
+  * format pointers properly
+  * (deb) Fix dependency on ninja-build
+  * fix cmake -- project()
+  * adapt to the header-files from xorg sdk
+  * Thaw check unlocked!
+  * flush_to_next: unlock & lock
+  * So also these unlock temporarily
+  * Those call output_event() so unlock as well.
+  * Hi-level api which unlocks too
+
+ --  <mmaruska@gmail.com>  Sun, 14 Mar 2021 10:55:45 +0100
+
 fork-plugin (2.12) unstable; urgency=medium
 
   * cdbs->dh  (+ correct b. dependency)
