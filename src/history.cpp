@@ -7,10 +7,10 @@
 
 #include "history.h"
 #include "fork.h"
-#include "fork_requests.h"
-
 
 extern "C" {
+#include "fork_requests.h"
+
 #include <xorg-server.h>
 #include <xorg/xkbsrv.h>
 
