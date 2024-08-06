@@ -93,6 +93,49 @@ machineRec::switch_config(int id)
     // ->debug = (stuff->value?True:False); // (Bool)
 }
 
+void
+machineRec::log_state(const char* message) const
+{
+    mdb("%s%s%s state: %s, queue: %d .... %s\n",
+        fork_color, __FUNCTION__, color_reset,
+        describe_machine_state(),
+        internal_queue.length (),
+        message);
+}
+
+void
+machineRec::log_state_and_event(const char* message, const key_event *ev)
+{
+    DeviceIntPtr keybd = mPlugin->device;
+    InternalEvent* event = ev->event;
+    KeyCode key = detail_of(event);
+
+    if (keybd->key)
+    {
+        XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
+        KeySym *sym = XkbKeySymsPtr(xkbi->desc, key);
+        if ((!sym) || (! isalpha(* (unsigned char*) sym)))
+            sym = (KeySym*) " ";
+
+        mdb("%s%s%s state: %s, queue: %d, event: %d %s%c %s %s\n",
+            info_color,message,color_reset,
+            describe_machine_state(),
+            internal_queue.length (),
+            key,
+            key_color, (char)*sym, color_reset,
+            event_type_brief(event));
+    }
+}
+
+void
+machineRec::log_queues(const char* message)
+{
+    mdb("%s: Queues: output: %d\t internal: %d\t input: %d \n", message,
+        output_queue.length (),
+        internal_queue.length (),
+        input_queue.length ());
+}
+
 /* The machine is locked here:
  * Push as many as possible from the OUTPUT queue to the next layer */
 void
@@ -100,10 +143,7 @@ machineRec::flush_to_next()
 {
     // todo: lock in this scope only?
     check_locked();
-    mdb("%s: Queues: output: %d\t internal: %d\t input: %d \n", __FUNCTION__,
-         output_queue.length (),
-         internal_queue.length (),
-         input_queue.length ());
+    log_queues(__FUNCTION__);
 
     PluginInstance* const nextPlugin = mPlugin->next;
     while(!plugin_frozen(nextPlugin) && !output_queue.empty()) {
@@ -271,11 +311,11 @@ machineRec::try_to_play(Bool force_also)
     // fixme: maybe All I need is the nextPlugin?
     PluginInstance* const nextPlugin = mPlugin->next;
 
+    // log_queues_and_nextplugin(message)
     mdb("%s: next %s: internal %d, input: %d\n", __FUNCTION__,
          (plugin_frozen(nextPlugin)?"frozen":"NOT frozen"),
          internal_queue.length (),
          input_queue.length ());
-
 
     while (!plugin_frozen(nextPlugin)) {
 
@@ -325,10 +365,7 @@ machineRec::step_fork_automaton_by_force()
 
     /* so, the state is one of: verify, suspect or activated. */
 
-    mdb("%s%s%s state: %s, queue: %d .... FORCE\n",
-         fork_color, __FUNCTION__, color_reset,
-         describe_machine_state(),
-         internal_queue.length ());
+    log_state(__FUNCTION__);
 
     // todo: move it inside?
     decision_time = 0;
@@ -553,7 +590,6 @@ machineRec::apply_event_to_normal(key_event *ev)
 };
 
 
-
 /*  First (press)
  *  Second    <-- we are here.
  */
@@ -653,7 +689,7 @@ machineRec::apply_event_to_suspect(key_event *ev)
  * Now we have the 3rd key.
  *  We wait only for time, and for the release of the key */
 void
-machineRec::apply_event_to_verify(key_event *ev)
+machineRec::apply_event_to_verify_state(key_event *ev)
 {
     InternalEvent* event = ev->event;
     Time simulated_time = time_of(event);
@@ -684,7 +720,7 @@ machineRec::apply_event_to_verify(key_event *ev)
        are slow to release, when we press a specific one afterwards. So in this case fork slower!
     */
 
-    if ((decision_time = key_pressed_too_long(simulated_time)) == 0)
+    if (0 == (decision_time = key_pressed_too_long(simulated_time)))
     {
         do_confirm_fork_by(ev);
         return;
@@ -701,7 +737,6 @@ machineRec::apply_event_to_verify(key_event *ev)
     }
     if (decision_time < decision_time)
         decision_time = decision_time;
-
 
     if (release_p(event) && (key == suspect)){ // fixme: is release_p(event) useless?
         mdb("fork-key released on time: %dms is a tolerated error (< %lu)\n",
@@ -724,7 +759,6 @@ machineRec::apply_event_to_verify(key_event *ev)
     };
 }
 
-
 /* Apply event EV to (state, internal-queue, time).
  * This can append to the output-queue
  *      sets: `decision_time'
@@ -741,7 +775,6 @@ machineRec::step_fork_automaton_by_key(key_event *ev)
 {
     assert (ev);
 
-    DeviceIntPtr keybd = mPlugin->device;
     InternalEvent* event = ev->event;
     KeyCode key = detail_of(event);
 
@@ -771,21 +804,8 @@ machineRec::step_fork_automaton_by_key(key_event *ev)
     // assert (release_p(event) || (key < MAX_KEYCODE && forkActive[key] == 0));
 
 #if DEBUG
-    /* describe the (state, key) */
-    if (keybd->key)
-    {
-        XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
-        KeySym *sym = XkbKeySymsPtr(xkbi->desc,key);
-        if ((!sym) || (! isalpha(* (unsigned char*) sym)))
-            sym = (KeySym*) " ";
-
-        mdb("%s%s%s state: %s, queue: %d, event: %d %s%c %s %s\n",
-            info_color,__FUNCTION__,color_reset,
-            describe_machine_state(),
-            internal_queue.length (),
-            key,
-            key_color, (char)*sym, color_reset,
-            event_type_brief(event));
+    if (press_p(event) || release_p(event)) {
+        log_state_and_event(__FUNCTION__, ev);
     }
 #endif
 
@@ -800,7 +820,7 @@ machineRec::step_fork_automaton_by_key(key_event *ev)
         }
         case st_verify:
         {
-            apply_event_to_verify(ev);
+            apply_event_to_verify_state(ev);
             return;
         }
         default:

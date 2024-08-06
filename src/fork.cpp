@@ -335,7 +335,7 @@ step_in_time_locked(PluginInstance* plugin)
     /* push the time ! */
     machine->try_to_play(FALSE);
 
-    /* i should take the minimum of time and the time of the 1st event in the
+    /* I should take the minimum of time and the time of the 1st event in the
        (output) internal queue */
     if (machine->internal_queue.empty() && machine->input_queue.empty()
         && !plugin_frozen(next))
@@ -530,7 +530,8 @@ extern "C" {
 static void* /*DevicePluginRec* */
 fork_plug(void          *options,
           int		*errmaj,
-          int		*errmin)
+          int		*errmin,
+          void* dynamic_module)
 {
   ErrorF("%s: %s version %d\n", __FUNCTION__, FORK_PLUGIN_NAME, PLUGIN_VERSION);
 
@@ -550,22 +551,30 @@ fork_plug(void          *options,
     _B(terminate,  destroy_machine)
   };
   plugin_class.ref_count = 0;
+  ErrorF("assigning %p\n", dynamic_module);
+
+  plugin_class.module = dynamic_module;
   xkb_add_plugin_class(&plugin_class);
 
   return &plugin_class;
 }
 
 // my old way of loading modules?
+#if 0
 void __attribute__((constructor)) on_init()
 {
     ErrorF("%s:\n", __FUNCTION__); /* impossible */
     fork_plug(NULL,NULL,NULL);
 }
+#endif
 
-static pointer
-SetupProc(pointer module, pointer options, int *errmaj, int *errmin)
+static void*
+SetupProc(void* module, pointer options, int *errmaj, int *errmin)
 {
-    on_init();
+    ErrorF("%s %p\n", __func__, module);
+
+    fork_plug(NULL,NULL,NULL, module);
+    // on_init();
     return module;
 }
 
@@ -590,6 +599,7 @@ static XF86ModuleVersionInfo VersionRec = {
 _X_EXPORT XF86ModuleData forkModuleData = {
     &VersionRec,
     &SetupProc,
+    // teardown:
     NULL
 };
 
