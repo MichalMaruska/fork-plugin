@@ -1,7 +1,10 @@
 #include "event_ops.h"
 
 // specific keysyms:
+
+extern "C" {
 #include <X11/keysym.h>
+}
 
 Bool
 release_p(const InternalEvent* event)
