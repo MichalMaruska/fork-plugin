@@ -2,20 +2,14 @@
 #define _HISTORY_H_
 
 
-// #include "fork.h"
-
-// fixme: this should include:
 extern "C" {
 #include <xorg-server.h>
 
-#include <X11/X.h>
-#include <X11/Xproto.h>
 #include <X11/keysym.h>
-#include <xorg/inputstr.h>
-  // Bool:
-  // /usr/include/X11/Xdefs.h:typedef
 
-#include <X11/Xdefs.h>
+// ^ for safety: before v
+#include <xorg/inputstr.h>
+
 #include "fork_requests.h"
 }
 

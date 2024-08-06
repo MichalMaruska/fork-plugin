@@ -3,14 +3,29 @@
 #include "config.h"
 #include "debug.h"
 
+// bug: this makes it crash:
+
+
+extern "C" {
+
+#include <xorg-server.h>
+#include <xorg/inputstr.h>
+
+#include <X11/X.h>
+#include <X11/Xproto.h>
+#include <X11/keysym.h>
+}
+
+// bug these 2 ^ v
 #include "configure.h"
 #include "fork.h"
-#include "fork_requests.h"
 #include "history.h"
 
 /* something to define NULL */
 extern "C"
 {
+#include "fork_requests.h"
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>

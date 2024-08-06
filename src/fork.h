@@ -2,13 +2,13 @@
 #define _FORK_H_
 
 
+extern "C" {
 #include <xorg-server.h>
+
 #ifndef MMC_PIPELINE
 #error "This is useful only when the xorg-server is configured with --enable-pipeline"
 #endif
 
-
-extern "C" {
 #include <X11/X.h>
 #include <X11/Xproto.h>
 #include <X11/keysym.h>
@@ -23,24 +23,16 @@ extern "C" {
 // include/os.h
 #undef xalloc
 
-// in C++ it conflicts! (/usr/include/xorg/misc.h vs alorithm)
-#undef max
-#undef min
-};
+#include "fork_requests.h"
+}
 
+#include <cstdarg>
 #include "config.h"
 
-#include "debug.h"
+// #include "debug.h"
+
 #include "queue.h"
-
-#include "fork_requests.h"
 #include "history.h"
-
-using namespace std;
-using namespace __gnu_cxx;
-
-
-typedef my_queue<key_event> list_with_tail;
 
 
 #define plugin_machine(plugin) ((machineRec*)(plugin->data))
@@ -49,13 +41,35 @@ typedef my_queue<key_event> list_with_tail;
 typedef int keycode_parameter_matrix[MAX_KEYCODE][MAX_KEYCODE];
 
 
-
-/* we can have a (linked) list of configs! */
+/* We can switch between configs. */
 typedef struct _fork_configuration fork_configuration;
 
 struct _fork_configuration
 {
-  /* static data of the machine: i.e.  `configuration' */
+    /* static data of the machine: i.e.  `configuration' */
+
+private:
+    static Time
+    get_value_from_matrix (keycode_parameter_matrix matrix, KeyCode code, KeyCode verificator)
+        {
+            return (matrix[code][verificator]?
+                    matrix[code][verificator]:
+                    (matrix[code][0]?
+                     matrix[code][0]: matrix[0][0]));
+        }
+
+public:
+    // note: depending on verificator is strange. There might be none!
+    // fork_configuration* config,
+    Time verification_interval_of(KeyCode code, KeyCode verificator)
+    {
+        return get_value_from_matrix(this->verification_interval, code, verificator);
+    }
+    Time
+    overlap_tolerance_of(KeyCode code, KeyCode verificator)
+    {
+        return get_value_from_matrix(this->overlap_tolerance, code, verificator);
+    }
 
   KeyCode          fork_keycode[MAX_KEYCODE];
   Bool          fork_repeatable[MAX_KEYCODE]; /* True -> if repeat, cancel possible fork. */
@@ -87,15 +101,30 @@ typedef enum {
   st_verify,
   st_deactivated,
   st_activated
-} state_type;
+} fork_state_t;
 
+extern char const *state_description[];
 
 /* `machine': the dynamic `state' */
 
-typedef struct machine
+// typedef
+struct machineRec
 {
+    typedef my_queue<key_event> list_with_tail;
+
+    /* How we decided for the fork */
+    enum {
+        reason_total,               // key pressed too long
+        reason_overlap,             // key press overlaps with another key
+        reason_force                // mouse-button was pressed & triggered fork.
+    };
+
+    /* used only for debugging */
+    static char const *state_description[];
+
     volatile int lock;           /* the mouse interrupt handler should ..... err!  `volatile'
                                   * useless mmc!  But i want to avoid any caching it.... SMP ??*/
+    // fork_state_t
     unsigned char state;
 
     /* To allow AR for forkable keys:
@@ -131,7 +160,44 @@ typedef struct machine
     int max_last;
 
     fork_configuration  *config;
-} machineRec;
+
+
+    static const int BufferLength = 200;
+    const char*
+    describe_machine_state()
+    {
+        static char buffer[BufferLength];
+
+        snprintf(buffer, BufferLength, "%s[%dm%s%s",
+                 escape_sequence, 32 + this->state,
+                 state_description[this->state], color_reset);
+        return buffer;
+    }
+
+    machineRec()
+        : internal_queue("internal"),
+          input_queue("input_queue"),
+          output_queue("output_queue")
+        {};
+
+    void rewind_machine();
+
+    void activate_fork(PluginInstance* plugin);
+    void step_fork_automaton_by_force(PluginInstance* plugin);
+    void apply_event_to_suspect(key_event *ev, PluginInstance* plugin);
+    void step_fork_automaton_by_key(key_event *ev, PluginInstance* plugin);
+
+    void mdb(const char* format...)
+    {
+        va_list argptr;
+        // if (config->debug) {ErrorF(x, ...);}
+        va_start(argptr, format);
+        VErrorF(format, argptr);
+        va_end(argptr);
+    };
+
+    static void reverse_slice(list_with_tail &pre, list_with_tail &post);
+};
 
 extern fork_configuration* machine_new_config(void);
 extern void machine_switch_config(PluginInstance* plugin, machineRec* machine,int id);
