@@ -227,9 +227,11 @@ set_wakeup_time(PluginInstance* plugin)
         // this is wrong: if machine waits, it cannot pass to the next-plugin!
         first_non_zero(machine->next_decision_time(), plugin->next->wakeup_time);
 
-    // (machine->internal_queue.empty())? plugin->next->wakeup_time:0;
-    machine->mdb("%s %s wakeup_time = %d, next wants: %u, we %" TIME_FMT "\n", FORK_PLUGIN_NAME, __FUNCTION__,
-                 (int)plugin->wakeup_time, (int)plugin->next->wakeup_time, machine->next_decision_time());
+    // || ( DEBUG > 1 )
+    if (plugin->wakeup_time != 0) {
+        machine->mdb("%s %s wakeup_time = %d, next wants: %u, we %" TIME_FMT "\n", FORK_PLUGIN_NAME, __FUNCTION__,
+                     (int)plugin->wakeup_time, (int)plugin->next->wakeup_time, machine->next_decision_time());
+    }
 }
 
 
@@ -475,11 +477,12 @@ destroy_machine(PluginInstance* plugin)
     // should be locked from the STOP call?
     machine->lock();
 
-    delete machine;
     // delete machine->last_events;
     DeleteCallback(&DeviceEventCallback, (CallbackProcPtr) mouse_call_back,
                    (void*) plugin);
-    machine->mdb("%s: what to do?\n", __FUNCTION__);
+
+    delete machine;
+    // machine->mdb("%s: what to do?\n", __FUNCTION__);
     return 1;
 }
 
