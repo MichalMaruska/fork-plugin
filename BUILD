@@ -27,3 +27,6 @@ script zapis  -c ninja
 
 error: redeclaration of 'Time machineRec::mCurrent_time'
 
+
+* CMake Error: INSTALL(EXPORT) given unknown export "EXPORT_module"
+
