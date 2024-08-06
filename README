@@ -49,8 +49,3 @@ This much after. code.
 * bit map
 Forkable.
 
-
-
-* Build with cmake:
-cmake -DCMAKE_BUILD_TYPE=debug -G Ninja  ../
-
