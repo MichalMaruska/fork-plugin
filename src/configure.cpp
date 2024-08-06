@@ -31,6 +31,9 @@ extern "C"
 #include <stdlib.h>
 #include <string.h>
 #include <xorg/misc.h>
+
+#undef max
+#undef min
 }
 
 static int config_counter = 0;

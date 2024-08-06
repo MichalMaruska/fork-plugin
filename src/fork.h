@@ -24,6 +24,9 @@ extern "C" {
 #undef xalloc
 
 #include "fork_requests.h"
+
+#undef max
+#undef min
 }
 
 #include <cstdarg>

@@ -21,6 +21,9 @@ extern "C" {
 
 /* `probably' I use it only to print out the keysym in debugging stuff*/
 #include <xorg/eventstr.h>
+
+#undef max
+#undef min
 }
 
 #include "event_ops.h"
