@@ -74,12 +74,8 @@ dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int max_req
 /* endi */
 #endif
 
-
-   char *start;
-   fork_events_reply* buf;
-
-   start = (char *)alloca(appendix_len);
-   buf = (fork_events_reply*) start;
+   const auto start = static_cast<char *>(alloca(appendix_len));
+   auto *buf = reinterpret_cast<fork_events_reply *>(start);
 
    buf->count = max_requested;              /* fixme: BYTE SWAP if needed! */
 
@@ -116,7 +112,7 @@ dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
         sname = XkbKeysymText(*sym,XkbCFile); // doesn't work inside server !!
 
         // my ascii hack
-        if (! isalpha(* (unsigned char*) sym)){
+        if (! isalpha(* reinterpret_cast<unsigned char *>(sym))){
             sym = (KeySym*) " ";
         } else {
             static char keysymname[15];
@@ -132,7 +128,7 @@ dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
     */
 
     ErrorF("%s %d (%d)" ,(press?" ]":"[ "),
-           (int)key, (int) fork);
+           static_cast<int>(key), static_cast<int>(fork));
     ErrorF(" %.4s (%5.5s) %" TIME_FMT "\t%" TIME_FMT "\n",
            ksname, sname,
            event_time,
