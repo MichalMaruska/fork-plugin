@@ -28,8 +28,7 @@ private:
   typename slist<T*>::iterator last_node;
 
 public:
-  const char* get_name()
-  {
+  [[nodiscard]] const char* get_name() const {
     return m_name.c_str();//  ?:"(unknown)"
   }
 
