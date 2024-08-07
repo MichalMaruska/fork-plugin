@@ -4,11 +4,7 @@
 #include "config.h"
 #include "debug.h"
 
-// bug: this makes it crash:
-
-
 extern "C" {
-
 #include <xorg-server.h>
 #include <xorg/inputstr.h>
 
@@ -85,7 +81,6 @@ machine_new_config()
    return config;
 }
 
-
 /* fixme:  where is the documentation: fork_requests.h ? */
 static int
 machine_configure_twins (machineRec* machine, int type, KeyCode key, KeyCode twin,
@@ -97,7 +92,6 @@ machine_configure_twins (machineRec* machine, int type, KeyCode key, KeyCode twi
             machine->config->verification_interval[key][twin] = value;
          else
             return machine->config->verification_interval[key][twin];
-
          break;
       case fork_configure_overlap_limit:
          if (set)
