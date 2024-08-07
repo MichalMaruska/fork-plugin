@@ -121,7 +121,7 @@ public:
   }
 
   // const char* name = NULL
-  my_queue<T>(string name) : m_name(name)
+  explicit my_queue<T>(string&& name) : m_name(std::move(name))
   {
     DB("constructor\n");
     last_node = list.end();
