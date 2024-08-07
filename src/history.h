@@ -1,15 +1,8 @@
 #ifndef _HISTORY_H_
 #define _HISTORY_H_
 
-
 extern "C" {
-#include <xorg-server.h>
-
-#include <X11/keysym.h>
-
-// ^ for safety: before v
 #include <xorg/inputstr.h>
-
 #include "fork_requests.h"
 }
 
@@ -19,7 +12,6 @@ typedef struct {
   InternalEvent* event;
   KeyCode forked; /* if forked to (another keycode), this is the original key */
 } key_event;
-
 
 /* (100) */
 typedef circular_buffer<archived_event*> last_events_type;
