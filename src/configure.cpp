@@ -159,15 +159,14 @@ machine_configure_global(PluginInstance* plugin, machineRec* machine, int type,
    case fork_configure_repeat_limit:
       if (set)
          fork_configuration->repeat_max = value;
-      else return fork_configuration->repeat_max;
+      else
+         return fork_configuration->repeat_max;
       break;
 
    case fork_configure_repeat_consider_forks:
       if (set)
          fork_configuration->consider_forks_for_repeat = value;
       return fork_configuration->consider_forks_for_repeat;
-      break;
-
    case fork_configure_last_events:
       if (set)
          machine->set_last_events_count(value);
