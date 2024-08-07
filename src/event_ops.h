@@ -1,4 +1,5 @@
 /* I use it only to print out the keysym in debugging stuff*/
+#pragma once
 
 extern "C" {
     // this must precede!
