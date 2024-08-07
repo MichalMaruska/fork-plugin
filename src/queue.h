@@ -41,12 +41,12 @@ public:
   }
 #endif
 
-  int length() const
+  [[nodiscard]] int length() const
   {
     return list.size();
   }
 
-  bool empty() const
+  [[nodiscard]] bool empty() const
   {
     return (list.empty());
   }
