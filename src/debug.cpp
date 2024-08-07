@@ -11,17 +11,14 @@ extern "C" {
 }
 #include "debug.h"
 
-const int BufferLength = 200;
-// #define BufferLength 200
+constexpr int BufferLength = 200;
 
 static void
-retrieve_keysym(DeviceIntPtr keybd, KeyCode key, KeySym *sym, const char **keycode_name)
+retrieve_keysym(DeviceIntPtr keybd, const KeyCode key, KeySym *sym, const char **keycode_name)
 {
     if (!keybd->key)
         return;
-
     XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
-
     *keycode_name = xkbi->desc->names->keys[key].name;
     *sym= *XkbKeySymsPtr(xkbi->desc,key);
 }
