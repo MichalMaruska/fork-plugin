@@ -158,8 +158,7 @@ public:
     previous_time = event->time;
   };
 
-
-  event_dumper(PluginInstance* plugin, int i = 0) : index(i), previous_time(0)
+  explicit event_dumper(const PluginInstance* plugin, int i = 0) : index(i), previous_time(0)
   {
     keybd = plugin->device;
     xkbi = keybd->key->xkbInfo;
