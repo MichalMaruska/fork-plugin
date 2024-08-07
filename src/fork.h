@@ -137,12 +137,10 @@ private:
                                   * useless mmc!  But i want to avoid any caching it.... SMP ??*/
 public:
 #if USE_LOCKING
-    void check_locked()
-    {
+    void check_locked() const {
         assert(mLock);
     }
-    void check_unlocked()
-    {
+    void check_unlocked() const {
         assert(mLock == 0);
     }
 
@@ -229,17 +227,17 @@ public:
         return 0;
     }
 
-    void log_event(const key_event *event, const DeviceIntPtr keybd);
+    void log_event(const key_event *event, DeviceIntPtr keybd);
 private:
     static Bool
-    forkable_p(fork_configuration* config, KeyCode code)
+    forkable_p(const fork_configuration* config, KeyCode code)
     {
         return (config->fork_keycode[code]);
     }
 
+    static constexpr int BufferLength = 200;
 
-    static const int BufferLength = 200;
-    const char*
+    [[nodiscard]] const char*
     describe_machine_state() const
     {
         static char buffer[BufferLength];
@@ -284,11 +282,10 @@ private:
     Time key_pressed_too_long(Time current_time);
     Time key_pressed_in_parallel(Time current_time);
 
-    /* Return the keycode into which CODE has forked _last_ time.
+   /* Return the keycode into which CODE has forked _last_ time.
    Returns code itself, if not forked. */
-    Bool
-    key_forked(KeyCode code)
-    {
+    [[nodiscard]] Bool
+    key_forked(KeyCode code) const {
         return (forkActive[code]);
     }
 
@@ -367,8 +364,7 @@ public:
     void flush_to_next();
 
     // calculated:
-    Time next_decision_time()
-    {
+    [[nodiscard]] Time next_decision_time() const {
         if ((state == st_verify)
             || (state == st_suspect))
         // we are indeed waiting:
@@ -378,12 +374,10 @@ public:
 
 };
 
-// configure.cpp
-extern fork_configuration* machine_new_config(void);
+extern fork_configuration* machine_new_config();
 
-extern int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n);
+// extern int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n);
 
-// fork.cpp
 void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* plugin);
 
 enum {
