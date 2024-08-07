@@ -252,6 +252,9 @@ machine_configure_get(PluginInstance* plugin, int values[5], int return_config[3
            break;
    case 3:
            return 0;
+        default:
+      machine->mdb("%s: invalid option %d\n", __func__, subtype_n_args(type));
+           ;
    }
    return 0;
 }
