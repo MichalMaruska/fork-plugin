@@ -27,7 +27,7 @@ extern "C" {
 archived_event*
 make_archived_event(const key_event* const ev)
 {
-  archived_event* event = MALLOC(archived_event);
+  const auto event = MALLOC(archived_event);
 
   event->key = detail_of(ev->event);
   event->time = time_of(ev->event);
