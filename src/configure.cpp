@@ -122,6 +122,9 @@ machine_configure_key(machineRec* machine, int type, KeyCode key, int value, Boo
             machine->config->fork_repeatable[key] = value;
          else return machine->config->fork_repeatable[key];
          break;
+      default:
+         machine->mdb("%s: invalid option %d\n", __func__, value);
+         ;
       }
    return 0;
 }
