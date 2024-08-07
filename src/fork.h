@@ -11,19 +11,14 @@ extern "C" {
 
 #include <X11/X.h>
 #include <X11/Xproto.h>
-#include <X11/keysym.h>
 #include <xorg/inputstr.h>
 
 
 #include <X11/Xdefs.h>
-#include <stdint.h>
 #include <xorg/input.h>
 #include <xorg/eventstr.h>
 
-// include/os.h
 #undef xalloc
-
-#include "fork_requests.h"
 
 #undef max
 #undef min
@@ -31,8 +26,6 @@ extern "C" {
 
 #include <cstdarg>
 #include "config.h"
-
-// #include "debug.h"
 
 #include "queue.h"
 #include "history.h"
