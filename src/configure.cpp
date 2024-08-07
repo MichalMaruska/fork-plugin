@@ -40,7 +40,7 @@ static int config_counter = 0;
 
 // nothing active (forkable) in this configuration
 fork_configuration*
-machine_new_config(void)
+machine_new_config()
 {
    fork_configuration* config;
 
@@ -53,7 +53,7 @@ machine_new_config(void)
       ErrorF("%s: malloc failed (for config)\n", __FUNCTION__);
       /* fixme: should free the machine!!! */
       /* in C++ exception which calls all destructors (of the objects on the stack ?? */
-      return NULL;
+      return nullptr;
    }
 
    config->repeat_max = 80;
@@ -83,7 +83,7 @@ machine_new_config(void)
 
    config->name = "default";
    config->id = config_counter++;
-   config->next = NULL;
+   config->next = nullptr;
    return config;
 }
 
