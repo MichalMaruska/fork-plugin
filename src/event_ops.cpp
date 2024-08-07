@@ -40,7 +40,7 @@ detail_of(const InternalEvent* event)
 
 // (printable) Name of the event
 const char*
-event_type_brief(InternalEvent *event)
+event_type_brief(const InternalEvent *event)
 {
     return (press_p(event)?"down":
             (release_p(event)?"up":"??"));
