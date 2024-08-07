@@ -1,18 +1,10 @@
 extern "C" {
-// Must be here!
-//#define _xserver64 1
-#include <xorg-server.h>
-
 // this one pulls in all the dependencies. When that one is split to *.cpp we will
 // have to state our dependencies explicity.
 #include "event_ops.h"
 
 // KeySym #define KeySym CARD32 comes from:
 #include <X11/X.h>
-
-//#include <X11/Xfuncproto.h>  // _XFUNCPROTOBEGIN
-// #include <stdio.h> // FILE
-
 #include <xorg/xkbsrv.h>
 // specific keysyms:
 #include <X11/keysym.h>
