@@ -48,7 +48,7 @@ machine_new_config()
 
 
    if (! config){
-      ErrorF("%s: malloc failed (for config)\n", __FUNCTION__);
+      ErrorF("%s: malloc failed (for config)\n", __func__);
       /* fixme: should free the machine!!! */
       /* in C++ exception which calls all destructors (of the objects on the stack ?? */
       return nullptr;
@@ -113,7 +113,7 @@ machine_configure_twins (machineRec* machine, int type, KeyCode key, KeyCode twi
 static int
 machine_configure_key(machineRec* machine, int type, KeyCode key, int value, Bool set)
 {
-   machine->mdb("%s: keycode %d -> value %d, function %d\n", __FUNCTION__, key, value, type);
+   machine->mdb("%s: keycode %d -> value %d, function %d\n", __func__, key, value, type);
 
    switch (type)
       {
@@ -236,7 +236,7 @@ machine_configure_get(PluginInstance* plugin, int values[5], int return_config[3
       type: local & global
    */
 
-   machine->mdb("%s: %d operands, command %d: %d %d\n", __FUNCTION__, subtype_n_args(type),
+   machine->mdb("%s: %d operands, command %d: %d %d\n", __func__, subtype_n_args(type),
                 type_subtype(type), values[1], values[2]);
 
    switch (subtype_n_args(type)){
@@ -269,7 +269,7 @@ machine_configure(PluginInstance* plugin, int values[5])
    machineRec* machine = plugin_machine(plugin);
 
    int type = values[0];
-   machine->mdb("%s: %d operands, command %d: %d %d %d\n", __FUNCTION__,
+   machine->mdb("%s: %d operands, command %d: %d %d %d\n", __func__,
                 subtype_n_args(type), type_subtype(type),
                 values[1], values[2],values[3]);
 
@@ -299,15 +299,15 @@ void
 machine_command(ClientPtr client, PluginInstance* plugin, int cmd, int data1,
                 int data2, int data3, int data4)
 {
-  DB("%s cmd %d, data %d ...\n", __FUNCTION__, cmd, data1);
+  DB("%s cmd %d, data %d ...\n", __func__, cmd, data1);
   switch (cmd)
     {
     case fork_client_dump_keys:
-      /* DB("%s %d %.3s\n", __FUNCTION__, len, data); */
+      /* DB("%s %d %.3s\n", __func__, len, data); */
       dump_last_events_to_client(plugin, client, data1);
       break;
     default:
-      DB("%s Unknown command!\n", __FUNCTION__);
+      DB("%s Unknown command!\n", __func__);
       break;
       /* What XReply to send?? */
     }
