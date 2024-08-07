@@ -63,7 +63,7 @@ dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int max_req
    };
 
    // allocate the appendix buffer:
-   int appendix_len = sizeof(fork_events_reply) + (max_requested * sizeof(archived_event));
+   size_t appendix_len = sizeof(fork_events_reply) + (max_requested * sizeof(archived_event));
    /* no alignment! */
 
    /* fork_events_reply; */
@@ -87,7 +87,7 @@ dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int max_req
                         function);
 #endif
 
-   DB("sending %d events: + %d!\n", max_requested, appendix_len);
+   DB("sending %d events: + %zd!\n", max_requested, appendix_len);
 
    int r = xkb_plugin_send_reply(client, plugin, start, appendix_len);
    if (r == 0)
