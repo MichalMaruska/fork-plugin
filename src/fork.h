@@ -33,6 +33,8 @@ extern "C" {
 
 #define plugin_machine(plugin) ((machineRec*)(plugin->data))
 #define MALLOC(type)   (type *) malloc(sizeof (type))
+
+#define KEYCODE_UNUSED 0
 #define MAX_KEYCODE 256         /* fixme: inherit from xorg! */
 typedef int keycode_parameter_matrix[MAX_KEYCODE][MAX_KEYCODE];
 
@@ -344,8 +346,8 @@ public:
         {
             last_events = new last_events_type(max_last);
 
-            for (int i=0;i<256;i++){                   // keycode 0 is unused!
-                forkActive[i] = 0; /* 0 = not active */
+            for (unsigned char & i : forkActive){
+                i = KEYCODE_UNUSED; /* not active */
             };
         };
 
