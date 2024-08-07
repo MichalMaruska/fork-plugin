@@ -204,7 +204,11 @@ machine_configure_global(PluginInstance* plugin, machineRec* machine, int type,
 
       machine->mdb("fork_configure_switch: %d\n", value);
       machine->switch_config(value);
-      return 0;
+      break;
+
+   default:
+      machine->mdb("%s: invalid option %d\n", __func__, value);
+      ;
    }
    return 0;
 }
