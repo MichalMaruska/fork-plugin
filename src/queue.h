@@ -3,12 +3,7 @@
 
 
 #include <ext/slist>
-#include <algorithm>
-#include <iostream>
-#include <iterator>
 #include <string>
-#include <utility>
-
 #include "debug.h"
 
 using namespace std;
