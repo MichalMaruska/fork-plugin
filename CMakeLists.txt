@@ -4,3 +4,5 @@ add_compile_options (-fdiagnostics-color=always)
 add_subdirectory(src)
 
 export(EXPORT fork FILE dump.cmake)
+
+add_subdirectory(test)

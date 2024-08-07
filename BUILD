@@ -30,3 +30,11 @@ error: redeclaration of 'Time machineRec::mCurrent_time'
 
 * CMake Error: INSTALL(EXPORT) given unknown export "EXPORT_module"
 
+
+ctest:
+ai libgtest-dev
+
+g++ test-circular.cpp
+g++ test-circular.cpp  -lgtest
+
+cd tests; ctest
