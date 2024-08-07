@@ -36,12 +36,9 @@ static int config_counter = 0;
 fork_configuration*
 machine_new_config()
 {
-   fork_configuration* config;
-
    /* `configuration' */
    ErrorF("resetting the configuration to defaults\n");
-   config = MALLOC(fork_configuration);
-
+   auto *config = MALLOC(fork_configuration);
 
    if (! config){
       ErrorF("%s: malloc failed (for config)\n", __func__);
