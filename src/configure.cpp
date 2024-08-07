@@ -141,9 +141,9 @@ machine_configure_global(PluginInstance* plugin, machineRec* machine, int type,
    switch (type){
    case fork_configure_overlap_limit:
       if (set)
-         machine->config->verification_interval[0][0] = value;
+         machine->config->overlap_tolerance[0][0] = value;
       else
-         return machine->config->verification_interval[0][0];
+         return machine->config->overlap_tolerance[0][0];
       break;
 
    case fork_configure_total_limit:
