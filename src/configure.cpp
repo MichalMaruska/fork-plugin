@@ -285,6 +285,9 @@ machine_configure(PluginInstance* plugin, int values[5])
    case 3:
       // special requests ....
       break;
+   default:
+      machine->mdb("%s: invalid option %d\n", __func__, subtype_n_args(type));
+      ;
    }
    /* return client->noClientException; */
    return 0;
