@@ -14,7 +14,6 @@ extern "C" {
 
 #include <X11/X.h>
 #include <X11/Xproto.h>
-#include <X11/keysym.h>
 }
 
 // bug these 2 ^ v
@@ -27,7 +26,6 @@ extern "C"
 {
 #include "fork_requests.h"
 
-#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <xorg/misc.h>
