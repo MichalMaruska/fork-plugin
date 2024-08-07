@@ -83,7 +83,7 @@ machine_new_config()
 
 /* fixme:  where is the documentation: fork_requests.h ? */
 static int
-machine_configure_twins (machineRec* machine, int type, KeyCode key, KeyCode twin,
+machine_configure_twins (const machineRec* machine, int type, KeyCode key, KeyCode twin,
                          int value, Bool set)
 {
    switch (type) {
@@ -106,7 +106,7 @@ machine_configure_twins (machineRec* machine, int type, KeyCode key, KeyCode twi
 
 
 static int
-machine_configure_key(machineRec* machine, int type, KeyCode key, int value, Bool set)
+machine_configure_key(const machineRec* machine, int type, KeyCode key, int value, Bool set)
 {
    machine->mdb("%s: keycode %d -> value %d, function %d\n", __func__, key, value, type);
 
