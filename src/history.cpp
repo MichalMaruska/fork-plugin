@@ -106,7 +106,7 @@ dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
 
     // 0.1   keysym bound to the key:
     KeySym* sym= XkbKeySymsPtr(xkbi->desc,key); // mmc: is this enough ?
-    char* sname = NULL;
+    char* sname = nullptr;
 
     if (sym){
         sname = XkbKeysymText(*sym,XkbCFile); // doesn't work inside server !!
