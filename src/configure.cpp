@@ -92,19 +92,20 @@ machine_configure_twins (machineRec* machine, int type, KeyCode key, KeyCode twi
                          int value, Bool set)
 {
    switch (type) {
+      case fork_configure_total_limit:
+         if (set)
+            machine->config->verification_interval[key][twin] = value;
+         else
+            return machine->config->verification_interval[key][twin];
 
-   case fork_configure_total_limit:
-      if (set)
-         machine->config->verification_interval[key][twin] = value;
-      else
-         return machine->config->verification_interval[key][twin];
-
-      break;
-   case fork_configure_overlap_limit:
-      if (set)
-         machine->config->overlap_tolerance[key][twin] = value;
-      else return machine->config->overlap_tolerance[key][twin];
-      break;
+         break;
+      case fork_configure_overlap_limit:
+         if (set)
+            machine->config->overlap_tolerance[key][twin] = value;
+         else return machine->config->overlap_tolerance[key][twin];
+         break;
+      default:
+         machine->mdb("%s: invalid type %d\n", __func__, type);;
    }
    return 0;
 }
