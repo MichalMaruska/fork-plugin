@@ -127,8 +127,7 @@ public:
     last_node = list.end();
   };
 
-  void swap (my_queue<T>& peer)
-  {
+  void swap (my_queue<T>& peer) noexcept {
     typename slist<T*>::iterator temp;
     temp = last_node;
 
