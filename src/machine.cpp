@@ -83,7 +83,7 @@ machineRec::switch_config(int id)
     }
 }
 
-void machineRec::log_event(const key_event *event, DeviceIntPtr keybd)
+void machineRec::log_event(const key_event *event, const DeviceIntPtr keybd)
 {
 #if 0 // fixme: DEBUG
             if (config->debug) {
