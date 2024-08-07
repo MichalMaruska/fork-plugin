@@ -138,39 +138,39 @@ static int
 machine_configure_global(PluginInstance* plugin, machineRec* machine, int type,
                          int value, Bool set)
 {
+   const auto fork_configuration = machine->config;
+
    switch (type){
    case fork_configure_overlap_limit:
       if (set)
-         machine->config->overlap_tolerance[0][0] = value;
+         fork_configuration->overlap_tolerance[0][0] = value;
       else
-         return machine->config->overlap_tolerance[0][0];
+         return fork_configuration->overlap_tolerance[0][0];
       break;
 
    case fork_configure_total_limit:
       if (set)
-         machine->config->verification_interval[0][0] = value;
-      else return machine->config->verification_interval[0][0];
+         fork_configuration->verification_interval[0][0] = value;
+      else return fork_configuration->verification_interval[0][0];
       break;
 
    case fork_configure_clear_interval:
       if (set)
-         machine->config->clear_interval = value;
-      else return machine->config->clear_interval;
+         fork_configuration->clear_interval = value;
+      else return fork_configuration->clear_interval;
       break;
 
    case fork_configure_repeat_limit:
       if (set)
-         machine->config->repeat_max = value;
-      else return machine->config->repeat_max;
+         fork_configuration->repeat_max = value;
+      else return fork_configuration->repeat_max;
       break;
-
 
    case fork_configure_repeat_consider_forks:
       if (set)
-         machine->config->consider_forks_for_repeat = value;
-      return machine->config->consider_forks_for_repeat;
+         fork_configuration->consider_forks_for_repeat = value;
+      return fork_configuration->consider_forks_for_repeat;
       break;
-
 
    case fork_configure_last_events:
       if (set)
@@ -185,14 +185,13 @@ machine_configure_global(PluginInstance* plugin, machineRec* machine, int type,
             //  here we force, rather than using MDB !
             DB("fork_configure_debug set: %d -> %d\n", machine->config->debug,
                 value);
-            machine->config->debug = value;
+            fork_configuration->debug = value;
          }
       else
          {
-            machine->mdb("fork_configure_debug get: %d\n", machine->config->debug);
-            return machine->config->debug; // (Bool) ?True:FALSE
+            machine->mdb("fork_configure_debug get: %d\n", fork_configuration->debug);
+            return fork_configuration->debug; // (Bool) ?True:FALSE
          }
-
       break;
 
    case fork_server_dump_keys:
@@ -207,7 +206,6 @@ machine_configure_global(PluginInstance* plugin, machineRec* machine, int type,
       machine->switch_config(value);
       return 0;
    }
-
    return 0;
 }
 
