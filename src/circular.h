@@ -61,7 +61,7 @@ class circular_buffer_iterator
             : buf_(b), pos_(p) {}
 
         // Converting a non-const iterator to a const iterator
-        circular_buffer_iterator
+        explicit circular_buffer_iterator
            (const circular_buffer_iterator<T_nonconst, T_nonconst,
                                            typename T_nonconst::value_type>
             &other)
