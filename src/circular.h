@@ -388,7 +388,7 @@ class circular_buffer
         {
             if (size >= contents_size_)
             {
-                throw std::out_of_range();
+                throw std::out_of_range(__func__);
             }
             return at_unchecked(index);
         }
