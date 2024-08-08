@@ -286,8 +286,7 @@ class circular_buffer
             swap(tmp);
             return *this;
         }
-        void swap(circular_buffer &other)
-        {
+        void swap(circular_buffer &other) noexcept {
             std::swap(array_,         other.array_);
             std::swap(array_size_,    other.array_size_);
             std::swap(head_,          other.head_);
