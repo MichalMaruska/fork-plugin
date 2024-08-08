@@ -317,7 +317,7 @@ class circular_buffer
         // Size
         size_type size() const        { return contents_size_; }
         size_type capacity() const    { return array_size_; }
-        bool      empty() const       { return !contents_size_; }
+        [[nodiscard]] bool      empty() const       { return !contents_size_; }
         size_type max_size() const
         {
             return alloc_.max_size();
