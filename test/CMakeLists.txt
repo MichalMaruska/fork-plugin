@@ -14,15 +14,12 @@ add_executable(test-circular test-circular.cpp)
 #             PROPERTY prop1 value1 value2 ...)
 target_link_libraries(test-circular GTest::gtest_main)
 
-add_test(NAME test-circular
-         COMMAND test-circular)
 gtest_discover_tests(test-circular)
 
 
 add_executable(test-queue test-queue.cpp)
 target_link_libraries(test-queue GTest::gtest_main)
 
-add_test(NAME test-queue COMMAND test-queue)
 gtest_discover_tests(test-queue)
 
 
