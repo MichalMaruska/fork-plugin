@@ -144,7 +144,7 @@ machineRec::flush_to_next()  // unlocks!
 {
     // todo: lock in this scope only?
     check_locked();
-    log_queues(__FUNCTION__);
+    log_queues(__func__);
 
     PluginInstance* const nextPlugin = mPlugin->next;
     while(!plugin_frozen(nextPlugin) && !output_queue.empty()) {
@@ -866,7 +866,7 @@ machineRec::step_fork_automaton_by_key(key_event *ev)
 
 #if DEBUG
     if (press_p(event) || release_p(event)) {
-        log_state_and_event(__FUNCTION__, ev);
+        log_state_and_event(__func__, ev);
     }
 #endif
 
