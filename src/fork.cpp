@@ -290,7 +290,7 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
     };
 
     {
-        machineRec* machine = plugin_machine(plugin);
+        const auto machine = plugin_machine(plugin);
 
         machine->check_unlocked();
         machine->lock();           // fixme: mouse must not interrupt us.
