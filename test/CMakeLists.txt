@@ -1,8 +1,8 @@
 # include(CTest)
 # add_test(NAME test-circular COMMAND ExecutableToRun arg1 arg2 ...)
 
-# ?
 include(GoogleTest)
+
 
 # this was crucial to use GTest::gtest_main
 find_package(GTest REQUIRED)
@@ -10,15 +10,21 @@ find_package(GTest REQUIRED)
 
 add_executable(test-circular test-circular.cpp)
 # target_link_libraries(TestInstantiator vtkCommon)
-add_test(NAME test-circular
-         COMMAND test-circular)
-
 #       set_property(TEST test_name
 #             PROPERTY prop1 value1 value2 ...)
-
-
 target_link_libraries(test-circular GTest::gtest_main)
 
-gtest_add_tests(TARGET test-circular)
-
+add_test(NAME test-circular
+         COMMAND test-circular)
 gtest_discover_tests(test-circular)
+
+
+add_executable(test-queue test-queue.cpp)
+target_link_libraries(test-queue GTest::gtest_main)
+
+add_test(NAME test-queue COMMAND test-queue)
+gtest_discover_tests(test-queue)
+
+
+
+
