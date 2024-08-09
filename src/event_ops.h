@@ -10,5 +10,6 @@ extern "C" {
 Bool release_p(const InternalEvent* event);
 Bool press_p(const InternalEvent* event);
 Time time_of(const InternalEvent* event);
-KeyCode detail_of(const InternalEvent* event);
+KeyCode detail_of1(const InternalEvent* event);
+KeyCode detail_of2();
 const char* event_type_brief(const InternalEvent *event);

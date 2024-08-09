@@ -109,7 +109,7 @@ machineRec::log_state_and_event(const char* message, const key_event *ev)
 {
     DeviceIntPtr keybd = mPlugin->device;
     InternalEvent* event = ev->event;
-    KeyCode key = detail_of(event);
+    KeyCode key = detail_of1(event);
 
     if (keybd->key)
     {
@@ -259,7 +259,7 @@ machineRec::activate_fork() // possibly unlocks
     assert(!internal_queue.empty());
 
     key_event* ev = internal_queue.pop();
-    KeyCode forked_key = detail_of(ev->event);
+    KeyCode forked_key = detail_of1(ev->event);
     // assert(forked_key == suspect);
 
     ev->forked = forked_key;
@@ -398,7 +398,7 @@ machineRec::do_confirm_non_fork_by(key_event *ev) // possibly unlocks
 
     key_event* non_forked_event = internal_queue.pop();
     // todo: improve this log:
-    mdb("this is not a fork! %d\n", detail_of(non_forked_event->event));
+    mdb("this is not a fork! %d\n", detail_of1(non_forked_event->event));
 
     rewind_machine();
     output_event(non_forked_event);
@@ -571,7 +571,7 @@ machineRec::apply_event_to_normal(key_event *ev) // possibly unlocks
 {
     const DeviceIntPtr keybd = mPlugin->device;
     InternalEvent* event = ev->event;
-    const KeyCode key = detail_of(event);
+    const KeyCode key = detail_of1(event);
     const Time simulated_time = time_of(event);
 
     assert(internal_queue.empty());
@@ -619,7 +619,7 @@ machineRec::apply_event_to_normal(key_event *ev) // possibly unlocks
         // fixme:  we should see if the fork was `used'.
         if (config->consider_forks_for_repeat){
             // C-f   f long becomes fork. now we wanted to repeat it....
-            last_released = detail_of(event);
+            last_released = detail_of1(event);
             last_released_time = time_of(event);
         } else {
             // imagine mouse-button during the short 1st press. Then
@@ -639,7 +639,7 @@ machineRec::apply_event_to_normal(key_event *ev) // possibly unlocks
         output_event(ev);
     } else {
         if (release_p (event)) {
-            last_released = detail_of(event);
+            last_released = detail_of1(event);
             last_released_time = time_of(event);
         };
         // pass along the un-forkable event.
@@ -656,7 +656,7 @@ machineRec::apply_event_to_suspect(key_event *ev)
 {
     InternalEvent* event = ev->event;
     Time simulated_time = time_of(event);
-    KeyCode key = detail_of(event);
+    KeyCode key = detail_of1(event);
 
     list_with_tail &queue = internal_queue;
 
@@ -754,7 +754,7 @@ machineRec::apply_event_to_verify_state(key_event *ev)
 {
     InternalEvent* event = ev->event;
     Time simulated_time = time_of(event);
-    KeyCode key = detail_of(event);
+    KeyCode key = detail_of1(event);
 
     /* We pressed a forkable key, and another one (which could possibly
        use the modifier). Now, either the forkable key was intended
@@ -839,7 +839,7 @@ machineRec::step_fork_automaton_by_key(key_event *ev)
     ErrorF("%s:\n", __func__);
     assert (ev);
     const InternalEvent* event = ev->event;
-    const KeyCode key = detail_of(event);
+    const KeyCode key = detail_of1(event);
 
     /* Please, first change the state, then enqueue, and then EMIT_EVENT.
      * fixme: should be a function then  !!!*/
