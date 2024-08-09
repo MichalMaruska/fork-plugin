@@ -95,6 +95,7 @@ const char* event_names[] = {
     "XQuartz"
 };
 
+using machineRec = forkingMachine<Time, KeyCode>;
 
 /* memory problems tracking: (used with mxfree & mmalloc) I observe this value. */
 size_t memory_balance = 0;

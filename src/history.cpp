@@ -27,6 +27,8 @@ extern "C" {
 
 #include "event_ops.h"
 
+using machineRec = forkingMachine<Time, KeyCode>;
+
 archived_event*
 make_archived_event(const key_event* const ev)
 {
