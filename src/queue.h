@@ -124,7 +124,7 @@ public:
   }
 
   // const char* name = NULL
-  explicit my_queue<T>(string&& name) : m_name(std::move(name))
+  explicit my_queue(string&& name) : m_name(std::move(name))
   {
 #ifdef DEBUG
     DB("%s: constructor\n", __func__);
@@ -132,7 +132,7 @@ public:
     last_node = list.end();
   };
 
-  void swap (my_queue<T>& peer) noexcept {
+  void swap(my_queue& peer) noexcept {
     typename slist<T*>::iterator temp;
     temp = last_node;
 
