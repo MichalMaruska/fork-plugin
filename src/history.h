@@ -6,6 +6,7 @@ extern "C" {
 #include "fork_requests.h"
 }
 
+#define DEBUG 1
 #include "circular.h"
 
 typedef struct {
