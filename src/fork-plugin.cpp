@@ -17,26 +17,6 @@
  */
 
 
-#define USE_LOCKING 1
-
-/* What does the lock protect?  ... access to the  queues,state
- * mouse signal handler cannot just make "fork", while a key event is being analyzed.
- */
-
-
-/* Locking is broken: but it's not used now:
- *
- *   ---> keyevent ->  xkb action -> mouse
- *                                     |
- *   prev   <----                 <---  thaw
- *        ->   process  \
- *               exits  /
- *             unlocks!
- *
- *
- *  lock is gone!! <- action */
-
-
 
 /* This is how it works:
  * We have a `state' and 3 queues:
