@@ -320,9 +320,10 @@ machineRec::try_to_play(Bool force_also)
 
     // notice that instead of recursion, all the calls to `rewind_machine' are
     // followed by return to this cycle!
-    while (!plugin_frozen(nextPlugin)) {
-
+    while (! plugin_frozen(nextPlugin)) {
+        ErrorF("%s:\n", __func__);
         if (! input_queue.empty()) {
+            ErrorF("%s: ok!\n", __func__);
             key_event *ev = input_queue.pop();
             step_fork_automaton_by_key(ev);
         } else {
@@ -332,7 +333,7 @@ machineRec::try_to_play(Bool force_also)
                     // we have to try again.
                     continue;
             }
-
+            ErrorF("%s:2\n", __func__);
             if (force_also && (state != st_normal)) {
                 step_fork_automaton_by_force();
             } else {
@@ -348,8 +349,11 @@ void
 machineRec::accept_event(key_event* ev)
 {
     mCurrent_time = 0; // time_of(ev->event);
+    ErrorF("%s:\n", __func__);
     input_queue.push(ev);
+    ErrorF("%s: 2\n", __func__);
     try_to_play(FALSE);
+    ErrorF("%s: 3\n", __func__);
 }
 
 /*
@@ -572,7 +576,7 @@ machineRec::apply_event_to_normal(key_event *ev) // possibly unlocks
     const Time simulated_time = time_of(event);
 
     assert(internal_queue.empty());
-
+    ErrorF("%s: 2\n", __func__);
     // if this key might start a fork....
     if (press_p(event) && forkable_p(config, key)
         /* fixme: is this w/ 1-event precision? (i.e. is the xkb-> updated synchronously) */
@@ -833,6 +837,7 @@ machineRec::apply_event_to_verify_state(key_event *ev)
 void
 machineRec::step_fork_automaton_by_key(key_event *ev)
 {
+    ErrorF("%s:\n", __func__);
     assert (ev);
     const InternalEvent* event = ev->event;
     const KeyCode key = detail_of(event);
@@ -862,6 +867,7 @@ machineRec::step_fork_automaton_by_key(key_event *ev)
     // A currently forked keycode cannot be (suddenly) pressed 2nd time.
     // assert(release_p(event) || (key < MAX_KEYCODE && forkActive[key] == 0));
 
+    ErrorF("%s: 2\n", __func__);
 #if DEBUG
     if (press_p(event) || release_p(event)) {
         log_state_and_event(__func__, ev);
