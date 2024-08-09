@@ -35,8 +35,9 @@ mouse_emulation_on(DeviceIntPtr keybd)
 //    |    or      |
 //  return a _pointer_ to the pointer  on a searched-for item.
 
+template <typename Keycode, typename Time>
 fork_configuration**
-machineRec::find_configuration_n(int n)
+forkingMachine<Keycode, Time>::find_configuration_n(int n)
 {
     fork_configuration** config_p = &config;
 
@@ -50,10 +51,10 @@ machineRec::find_configuration_n(int n)
 
 // and replay whatever is inside the machine!
 // locked?
+template <typename Keycode, typename Time>
 void
-machineRec::switch_config(int id)
+forkingMachine<Keycode, Time>::switch_config(int id)
 {
-
     ErrorF("%s %d\n", __FUNCTION__, id);
     fork_configuration** config_p = find_configuration_n(id);
     ErrorF("%s found\n", __FUNCTION__);
@@ -83,7 +84,8 @@ machineRec::switch_config(int id)
     }
 }
 
-void machineRec::log_event(const key_event *event, const DeviceIntPtr keybd)
+template <typename Keycode, typename Time>
+void forkingMachine<Keycode, Time>::log_event(const key_event *event, const DeviceIntPtr keybd)
 {
 #if 0 // fixme: DEBUG
             if (config->debug) {
@@ -94,8 +96,9 @@ void machineRec::log_event(const key_event *event, const DeviceIntPtr keybd)
 #endif
 }
 
+template <typename Keycode, typename Time>
 void
-machineRec::log_state(const char* message) const
+forkingMachine<Keycode, Time>::log_state(const char* message) const
 {
     mdb("%s%s%s state: %s, queue: %d .... %s\n",
         fork_color, __FUNCTION__, color_reset,
@@ -104,8 +107,9 @@ machineRec::log_state(const char* message) const
         message);
 }
 
+template <typename Keycode, typename Time>
 void
-machineRec::log_state_and_event(const char* message, const key_event *ev)
+forkingMachine<Keycode, Time>::log_state_and_event(const char* message, const key_event *ev)
 {
     DeviceIntPtr keybd = mPlugin->device;
     InternalEvent* event = ev->event;
@@ -128,8 +132,9 @@ machineRec::log_state_and_event(const char* message, const key_event *ev)
     }
 }
 
+template <typename Keycode, typename Time>
 void
-machineRec::log_queues(const char* message)
+forkingMachine<Keycode, Time>::log_queues(const char* message)
 {
     mdb("%s: Queues: output: %d\t internal: %d\t input: %d \n", message,
         output_queue.length (),
@@ -139,8 +144,9 @@ machineRec::log_queues(const char* message)
 
 /* The machine is locked here:
  * Push as many as possible from the OUTPUT queue to the next layer */
+template <typename Keycode, typename Time>
 void
-machineRec::flush_to_next()  // unlocks!
+forkingMachine<Keycode, Time>::flush_to_next()  // unlocks!
 {
     // todo: lock in this scope only?
     check_locked();
@@ -150,7 +156,9 @@ machineRec::flush_to_next()  // unlocks!
     while(!plugin_frozen(nextPlugin) && !output_queue.empty()) {
         key_event* ev = output_queue.pop();
 
-        last_events->push_back(make_archived_event(ev));
+        auto tmp = make_archived_event(ev);
+
+        // last_events->push_back(tmp);
 
         InternalEvent* event = ev->event;
         mxfree(ev, sizeof(key_event));
@@ -201,11 +209,12 @@ machineRec::flush_to_next()  // unlocks!
 // ... and push the event down the pipeline, when not frozen.
 
 /* note, that after this EV could point to a deallocated memory! */
+template <typename Keycode, typename Time>
 void
-machineRec::output_event(key_event* ev) // unlocks possibly!
+forkingMachine<Keycode, Time>::output_event(key_event* ev) // unlocks possibly!
 {
-    assert(ev->event);
-
+    assert(ev->event != nullptr);
+    DB("%s: %p %p\n", __func__, ev, ev->event);
     output_queue.push(ev);
     flush_to_next();
 };
@@ -220,8 +229,9 @@ machineRec::output_event(key_event* ev) // unlocks possibly!
 /**
  * Now the operations on the Dynamic state
  */
+template <typename Keycode, typename Time>
 void
-machineRec::reverse_splice(list_with_tail &pre, list_with_tail &post)
+forkingMachine<Keycode, Time>::reverse_splice(list_with_tail &pre, list_with_tail &post)
 {
     // Splice with a reversed semantic:
     // pre.splice(post) --> ()  (pre post)
@@ -230,8 +240,9 @@ machineRec::reverse_splice(list_with_tail &pre, list_with_tail &post)
 }
 
 /** one key-event investigation finished, now reset for the next one */
+template <typename Keycode, typename Time>
 void
-machineRec::rewind_machine()
+forkingMachine<Keycode, Time>::rewind_machine()
 {
     assert ((state == st_deactivated) || (state == st_activated));
 
@@ -253,8 +264,9 @@ machineRec::rewind_machine()
 /* we concluded the key is forked. "output" it and prepare for the next one.
  * fixme: locking?
  */
+template <typename Keycode, typename Time>
 void
-machineRec::activate_fork() // possibly unlocks
+forkingMachine<Keycode, Time>::activate_fork() // possibly unlocks
 {
     assert(!internal_queue.empty());
 
@@ -283,8 +295,9 @@ machineRec::activate_fork() // possibly unlocks
  * Apparently the criteria/configuration has changed!
  * Reasonably this is in response to a key event. So we are in Final state.
  */
+template <typename Keycode, typename Time>
 void
-machineRec::replay_events(Bool force_also)
+forkingMachine<Keycode, Time>::replay_events(Bool force_also)
 {
     mdb("%s\n", __FUNCTION__);
     check_locked();
@@ -305,8 +318,9 @@ machineRec::replay_events(Bool force_also)
 /*
  * Take from input_queue, + the mCurrent_time + force   -> run the machine.
  */
+template <typename Keycode, typename Time>
 void
-machineRec::try_to_play(Bool force_also)
+forkingMachine<Keycode, Time>::try_to_play(Bool force_also)
 {
     // fixme: maybe All I need is the nextPlugin?
     const PluginInstance* const nextPlugin = mPlugin->next;
@@ -344,8 +358,9 @@ machineRec::try_to_play(Bool force_also)
      *              queue_empty(machine->input_queue)) */
 }
 
+template <typename Keycode, typename Time>
 void
-machineRec::accept_event(key_event* ev)
+forkingMachine<Keycode, Time>::accept_event(key_event* ev)
 {
     mCurrent_time = 0; // time_of(ev->event);
     ErrorF("%s:\n", __func__);
@@ -361,8 +376,9 @@ machineRec::accept_event(key_event* ev)
  *
  * If in Suspect or Verify state, force the fork. (todo: should be configurable)
  */
+template <typename Keycode, typename Time>
 void
-machineRec::step_fork_automaton_by_force()
+forkingMachine<Keycode, Time>::step_fork_automaton_by_force()
 {
     if ((state == st_normal) || (internal_queue.empty())) {
         // doe  this imply  that ^^^ ?
@@ -384,8 +400,9 @@ machineRec::step_fork_automaton_by_force()
 }
 
 // So the event proves, that the current event is not forked.
+template <typename Keycode, typename Time>
 void
-machineRec::do_confirm_non_fork_by(key_event *ev) // possibly unlocks
+forkingMachine<Keycode, Time>::do_confirm_non_fork_by(key_event *ev) // possibly unlocks
 {
     assert(state == st_suspect || state == st_verify);
 
@@ -405,8 +422,9 @@ machineRec::do_confirm_non_fork_by(key_event *ev) // possibly unlocks
 }
 
 // so EV confirms fork of the current event.
+template <typename Keycode, typename Time>
 void
-machineRec::do_confirm_fork_by(key_event *ev)
+forkingMachine<Keycode, Time>::do_confirm_fork_by(key_event *ev)
 {
     /* fixme: ev is the just-read event. But that is surely not the head
        of queue (which is confirmed to fork) */
@@ -427,8 +445,9 @@ machineRec::do_confirm_fork_by(key_event *ev)
 
 // return 0  if the current/first key is pressed enough time to fork.
 // or time when this will happen.
+template <typename Keycode, typename Time>
 Time
-machineRec::key_pressed_too_long(Time current_time)
+forkingMachine<Keycode, Time>::key_pressed_too_long(Time current_time)
 {
     assert(state== st_verify || state == st_suspect);
 
@@ -450,9 +469,10 @@ machineRec::key_pressed_too_long(Time current_time)
 
 
 // return 0 if enough, otherwise the time when it will be enough/proving a fork.
+template <typename Keycode, typename Time>
 Time
 // dangerous to name it current_time, like the member variable!
-machineRec::key_pressed_in_parallel(Time current_time)
+forkingMachine<Keycode, Time>::key_pressed_in_parallel(Time current_time)
 {
     // verify overlap
     int overlap_tolerance = config->overlap_tolerance_of(suspect,
@@ -477,8 +497,9 @@ machineRec::key_pressed_in_parallel(Time current_time)
 }
 
 
+template <typename Keycode, typename Time>
 bool
-machineRec::step_fork_automaton_by_time(Time current_time)
+forkingMachine<Keycode, Time>::step_fork_automaton_by_time(Time current_time)
 {
     // confirm fork:
     int reason;
@@ -527,8 +548,9 @@ machineRec::step_fork_automaton_by_time(Time current_time)
 }
 
 // This is a public api!
+template <typename Keycode, typename Time>
 void
-machineRec::step_in_time_locked(Time now) // unlocks possibly!
+forkingMachine<Keycode, Time>::step_in_time_locked(const Time now) // unlocks possibly!
 {
     mdb("%s:\n", __FUNCTION__);
 
@@ -566,8 +588,9 @@ machineRec::step_in_time_locked(Time now) // unlocks possibly!
 /** apply_event_to_{STATE} */
 
 // is mDecision_time always recalculated?
+template <typename Keycode, typename Time>
 void
-machineRec::apply_event_to_normal(key_event *ev) // possibly unlocks
+forkingMachine<Keycode, Time>::apply_event_to_normal(key_event *ev) // possibly unlocks
 {
     const DeviceIntPtr keybd = mPlugin->device;
     InternalEvent* event = ev->event;
@@ -651,8 +674,9 @@ machineRec::apply_event_to_normal(key_event *ev) // possibly unlocks
 /*  First (press)
  *  Second    <-- we are here.
  */
+template <typename Keycode, typename Time>
 void
-machineRec::apply_event_to_suspect(key_event *ev)
+forkingMachine<Keycode, Time>::apply_event_to_suspect(key_event *ev)
 {
     InternalEvent* event = ev->event;
     Time simulated_time = time_of(event);
@@ -749,8 +773,9 @@ machineRec::apply_event_to_suspect(key_event *ev)
  * So, already 2 keys have been pressed, and still no decision.
  * Now we have the 3rd key.
  * We wait only for time, and for the release of the key */
+template <typename Keycode, typename Time>
 void
-machineRec::apply_event_to_verify_state(key_event *ev)
+forkingMachine<Keycode, Time>::apply_event_to_verify_state(key_event *ev)
 {
     InternalEvent* event = ev->event;
     Time simulated_time = time_of(event);
@@ -833,8 +858,9 @@ machineRec::apply_event_to_verify_state(key_event *ev)
  *   either the ev  is pushed on internal_queue, or to the output-queue
  *   the head of internal_queue may be pushed to the output-queue as well.
  */
+template <typename Keycode, typename Time>
 void
-machineRec::step_fork_automaton_by_key(key_event *ev)
+forkingMachine<Keycode, Time>::step_fork_automaton_by_key(key_event *ev)
 {
     ErrorF("%s:\n", __func__);
     assert (ev);
