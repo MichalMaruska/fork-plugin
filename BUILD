@@ -38,3 +38,6 @@ g++ test-circular.cpp
 g++ test-circular.cpp  -lgtest
 
 cd tests; ctest
+
+# now that I  moved enable_testing() to the root:
+cmake --build . -t test
