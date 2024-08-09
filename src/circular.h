@@ -71,13 +71,16 @@ class circular_buffer_iterator
         // Use compiler generated copy ctor, copy assignment operator and dtor
 
         elem_type &operator*()  { return (*buf_)[pos_]; }
-        elem_type *operator->() { return &(operator*()); }
+        elem_type *operator->() { return &(operator*()); }  // mmc: is this ok?
 
         self_type &operator++()
         {
             pos_ += 1;
             return *this;
         }
+
+    // why (n) and why not reference? because it returns a new THING and it's ++iter, not iter++
+    // post-increment!
         self_type operator++(int)
         {
             self_type tmp(*this);
@@ -157,6 +160,7 @@ class circular_buffer_iterator
         size_type  pos_;
 };
 
+// outside for     N + iter.
 template <typename circular_buffer_iterator_t>
 circular_buffer_iterator_t operator+
     (const typename circular_buffer_iterator_t::difference_type &a,
@@ -165,6 +169,7 @@ circular_buffer_iterator_t operator+
     return circular_buffer_iterator_t(a) + b;
 }
 
+//  N - iter
 template <typename circular_buffer_iterator_t>
 circular_buffer_iterator_t operator-
     (const typename circular_buffer_iterator_t::difference_type &a,
@@ -243,7 +248,7 @@ class circular_buffer
         typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
         // Lifetime
-        enum { default_capacity = 100 };
+        static constexpr int default_capacity = 100;
         explicit circular_buffer(size_type capacity = default_capacity)
         : array_(alloc_.allocate(capacity)), array_size_(capacity),
           head_(1), tail_(0), contents_size_(0)
@@ -266,6 +271,7 @@ class circular_buffer
                 throw;
             }
         }
+
         template <class InputIterator>
         circular_buffer(InputIterator from, InputIterator to)
         : array_(alloc_.allocate(1)), array_size_(1),
@@ -338,6 +344,7 @@ class circular_buffer
         const_reference front() const {return array_[head_];}
         const_reference back() const  {return array_[tail_];}
 
+    // I wonder if I could change this to &&item
         void push_back(const value_type &item)
         {
             size_type next = next_tail();
@@ -345,12 +352,14 @@ class circular_buffer
             {
                 if (always_accept_data_when_full)
                 {
+                    // assignment!
                     array_[next] = item;
                     increment_head();
                 }
             }
             else
             {
+                // what? emplacement
                 alloc_.construct(array_ + next, item);
             }
             increment_tail();
@@ -432,6 +441,7 @@ class circular_buffer
             }
         }
 
+    // dynamically grow the array
         template <typename f_iter>
         void assign_into_reserving(f_iter from, f_iter to)
         {
