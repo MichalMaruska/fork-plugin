@@ -18,7 +18,7 @@ set(sources
   configure.cpp
   debug.cpp
   event_ops.cpp
-  fork.cpp
+  fork-plugin.cpp
   machine.cpp
   history.cpp
   )
