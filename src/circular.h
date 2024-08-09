@@ -24,6 +24,9 @@
 
 #include <stdexcept>
 
+#ifdef DEBUG
+#include "debug.h"
+#endif
 /******************************************************************************
  * Iterators
  *****************************************************************************/
@@ -347,6 +350,9 @@ class circular_buffer
     // I wonder if I could change this to &&item
         void push_back(const value_type &item)
         {
+#ifdef DEBUG
+            DB("%s:\n",  __func__);
+#endif
             size_type next = next_tail();
             if (contents_size_ == array_size_)
             {
