@@ -94,13 +94,17 @@ public:
    *      this      appendix    this        appendix
    *     xxxxxxx   yyyyy   ->   xxxxyyyy       (empty)
    */
-  void slice (my_queue<T>& suffix) // appendix
+  void append (my_queue<T>& suffix) // appendix
   {
+    if (empty()) {
+      // fixme:
+      return;
+    }
+
 #if DEBUG > 1
     DB(("%s: %s: appending/moving all from %s:\n", __FUNCTION__, get_name(),
         suffix.get_name()));
 #endif
-
     if (! suffix.list.empty())
     {
       list.splice_after(last_node, suffix.list);

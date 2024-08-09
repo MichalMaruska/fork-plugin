@@ -226,7 +226,7 @@ machineRec::reverse_slice(list_with_tail &pre, list_with_tail &post)
     // Slice with a reversed semantic:
     // A.slice(B) --> ()  (AB)
     // traditional is (AB) ()
-    pre.slice(post); // mmc:? splice?
+    pre.append(post); // mmc:? splice?
     pre.swap(post);
 }
 
