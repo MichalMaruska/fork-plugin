@@ -286,7 +286,7 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
                 // what to do with `event' !!
                 goto exit;
 
-            machine->log_event(ev, keybd);
+            // machine->log_event(ev, keybd);
             machine->accept_event(ev);
         }
 
