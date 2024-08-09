@@ -17,7 +17,10 @@ extern "C" {
 #include <X11/Xproto.h>
 
 /* `probably' I use it only to print out the keysym in debugging stuff*/
+#if 0
 #include <xorg/eventstr.h>
+#endif
+
 #undef max
 #undef min
 }

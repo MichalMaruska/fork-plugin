@@ -4,10 +4,8 @@ extern "C"
 #include "event_ops.h"
 }
 
-
-// specific keysyms:
-
 extern "C" {
+   // specific keysyms:
 #include <X11/keysym.h>
 }
 
