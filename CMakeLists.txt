@@ -5,4 +5,5 @@ add_subdirectory(src)
 
 export(EXPORT fork FILE dump.cmake)
 
+enable_testing()
 add_subdirectory(test)

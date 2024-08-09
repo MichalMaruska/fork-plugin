@@ -2,8 +2,6 @@
 # add_test(NAME test-circular COMMAND ExecutableToRun arg1 arg2 ...)
 
 # ?
-enable_testing()
-
 include(GoogleTest)
 
 # this was crucial to use GTest::gtest_main
