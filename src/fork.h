@@ -113,8 +113,10 @@ typedef enum {
 
 /* `machine': the dynamic `state' */
 
-// typedef
-struct machineRec
+// typename platformEvent, typename platformEnvironment,
+template <typename Keycode, typename Time>
+// so key_event
+struct forkingMachine
 {
     typedef my_queue<key_event> list_with_tail;
 
@@ -329,12 +331,12 @@ public:
         }
     };
 
-    ~machineRec()
+    ~forkingMachine()
         {
             delete last_events;
         };
 
-    explicit machineRec(PluginInstance* plugin)
+    explicit forkingMachine(PluginInstance* plugin)
         : mLock(0), state(st_normal), suspect(0), verificator_keycode(0), suspect_time(0),
           last_released(KEYCODE_UNUSED), last_released_time(0),
           mDecision_time(0),
