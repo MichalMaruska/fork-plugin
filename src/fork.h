@@ -50,7 +50,7 @@ struct _fork_configuration
 
 private:
     static Time
-    get_value_from_matrix (keycode_parameter_matrix matrix, KeyCode code, KeyCode verificator)
+    get_value_from_matrix(keycode_parameter_matrix matrix, KeyCode code, KeyCode verificator)
     {
         return (matrix[code][verificator]?
                 // code/verificator specific:
@@ -155,7 +155,7 @@ public:
     void unlock()
     {
         mLock=0;
-        mdb_raw("\\__\n");
+        mdb_raw("\\__ (unlock)\n");
     }
 #endif
 
@@ -341,7 +341,8 @@ public:
           mCurrent_time(0),
           internal_queue("internal"),
           input_queue("input_queue"),
-          output_queue("output_queue"), config(nullptr),
+          output_queue("output_queue"),
+          config(nullptr),
           mPlugin(plugin) {
         last_events = new last_events_type(max_last);
 
