@@ -259,7 +259,7 @@ private:
     void log_state_and_event(const char* message, const key_event *ev);
     void log_queues(const char* message);
 
-    static void reverse_slice(list_with_tail &pre, list_with_tail &post);
+    static void reverse_splice(list_with_tail &pre, list_with_tail &post);
 
     void try_to_play(Bool force);
 

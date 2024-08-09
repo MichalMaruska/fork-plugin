@@ -221,12 +221,11 @@ machineRec::output_event(key_event* ev) // unlocks possibly!
  * Now the operations on the Dynamic state
  */
 void
-machineRec::reverse_slice(list_with_tail &pre, list_with_tail &post)
+machineRec::reverse_splice(list_with_tail &pre, list_with_tail &post)
 {
-    // Slice with a reversed semantic:
-    // A.slice(B) --> ()  (AB)
-    // traditional is (AB) ()
-    pre.append(post); // mmc:? splice?
+    // Splice with a reversed semantic:
+    // pre.splice(post) --> ()  (pre post)
+    pre.append(post);
     pre.swap(post);
 }
 
@@ -245,7 +244,7 @@ machineRec::rewind_machine()
     verificator_keycode = 0;
 
     if (!(internal_queue.empty())) {
-        reverse_slice(internal_queue, input_queue);
+        reverse_splice(internal_queue, input_queue);
         mdb("now in input_queue: %d\n", input_queue.length ());
     }
 };
@@ -292,7 +291,7 @@ machineRec::replay_events(Bool force_also)
 
     if (!internal_queue.empty()) {
         // fixme: worth it?
-        reverse_slice(internal_queue, input_queue);
+        reverse_splice(internal_queue, input_queue);
     }
     change_state(st_normal);
     // todo: what else?
