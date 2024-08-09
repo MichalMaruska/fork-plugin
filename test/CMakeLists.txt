@@ -1,8 +1,7 @@
-# include(CTest)
-# add_test(NAME test-circular COMMAND ExecutableToRun arg1 arg2 ...)
-
 include(GoogleTest)
 
+# include(CTest)
+# add_test(NAME test-circular COMMAND ExecutableToRun arg1 arg2 ...)
 
 # this was crucial to use GTest::gtest_main
 find_package(GTest REQUIRED)
