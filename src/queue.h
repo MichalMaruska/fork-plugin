@@ -4,7 +4,10 @@
 
 #include <ext/slist>
 #include <string>
+
+#ifdef DEBUG
 #include "debug.h"
+#endif
 
 using namespace std;
 using namespace __gnu_cxx;
@@ -123,7 +126,9 @@ public:
   // const char* name = NULL
   explicit my_queue<T>(string&& name) : m_name(std::move(name))
   {
+#ifdef DEBUG
     DB("%s: constructor\n", __func__);
+#endif
     last_node = list.end();
   };
 
