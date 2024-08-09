@@ -38,6 +38,7 @@ extern "C" {
 #define MAX_KEYCODE 256         /* fixme: inherit from xorg! */
 typedef int keycode_parameter_matrix[MAX_KEYCODE][MAX_KEYCODE];
 
+// namespace fork {
 
 /* We can switch between configs. */
 typedef struct _fork_configuration fork_configuration;
@@ -328,21 +329,20 @@ public:
         }
     };
 
-
     ~machineRec()
         {
             delete last_events;
         };
 
-    machineRec(PluginInstance* plugin)
-        : internal_queue("internal"),
-          input_queue("input_queue"),
-          output_queue("output_queue"),
-          mPlugin(plugin),
-          last_released(0),
+    explicit machineRec(PluginInstance* plugin)
+        : state(st_normal),
+          last_released(KEYCODE_UNUSED),
           mDecision_time(0),
           mCurrent_time(0),
-          state(st_normal)
+          internal_queue("internal"),
+          input_queue("input_queue"),
+          output_queue("output_queue"),
+          mPlugin(plugin)
         {
             last_events = new last_events_type(max_last);
 
