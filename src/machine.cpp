@@ -310,7 +310,7 @@ void
 machineRec::try_to_play(Bool force_also)
 {
     // fixme: maybe All I need is the nextPlugin?
-    PluginInstance* const nextPlugin = mPlugin->next;
+    const PluginInstance* const nextPlugin = mPlugin->next;
 
     // log_queues_and_nextplugin(message)
     mdb("%s: next %s: internal %d, input: %d\n", __FUNCTION__,
@@ -566,11 +566,10 @@ machineRec::step_in_time_locked(Time now) // unlocks possibly!
 void
 machineRec::apply_event_to_normal(key_event *ev) // possibly unlocks
 {
-    DeviceIntPtr keybd = mPlugin->device;
-
+    const DeviceIntPtr keybd = mPlugin->device;
     InternalEvent* event = ev->event;
-    KeyCode key = detail_of(event);
-    Time simulated_time = time_of(event);
+    const KeyCode key = detail_of(event);
+    const Time simulated_time = time_of(event);
 
     assert(internal_queue.empty());
 
@@ -835,9 +834,8 @@ void
 machineRec::step_fork_automaton_by_key(key_event *ev)
 {
     assert (ev);
-
-    InternalEvent* event = ev->event;
-    KeyCode key = detail_of(event);
+    const InternalEvent* event = ev->event;
+    const KeyCode key = detail_of(event);
 
     /* Please, first change the state, then enqueue, and then EMIT_EVENT.
      * fixme: should be a function then  !!!*/
