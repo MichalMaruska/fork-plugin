@@ -400,28 +400,29 @@ make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
 
     assert (strcmp(plugin_class->name, FORK_PLUGIN_NAME) == 0);
 
-    PluginInstance* plugin = MALLOC(PluginInstance);
+    auto* plugin = MALLOC(PluginInstance);
     plugin->pclass = plugin_class;
     plugin->device = keybd;
     plugin->frozen = FALSE;
-    machineRec* forking_machine = NULL;
 
     // I create 2 config sets.  1 w/o forking.
     // They are numbered:  0 is the no-op.
-    fork_configuration* config_no_fork = machine_new_config(); // configuration number 0
-    config_no_fork->debug = 0;   // should be settable somehow.
+    auto *config_no_fork = machine_new_config(); // configuration number 0
     if (!config_no_fork)
     {
         return NULL;
     }
+    config_no_fork->debug = 0;   // should be settable somehow.
 
-    fork_configuration* config = machine_new_config();
+    auto *config = machine_new_config();
     if (!config)
     {
-        free (config_no_fork);
+        // fixme: some uniq_pointer<> ?
+        free(config_no_fork);
         return NULL;
     }
 
+    // make a method chain_to()?
     config->next = config_no_fork;
     // config->id = config_no_fork->id + 1;
     // so we start w/ config 1. 0 is empty and should not be modifiable
@@ -429,24 +430,22 @@ make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
     ErrorF("%s: constructing the machine %d (official release: %s)\n",
            __FUNCTION__, PLUGIN_VERSION, VERSION_STRING);
 
-    forking_machine = new machineRec(plugin);
+    auto* const forking_machine = new machineRec(plugin);
 
     // set_wakeup_time(plugin, 0);
     plugin->wakeup_time = 0;
-
     // fixme: dangerous: this should be part of the ctor!
     config->debug = 1;
     forking_machine->config = config;
 
     forking_machine->unlock();
 
-    plugin->data = (void*) forking_machine;
-    ErrorF("%s:@%s returning %d\n", __FUNCTION__, keybd->name, Success);
+    plugin->data = static_cast<void *>(forking_machine);
+    ErrorF("%s:@%s returning %d\n", __func__, keybd->name, Success);
 
-    AddCallback(&DeviceEventCallback, (CallbackProcPtr) mouse_call_back, (void*) plugin);
+    AddCallback(&DeviceEventCallback, reinterpret_cast<CallbackProcPtr>(mouse_call_back), (void*) plugin);
 
     plugin_class->ref_count++;
-
     return plugin;
 };
 
