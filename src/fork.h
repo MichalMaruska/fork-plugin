@@ -335,21 +335,20 @@ public:
         };
 
     explicit machineRec(PluginInstance* plugin)
-        : state(st_normal),
-          last_released(KEYCODE_UNUSED),
+        : mLock(0), state(st_normal), suspect(0), verificator_keycode(0), suspect_time(0),
+          last_released(KEYCODE_UNUSED), last_released_time(0),
           mDecision_time(0),
           mCurrent_time(0),
           internal_queue("internal"),
           input_queue("input_queue"),
-          output_queue("output_queue"),
-          mPlugin(plugin)
-        {
-            last_events = new last_events_type(max_last);
+          output_queue("output_queue"), config(nullptr),
+          mPlugin(plugin) {
+        last_events = new last_events_type(max_last);
 
-            for (unsigned char & i : forkActive){
-                i = KEYCODE_UNUSED; /* not active */
-            };
+        for (unsigned char &i: forkActive) {
+            i = KEYCODE_UNUSED; /* not active */
         };
+    };
 
     void switch_config(int id);
 
