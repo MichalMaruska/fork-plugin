@@ -30,13 +30,25 @@ extern "C" {
 archived_event*
 make_archived_event(const key_event* const ev)
 {
-  const auto event = MALLOC(archived_event);
+  auto *event = MALLOC(archived_event);
+  if (event == nullptr)
+    return NULL;
+  DB("%s: %d %p %p\n", __func__, __LINE__, ev, ev->event);
+  DB("%s:%d into %p\n", __func__, __LINE__, event);
 
-  event->key = detail_of(ev->event);
+  DB("%s:%d type: %d\n", __func__, __LINE__, ev->event->any.type);
+  DB("%s:%d keycode: %d\n", __func__, __LINE__, ev->event->device_event.detail.key);
+  DB("%s:%d keycode via function: %d\n", __func__, __LINE__, detail_of2()); // ev->event
+
+  event->key = detail_of1(ev->event);
+    DB("%s: %d\n", __func__, __LINE__);
   event->time = time_of(ev->event);
+    DB("%s: %d\n", __func__, __LINE__);
   event->press = press_p(ev->event);
+    DB("%s: %d\n", __func__, __LINE__);
   event->forked = ev->forked;
 
+    DB("%s: end\n", __func__);
   return event;
 }
 
