@@ -33,6 +33,7 @@
 
 
 extern "C" {
+#include <xorg-server.h>
 #include <xorg/inputstr.h>
 }
 
