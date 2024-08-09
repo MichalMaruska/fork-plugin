@@ -46,9 +46,19 @@ TEST_F(queueTest, slice) {
     // Given:
     auto newQueue = my_queue<int>("tmp");
     newQueue.push(50);
+    q0_.push(5);
+    q0_.append(newQueue);
+    // CHECK
+    EXPECT_EQ(q0_.length(), 2);
+}
 
+// bug:
+TEST_F(queueTest, slice_empty) {
+    // Given:
+    auto newQueue = my_queue<int>("tmp");
+    newQueue.push(50);
     // Do:   append:
-    q0_.slice(newQueue);
+    q0_.append(newQueue);
     // CHECK
     EXPECT_EQ(q0_.length(), 1);
 }
