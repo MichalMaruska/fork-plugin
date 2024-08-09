@@ -280,7 +280,7 @@ static Bool
 ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
 {
     DeviceIntPtr keybd = plugin->device;
-
+    ErrorF("%s: start", __func__);
     if (filter_config_key_maybe(plugin, event) < 0)
     {
         // fixme: I should at least push the time of (plugin->next)!
@@ -295,6 +295,7 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
         machine->check_unlocked();
         machine->lock();           // fixme: mouse must not interrupt us.
 
+        ErrorF("%s: middle\n", __func__);
         {
             key_event* ev = create_handle_for_event(event, owner);
             if (!ev)			// memory problems
@@ -302,16 +303,17 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, Bool owner)
                 goto exit;
 
             machine->log_event(ev, keybd);
-
             machine->accept_event(ev);
         }
 
+        ErrorF("%s: middle 2\n", __func__);
         set_wakeup_time(plugin);
         machine->unlock();
     }
 
     // always:
   exit:
+    ErrorF("%s: end\n", __func__);
     return PLUGIN_NON_FROZEN;
 };
 
@@ -395,8 +397,8 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
 PluginInstance*
 make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
 {
-    DB("%s @%p\n", __FUNCTION__, keybd);
-    DB("%s @%p\n", __FUNCTION__, (void*) keybd->name);
+    DB("%s @%p\n", __func__, keybd);
+    DB("%s @%p\n", __func__, static_cast<void *>(keybd->name));
 
     assert (strcmp(plugin_class->name, FORK_PLUGIN_NAME) == 0);
 
@@ -441,6 +443,10 @@ make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
     forking_machine->unlock();
 
     plugin->data = static_cast<void *>(forking_machine);
+    //
+    ErrorF("%s:keybd: next %p private %p on: %d\n", __func__, keybd->next, keybd->cpublic.devicePrivate, keybd->cpublic.on);
+
+    ErrorF("%s:keybd: coreEvents %d, size %d %d\n", __func__, keybd->coreEvents, sizeof(Atom), sizeof(CARD32));
     ErrorF("%s:@%s returning %d\n", __func__, keybd->name, Success);
 
     AddCallback(&DeviceEventCallback, reinterpret_cast<CallbackProcPtr>(mouse_call_back), (void*) plugin);
