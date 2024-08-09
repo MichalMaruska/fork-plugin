@@ -23,6 +23,10 @@ set(sources
   history.cpp
   )
 
+# enable warnings:
+# Wall
+add_compile_options("-Wall")
+
 add_library(fork MODULE ${sources})
 target_compile_definitions(fork PRIVATE VERSION_STRING="git-local-2")
 set_property(TARGET fork PROPERTY NO_SONAME)
