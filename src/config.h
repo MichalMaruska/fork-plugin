@@ -1,7 +1,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-
 // I want the version string settable from the command line!!
 #ifndef VERSION_STRING
 # define VERSION_STRING "(unknown version)"

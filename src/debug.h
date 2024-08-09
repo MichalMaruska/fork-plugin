@@ -5,9 +5,9 @@
 
 // #ifndef NDEBUG
 #define DEBUG 1
-#if DEBUG
 
-#if USE_COLORS
+#if DEBUG
+# if USE_COLORS
 #define escape_sequence "\x1b"
 #define info_color "\x1b[47;31m"
 #define fork_color "\x1b[47;30m"

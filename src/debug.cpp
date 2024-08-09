@@ -4,6 +4,7 @@ extern "C" {
 #include "event_ops.h"
 
 // KeySym #define KeySym CARD32 comes from:
+// fixme:_XSERVER64 in  #include <xorg-server.h>
 #include <X11/X.h>
 #include <xorg/xkbsrv.h>
 // specific keysyms:
