@@ -29,9 +29,10 @@ public:
     virtual bool output_frozen() = 0;
     // virtual void hand_over_event_to_next_plugin(PlatformEvent* event) = 0;
     virtual void output_event(PlatformEvent* pevent) = 0;
+    virtual void push_time(Time now) = 0;
 
     virtual void log(const char* format...) = 0;
-    virtual void log_event(const PlatformEvent *event) = 0;
+    virtual void log_event(const std::string &message, const PlatformEvent *event) = 0;
 
     virtual void archive_event(PlatformEvent* pevent, archived_event* archived_event) = 0;
     virtual void free_event(PlatformEvent* pevent) = 0;
