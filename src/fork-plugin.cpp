@@ -41,6 +41,7 @@
 #include "history.h"
 #include "fork.h"
 #include "memory.h"
+#include "xorg.h"
 
 extern "C" {
 #include "event_ops.h"
@@ -231,6 +232,9 @@ create_handle_for_event(InternalEvent *event, bool owner)
             return NULL;
         }
     }
+
+    auto pevent = new XorgEvent();
+
     // the handle is deallocated in `flush_to_next'
     key_event* ev = (key_event*)malloc(sizeof(key_event));
     if (!ev) {
@@ -241,12 +245,12 @@ create_handle_for_event(InternalEvent *event, bool owner)
         return NULL;
     };
 
-    memcpy(qe, event, event->any.length);
+    // memcpy(qe, event, event->any.length);
 #if DEBUG > 1
     DB("+++ accepted new event: %s\n",
         event_names[event->any.type - 2 ]);
 #endif
-    ev->event = qe;
+    ev->p_event = pevent;
     ev->forked = 0;
     return ev;
 }
@@ -416,7 +420,8 @@ make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
     ErrorF("%s: constructing the machine %d (official release: %s)\n",
            __FUNCTION__, PLUGIN_VERSION, VERSION_STRING);
 
-    auto* const forking_machine = new machineRec(plugin);
+    auto* xorg = new XOrgEnvironment(keybd, plugin);
+    auto* const forking_machine = new machineRec(xorg);
 
     // set_wakeup_time(plugin, 0);
     plugin->wakeup_time = 0;

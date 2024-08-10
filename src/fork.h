@@ -2,34 +2,12 @@
 #define _FORK_H_
 
 
-extern "C" {
-#include <xorg-server.h>
-
-#ifndef MMC_PIPELINE
-#error "This is useful only when the xorg-server is configured with --enable-pipeline"
-#endif
-
-#include <X11/X.h>
-#include <X11/Xproto.h>
-#include <xorg/inputstr.h>
-
-
-#include <X11/Xdefs.h>
-#include <xorg/input.h>
-#include <xorg/eventstr.h>
-
-#undef xalloc
-
-#undef max
-#undef min
-}
-
 #include <cstdarg>
 #include "config.h"
 
 #include "queue.h"
 #include "history.h"
-
+#include "platform.h"
 
 #define plugin_machine(plugin) ((machineRec*)(plugin->data))
 #define MALLOC(type)   (type *) malloc(sizeof (type))
@@ -121,7 +99,6 @@ public:
 };
 
 
-
 /* states of the automaton: */
 typedef enum {
   st_normal,
@@ -133,11 +110,12 @@ typedef enum {
 
 /* `machine': the dynamic `state' */
 
-// typename platformEvent, typename platformEnvironment,
+// typename PlatformEvent, typename platformEnvironment,
 template <typename Keycode, typename Time>
 // so key_event
 struct forkingMachine
 {
+    // history:
     typedef my_queue<key_event> list_with_tail;
 
     /* How we decided for the fork */
@@ -161,6 +139,7 @@ private:
                                   *
                                   * useless mmc!  But i want to avoid any caching it.... SMP ??*/
 public:
+    platformEnvironment* environment;
 #if USE_LOCKING
     void check_locked() const {
         assert(mLock);
@@ -218,7 +197,6 @@ public:
        forked keycode for the release event. */
     KeyCode          forkActive[MAX_KEYCODE];
 
-
     last_events_type *last_events; // history
     int max_last = 100; // can be updated!
 
@@ -235,7 +213,7 @@ public:
  * ....
  */
 
-    int set_last_events_count(int new_max) // fixme:  lock ??
+    int set_last_events_count(const int new_max) // fixme:  lock ??
     {
         mdb("%s: allocating %d events\n", __FUNCTION__, new_max);
 
@@ -356,7 +334,7 @@ public:
             delete last_events;
         };
 
-    explicit forkingMachine(PluginInstance* plugin)
+    explicit forkingMachine(platformEnvironment* environment)
         : mLock(0), state(st_normal), suspect(0), verificator_keycode(0), suspect_time(0),
           last_released(KEYCODE_UNUSED), last_released_time(0),
           mDecision_time(0),
@@ -365,7 +343,7 @@ public:
           input_queue("input_queue"),
           output_queue("output_queue"),
           config(nullptr),
-          mPlugin(plugin) {
+          environment(environment) {
         last_events = new last_events_type(max_last);
 
         for (unsigned char &i: forkActive) {
@@ -402,7 +380,7 @@ extern fork_configuration* machine_new_config();
 
 // extern int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n);
 
-void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* plugin);
+void hand_over_event_to_next_plugin(InternalEvent *event, const PluginInstance* plugin);
 
 enum {
   PAUSE_KEYCODE = 127
