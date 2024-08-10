@@ -562,8 +562,7 @@ template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::step_in_time_locked(const Time now) // unlocks possibly!
 {
-    mdb("%s:\n", __FUNCTION__);
-
+    mdb("%s:\n", __func__);
     if (mCurrent_time > now)
         mdb("bug: time moved backwards!");
 
