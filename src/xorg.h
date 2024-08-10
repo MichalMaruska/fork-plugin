@@ -44,19 +44,20 @@ public:
 class XOrgEnvironment : public platformEnvironment {
 private:
     const DeviceIntPtr keybd;
-    PluginInstance* const nextPlugin;
+    PluginInstance* const plugin;
     // how to ctor for those 2 members?
     // XOrgEnvironment()
 public:
-    XOrgEnvironment(const DeviceIntPtr keybd, PluginInstance* const nextPlugin) :
-    keybd(keybd), nextPlugin(nextPlugin){};
+    XOrgEnvironment(const DeviceIntPtr keybd, PluginInstance* const plugin) :
+    keybd(keybd), plugin(plugin){};
 
     virtual ~XOrgEnvironment() = default;
 
     virtual void log_event(const PlatformEvent *event) override;
 
 
-    bool output_frozen() override {
+        bool output_frozen() override {
+            const PluginInstance* const nextPlugin = plugin->next;
         return plugin_frozen(nextPlugin);
     };
 
@@ -119,11 +120,20 @@ public:
 
     virtual void output_event(PlatformEvent* pevent) {
         auto event = static_cast<XorgEvent*>(pevent)->event;
+        const PluginInstance* const nextPlugin = plugin->next;
         ::hand_over_event_to_next_plugin(event, nextPlugin);
     };
+
+    virtual void push_time(Time now) {
+        const PluginInstance* const nextPlugin = plugin->next;
+        PluginClass(nextPlugin)->ProcessTime(nextPlugin, now);
+    }
+
+
 #if 0
     virtual void hand_over_event_to_next_plugin(PlatformEvent *pevent) override {
         auto event = static_cast<XorgEvent*>(pevent)->event;
+        const PluginInstance* const nextPlugin = plugin->next;
         ::hand_over_event_to_next_plugin(event, nextPlugin);
     }
 #endif
