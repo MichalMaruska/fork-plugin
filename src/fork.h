@@ -361,7 +361,7 @@ public:
 
     bool step_fork_automaton_by_time(Time current_time);
 
-    void accept_event(key_event* ev);
+    void accept_event(PlatformEvent* pevent);
 
     void flush_to_next();
 

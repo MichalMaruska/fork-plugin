@@ -217,7 +217,7 @@ set_wakeup_time(PluginInstance* plugin)
 }
 
 
-static key_event*
+static PlatformEvent*
 create_handle_for_event(InternalEvent *event, bool owner)
 {
     InternalEvent* qe;
@@ -285,7 +285,7 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
 
         ErrorF("%s: middle\n", __func__);
         {
-            key_event* ev = create_handle_for_event(event, owner);
+            auto* ev = create_handle_for_event(event, owner);
             if (!ev)			// memory problems
                 // what to do with `event' !!
                 goto exit;
