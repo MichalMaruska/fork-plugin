@@ -73,7 +73,19 @@ class XOrgEnvironment : platformEnvironment {
         DB("%s: %d\n", __func__, __LINE__);
         archived_event->forked = ev->forked;
 #endif
+    };
+
+    virtual void rewrite_event(PlatformEvent* pevent, KeyCode code) {
+        auto event = static_cast<XorgEvent*>(pevent)->event;
+        event->device_event.detail.key = code;
     }
+
+    virtual void free_event(PlatformEvent* pevent) {
+        auto event = static_cast<XorgEvent*>(pevent)->event;
+        mxfree(event, event->any.length);
+    }
+
+
 };
 
 #endif //XORG_H
