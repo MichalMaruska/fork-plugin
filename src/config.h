@@ -11,7 +11,7 @@
 
 // use -DNDEBUG to avoid asserts!
 // Trace + debug:
-#define DEBUG 1
+// #define DEBUG 1
 
 // I like colored tracing (in 256-color xterm)
 #define USE_COLORS 1
