@@ -604,17 +604,18 @@ void
 forkingMachine<Keycode, Time>::apply_event_to_normal(key_event *ev) // possibly unlocks
 {
     const DeviceIntPtr keybd = mPlugin->device;
-    InternalEvent* event = ev->p_event;
-    const KeyCode key = detail_of1(event);
-    const Time simulated_time = time_of(event);
+    PlatformEvent* pevent = ev->p_event;
+
+    const KeyCode key = environment->detail_of(pevent);
+    const Time simulated_time = environment->time_of(pevent);
 
     assert(internal_queue.empty());
-    ErrorF("%s: 2\n", __func__);
+    // ErrorF("%s: 2\n", __func__);
     // if this key might start a fork....
-    if (press_p(event) && forkable_p(config, key)
+    if (environment->press_p(pevent) && forkable_p(config, key)
         /* fixme: is this w/ 1-event precision? (i.e. is the xkb-> updated synchronously) */
         /* todo:  does it have a mouse-related action? */
-        && !(mouse_emulation_on(keybd))) {
+        && !environment->ignore_event()) {
         /* Either suspect, or detect .- trick to suppress fork */
 
         /* .- trick: by depressing/re-pressing the key rapidly, fork is disabled,
