@@ -21,7 +21,10 @@ set(sources
   fork-plugin.cpp
   machine.cpp
   history.cpp
-  )
+
+  platform.h
+  xorg.h
+)
 
 # enable warnings:
 # Wall
