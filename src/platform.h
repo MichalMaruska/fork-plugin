@@ -31,7 +31,7 @@ public:
     virtual KeyCode detail_of(const PlatformEvent* event) = 0;
     virtual void log_event(const PlatformEvent *event) = 0;
 
-    virtual void copy_event(PlatformEvent* pevent, archived_event* archived_event) = 0;
+    virtual void archive_event(PlatformEvent* pevent, archived_event* archived_event) = 0;
     virtual void free_event(PlatformEvent* pevent) = 0;
     virtual void rewrite_event(PlatformEvent* pevent, KeyCode code) = 0;
 

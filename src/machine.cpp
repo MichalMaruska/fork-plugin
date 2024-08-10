@@ -157,7 +157,7 @@ forkingMachine<Keycode, Time>::flush_to_next()  // unlocks!
         key_event* ev = output_queue.pop();
 
         auto tmp = make_archived_event(ev);
-        environment->copy_event(ev->p_event, tmp);
+        environment->archive_event(ev->p_event, tmp);
 
         // last_events->push_back(tmp);
 

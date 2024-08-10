@@ -57,7 +57,8 @@ class XOrgEnvironment : platformEnvironment {
         };
 
     //
-    virtual void copy_event(PlatformEvent* pevent, archived_event* archived_event) {
+    virtual void archive_event(PlatformEvent* pevent, archived_event* archived_event) {
+
         auto event = static_cast<XorgEvent*>(pevent)->event;
         // dynamic_cast
 
