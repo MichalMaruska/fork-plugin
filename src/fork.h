@@ -251,7 +251,7 @@ private:
         return buffer;
     }
 
-    PluginInstance* mPlugin;
+    // PluginInstance* mPlugin;
 
     fork_configuration** find_configuration_n(int n);
 
