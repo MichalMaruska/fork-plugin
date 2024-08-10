@@ -23,4 +23,16 @@ gtest_discover_tests(test-queue)
 
 
 
+find_package(PkgConfig)
+pkg_search_module(xorg-server REQUIRED xorg-server
+  IMPORTED_TARGET GLOBAL)
+
+add_executable(test-machine test-machine.cpp)
+target_include_directories(test-machine SYSTEM PUBLIC ${xorg-server_INCLUDE_DIRS})
+target_link_libraries(test-machine GTest::gtest_main)
+
+gtest_discover_tests(test-machine)
+
+
+
 
