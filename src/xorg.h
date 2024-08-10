@@ -53,9 +53,6 @@ public:
 
     virtual ~XOrgEnvironment() = default;
 
-    virtual void log_event(const PlatformEvent *event) override;
-
-
         bool output_frozen() override {
             const PluginInstance* const nextPlugin = plugin->next;
         return plugin_frozen(nextPlugin);
@@ -146,7 +143,25 @@ public:
         va_end(argptr);
     }
 
-    }
+
+    virtual void log_event(const string &message, const PlatformEvent *pevent) {
+        auto event = static_cast<const XorgEvent*>(pevent)->event;
+
+        const KeyCode key = event->device_event.detail.key;
+        // KeyCode key = detail_of(event);
+
+        if (keybd->key) {
+            XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
+            KeySym *sym = XkbKeySymsPtr(xkbi->desc, key);
+            if ((!sym) || (! isalpha(* (unsigned char*) sym)))
+                sym = (KeySym*) " ";
+
+            log("%s: ", key,
+                            key_color, (char)*sym, color_reset,
+                            event_type_brief(event));
+        }
+    };
+
 };
 
 #endif //XORG_H
