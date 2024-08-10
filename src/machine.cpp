@@ -157,6 +157,7 @@ forkingMachine<Keycode, Time>::flush_to_next()  // unlocks!
         key_event* ev = output_queue.pop();
 
         auto tmp = make_archived_event(ev);
+        environment->copy_event(ev->p_event, tmp);
 
         // last_events->push_back(tmp);
 
@@ -168,9 +169,9 @@ forkingMachine<Keycode, Time>::flush_to_next()  // unlocks!
         // 2020: it can!
         // so ... this is front_lock?
         {
-            log_event(ev, mPlugin->device);
+            environment->log_event(ev->p_event);
             unlock();
-            hand_over_event_to_next_plugin(event, nextPlugin);
+            environment->hand_over_event_to_next_plugin(ev->p_event);
             lock();
         };
     }
@@ -179,15 +180,15 @@ forkingMachine<Keycode, Time>::flush_to_next()  // unlocks!
     // if that plugin is gone. todo!
 
     // now we still have time:
-    if (!plugin_frozen(nextPlugin)) {
+    if (! environment->output_frozen()) {
         // we should push the time!
         Time now;
         if (!output_queue.empty()) {
-            now = time_of(output_queue.front()->event);
+            now = queue_time(output_queue, environment);
         } else if (!internal_queue.empty()) {
-            now = time_of(internal_queue.front()->event);
+            now = queue_time(internal_queue, environment);
         } else if (!input_queue.empty()) {
-            now = time_of(input_queue.front()->event);
+            now = queue_time(input_queue, environment);
         } else {
             // fixme: this is accessed & written to directly by fork.cpp: machine->mCurrent_time = now;
             now = mCurrent_time;
@@ -271,7 +272,7 @@ forkingMachine<Keycode, Time>::activate_fork() // possibly unlocks
     assert(!internal_queue.empty());
 
     key_event* ev = internal_queue.pop();
-    KeyCode forked_key = detail_of1(ev->event);
+    KeyCode forked_key = environment->detail_of(ev->p_event);
     // assert(forked_key == suspect);
 
     ev->forked = forked_key;
@@ -415,7 +416,8 @@ forkingMachine<Keycode, Time>::do_confirm_non_fork_by(key_event *ev) // possibly
 
     key_event* non_forked_event = internal_queue.pop();
     // todo: improve this log:
-    mdb("this is not a fork! %d\n", detail_of1(non_forked_event->event));
+    mdb("this is not a fork! %d\n",
+        environment->detail_of(non_forked_event->p_event));
 
     rewind_machine();
     output_event(non_forked_event);
@@ -883,7 +885,8 @@ forkingMachine<Keycode, Time>::step_fork_automaton_by_key(key_event *ev)
     {
         mdb("%s: the key is forked, ignoring\n", __FUNCTION__);
 
-        mxfree(ev->event, ev->event->any.length);
+        environment->free_event(ev->p_event);
+
         mxfree(ev, sizeof(key_event));
         return;
     }
