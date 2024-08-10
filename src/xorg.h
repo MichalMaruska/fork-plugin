@@ -48,7 +48,7 @@ class XOrgEnvironment : platformEnvironment {
 
     virtual void hand_over_event_to_next_plugin(PlatformEvent *pevent) override {
         auto event = static_cast<XorgEvent*>(pevent)->event;
-        hand_over_event_to_next_plugin(event, nextPlugin);
+        ::hand_over_event_to_next_plugin(event, nextPlugin);
     }
 
     bool output_frozen() override {

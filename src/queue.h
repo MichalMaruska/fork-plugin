@@ -60,6 +60,7 @@ public:
 
   T* pop()                    // top_and_pop()
   {
+    DB("%s\n", __func__);
     // not thread-safe!
     T* pointer = list.front();
     list.pop_front();
@@ -94,9 +95,12 @@ public:
    *      this      appendix    this        appendix
    *     xxxxxxx   yyyyy   ->   xxxxyyyy       (empty)
    */
-  void append (my_queue<T>& suffix) // appendix
+  void append (my_queue& suffix) // appendix
   {
     if (empty()) {
+#ifdef DEBUG
+      DB("%s: bad state\n", __func__);
+#endif
       // fixme:
       return;
     }
@@ -115,7 +119,6 @@ public:
     DB(("%s now has %d\n", suffix.get_name(), suffix.length()));
 #endif
   }
-
 
   ~my_queue()
   {

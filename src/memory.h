@@ -4,6 +4,8 @@
 // I want to track the memory usage, and warn when it's too high.
 extern size_t memory_balance;
 
+// using machineRec = machineRec<Time, Keycode>;
+
 inline
 void* mmalloc(size_t size)
 {
@@ -11,8 +13,12 @@ void* mmalloc(size_t size)
   if (p)
     {
       memory_balance += size;
+    // disable till template
+#if 0
       if (memory_balance > sizeof(machineRec) + sizeof(PluginInstance) + 2000)
         ErrorF("%s: memory_balance = %ld\n", __FUNCTION__, memory_balance);
+#endif
+
     }
   return p;
 }
@@ -20,11 +26,10 @@ void* mmalloc(size_t size)
 // #pragma message ( "Debug configuration - OK" )
 inline
 void
-mxfree(void* p, size_t size)
+mxfree(void* p, const size_t size)
 {
   memory_balance -= size;
   free(p);
 }
-
 
 #endif // _MEMORY_H_
