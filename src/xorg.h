@@ -4,8 +4,7 @@
 #include "platform.h"
 
 extern "C" {
-
-
+#include <xorg/events.h>
 }
 
 
@@ -22,6 +21,10 @@ class XOrgEnvironment : platformEnvironment {
         auto event = static_cast<XorgEvent*>(pevent)->event;
         hand_over_event_to_next_plugin(event, nextPlugin);
     }
+
+    bool output_frozen() override {
+        return plugin_frozen(nextPlugin);
+    };
 
     //
     virtual void copy_event(PlatformEvent* pevent, archived_event* archived_event) {
