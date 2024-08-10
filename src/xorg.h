@@ -20,7 +20,7 @@ extern "C" {
 #include <X11/Xproto.h>
 #include <xorg/inputstr.h>
 
-
+#include <xorg/xkbsrv.h>
 #include <X11/Xdefs.h>
 #include <xorg/input.h>
 #include <xorg/eventstr.h>
@@ -65,6 +65,18 @@ public:
         return event->device_event.detail.key;
         };
 
+    bool ignore_event(const PlatformEvent *pevent) override {
+        // mouse_emulation_on(DeviceIntPtr keybd)
+        auto event = static_cast<const XorgEvent*>(pevent)->event;
+            if (!keybd->key) {
+                ErrorF("%s: keybd is null!", __func__);
+                return 0;
+            }
+
+            XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
+            XkbDescPtr xkb = xkbi->desc;
+            return (xkb->ctrls->enabled_ctrls & XkbMouseKeysMask);
+    }
     //
     virtual void archive_event(PlatformEvent* pevent, archived_event* archived_event) {
 
