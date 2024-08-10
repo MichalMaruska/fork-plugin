@@ -10,7 +10,8 @@ extern "C" {
 #include "circular.h"
 
 typedef struct {
-  InternalEvent* event;
+  // InternalEvent*
+  PlatformEvent*  p_event;
   KeyCode forked; /* if forked to (another keycode), this is the original key */
 } key_event;
 

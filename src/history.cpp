@@ -35,7 +35,7 @@ make_archived_event(const key_event* const ev)
   auto *event = MALLOC(archived_event);
   if (event == nullptr)
     return NULL;
-  DB("%s: %d %p %p\n", __func__, __LINE__, ev, ev->event);
+  DB("%s: %d %p %p\n", __func__, __LINE__, ev, ev->p_event);
   DB("%s:%d into %p\n", __func__, __LINE__, event);
 
   DB("%s:%d type: %d\n", __func__, __LINE__, ev->event->any.type);

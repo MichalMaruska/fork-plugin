@@ -112,7 +112,7 @@ void
 forkingMachine<Keycode, Time>::log_state_and_event(const char* message, const key_event *ev)
 {
     DeviceIntPtr keybd = mPlugin->device;
-    InternalEvent* event = ev->event;
+    InternalEvent* event = ev->p_event;
     KeyCode key = detail_of1(event);
 
     if (keybd->key)
@@ -214,8 +214,8 @@ template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::output_event(key_event* ev) // unlocks possibly!
 {
-    assert(ev->event != nullptr);
-    DB("%s: %p %p\n", __func__, ev, ev->event);
+    assert(ev->p_event != nullptr);
+    DB("%s: %p %p\n", __func__, ev, ev->p_event);
     output_queue.push(ev);
     flush_to_next();
 };
@@ -595,7 +595,7 @@ void
 forkingMachine<Keycode, Time>::apply_event_to_normal(key_event *ev) // possibly unlocks
 {
     const DeviceIntPtr keybd = mPlugin->device;
-    InternalEvent* event = ev->event;
+    InternalEvent* event = ev->p_event;
     const KeyCode key = detail_of1(event);
     const Time simulated_time = time_of(event);
 
@@ -680,7 +680,7 @@ template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::apply_event_to_suspect(key_event *ev)
 {
-    InternalEvent* event = ev->event;
+    InternalEvent* event = ev->p_event;
     Time simulated_time = time_of(event);
     KeyCode key = detail_of1(event);
 
@@ -779,7 +779,7 @@ template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::apply_event_to_verify_state(key_event *ev)
 {
-    InternalEvent* event = ev->event;
+    InternalEvent* event = ev->p_event;
     Time simulated_time = time_of(event);
     KeyCode key = detail_of1(event);
 
@@ -866,7 +866,7 @@ forkingMachine<Keycode, Time>::step_fork_automaton_by_key(key_event *ev)
 {
     ErrorF("%s:\n", __func__);
     assert (ev);
-    const InternalEvent* event = ev->event;
+    const InternalEvent* event = ev->p_event;
     const KeyCode key = detail_of1(event);
 
     /* Please, first change the state, then enqueue, and then EMIT_EVENT.
