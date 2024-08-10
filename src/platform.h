@@ -13,6 +13,8 @@ class PlatformEvent {
     // abstract
 };
 
+#include "../include/archived_event.h"
+
 class platformEnvironment {
 public:
     virtual bool output_frozen();
