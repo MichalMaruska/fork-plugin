@@ -48,7 +48,7 @@ private:
     // how to ctor for those 2 members?
     // XOrgEnvironment()
 public:
-    XOrgEnvironment(const DeviceIntPtr keybd, PluginInstance* const plugin) :
+    XOrgEnvironment(const DeviceIntPtr keybd, PluginInstance* plugin) :
     keybd(keybd), plugin(plugin){};
 
     virtual ~XOrgEnvironment() = default;
@@ -122,7 +122,7 @@ public:
     };
 
     virtual void push_time(Time now) {
-        const PluginInstance* const nextPlugin = plugin->next;
+        PluginInstance* nextPlugin = plugin->next;
         PluginClass(nextPlugin)->ProcessTime(nextPlugin, now);
     }
 
@@ -144,8 +144,8 @@ public:
     }
 
 
-    virtual void log_event(const string &message, const PlatformEvent *pevent) {
-        auto event = static_cast<const XorgEvent*>(pevent)->event;
+        void log_event(const std::string &message, const PlatformEvent *pevent) override {
+            const auto event = static_cast<const XorgEvent*>(pevent)->event;
 
         const KeyCode key = event->device_event.detail.key;
         // KeyCode key = detail_of(event);
