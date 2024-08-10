@@ -19,16 +19,18 @@ class platformEnvironment {
 public:
     platformEnvironment() = default;
 
-    virtual bool output_frozen() = 0;
+    virtual bool press_p(const PlatformEvent* event) = 0;
+    virtual Time time_of(const PlatformEvent* event) = 0;
+    virtual KeyCode detail_of(const PlatformEvent* event) = 0;
 
+    virtual bool ignore_event(const PlatformEvent *pevent) = 0;
+    //!(mouse_emulation_on(keybd))
+
+    virtual bool output_frozen() = 0;
     // virtual void hand_over_event_to_next_plugin(PlatformEvent* event) = 0;
     virtual void output_event(PlatformEvent* pevent) = 0;
 
-    virtual bool press_p(const PlatformEvent* event) = 0;
     virtual void log(const char* format...) = 0;
-    //
-    virtual Time time_of(const PlatformEvent* event) = 0;
-    virtual KeyCode detail_of(const PlatformEvent* event) = 0;
     virtual void log_event(const PlatformEvent *event) = 0;
 
     virtual void archive_event(PlatformEvent* pevent, archived_event* archived_event) = 0;
