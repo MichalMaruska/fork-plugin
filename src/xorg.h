@@ -129,8 +129,13 @@ public:
 #endif
 
 
-    virtual void log(const char* fmt ...) {
-        ErrorF(fmt, ##__VA_ARGS__);
+    virtual void log(const char* format ...) {
+        va_list argptr;
+        va_start(argptr, format);
+        VErrorF(format, argptr);
+        va_end(argptr);
+    }
+
     }
 };
 
