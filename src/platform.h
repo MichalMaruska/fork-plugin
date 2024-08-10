@@ -20,6 +20,7 @@ public:
     platformEnvironment() = default;
 
     virtual bool press_p(const PlatformEvent* event) = 0;
+    virtual bool release_p(const PlatformEvent* event) = 0;
     virtual Time time_of(const PlatformEvent* event) = 0;
     virtual KeyCode detail_of(const PlatformEvent* event) = 0;
 

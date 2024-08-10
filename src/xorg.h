@@ -105,10 +105,13 @@ public:
         auto event = static_cast<XorgEvent*>(pevent)->event;
         mxfree(event, event->any.length);
     }
-
     virtual bool press_p(const PlatformEvent* pevent) {
         auto event = static_cast<const XorgEvent*>(pevent)->event;
         return (event->any.type == ET_KeyPress);
+    }
+    virtual bool release_p(const PlatformEvent* pevent) {
+        auto event = static_cast<const XorgEvent*>(pevent)->event;
+        return (event->any.type == ET_KeyRelease);
     }
     virtual Time time_of(const PlatformEvent* pevent) {
         auto event = static_cast<const XorgEvent*>(pevent)->event;
