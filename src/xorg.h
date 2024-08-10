@@ -7,9 +7,38 @@ extern "C" {
 #include <xorg/events.h>
 }
 
+extern "C" {
+    // /usr/include/xorg/xorg-server.h
+#include <xorg-server.h>
+
+#ifndef MMC_PIPELINE
+#error "This is useful only when the xorg-server is configured with --enable-pipeline"
+#endif
+
+    // _XSERVER64
+#include <X11/X.h>
+#include <X11/Xproto.h>
+#include <xorg/inputstr.h>
+
+
+#include <X11/Xdefs.h>
+#include <xorg/input.h>
+#include <xorg/eventstr.h>
+
+#undef xalloc
+
+#undef max
+#undef min
+}
+
 
 // extern "C"
 extern void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* const nextPlugin);
+
+class XorgEvent : public PlatformEvent {
+public:
+    const InternalEvent* event;
+};
 
 
 class XOrgEnvironment : platformEnvironment {

@@ -6,16 +6,11 @@
 #define PLATFORM_H
 
 extern "C" {
-#include <eventstr.h>
+// #include <eventstr.h>
 }
 
 class PlatformEvent {
     // abstract
-};
-
-class XorgEvent : public PlatformEvent {
-public:
-    const InternalEvent* event;
 };
 
 class platformEnvironment {
