@@ -152,8 +152,7 @@ forkingMachine<Keycode, Time>::flush_to_next()  // unlocks!
     check_locked();
     log_queues(__func__);
 
-    PluginInstance* const nextPlugin = mPlugin->next;
-    while(!plugin_frozen(nextPlugin) && !output_queue.empty()) {
+    while(! environment->output_frozen() && !output_queue.empty()) {
         key_event* ev = output_queue.pop();
 
         auto tmp = make_archived_event(ev);
@@ -171,7 +170,7 @@ forkingMachine<Keycode, Time>::flush_to_next()  // unlocks!
         {
             environment->log_event(ev->p_event);
             unlock();
-            environment->hand_over_event_to_next_plugin(ev->p_event);
+            environment->output_event(ev->p_event);
             lock();
         };
     }
@@ -198,7 +197,7 @@ forkingMachine<Keycode, Time>::flush_to_next()  // unlocks!
 
         if (now) {
             // this can thaw, freeze,?
-            PluginClass(nextPlugin)->ProcessTime(nextPlugin, now);
+            environment->push_time(now);
         }
     }
     if (!output_queue.empty ())
@@ -276,10 +275,11 @@ forkingMachine<Keycode, Time>::activate_fork() // possibly unlocks
     // assert(forked_key == suspect);
 
     ev->forked = forked_key;
+
     /* Change the keycode, but remember the original: */
-    forkActive[forked_key] =
-        ev->event->device_event.detail.key = config->fork_keycode[forked_key];
-    output_event(ev);
+    forkActive[forked_key] = config->fork_keycode[forked_key];
+    environment->rewrite_event(ev->p_event, forkActive[forked_key]);
+    environment->output_event(ev->p_event);
 
     change_state(st_activated);
     mdb("%s the key %d-> forked to: %d. Internal queue has %d events. %s\n", __FUNCTION__,
@@ -324,7 +324,6 @@ void
 forkingMachine<Keycode, Time>::try_to_play(Bool force_also)
 {
     // fixme: maybe All I need is the nextPlugin?
-    const PluginInstance* const nextPlugin = mPlugin->next;
 
     // log_queues_and_nextplugin(message)
     mdb("%s: next %s: internal %d, input: %d\n", __FUNCTION__,
@@ -334,8 +333,8 @@ forkingMachine<Keycode, Time>::try_to_play(Bool force_also)
 
     // notice that instead of recursion, all the calls to `rewind_machine' are
     // followed by return to this cycle!
-    while (! plugin_frozen(nextPlugin)) {
-        ErrorF("%s:\n", __func__);
+    while (! environment->output_frozen()) {
+        environment->log("%s:\n", __func__);
         if (! input_queue.empty()) {
             ErrorF("%s: ok!\n", __func__);
             key_event *ev = input_queue.pop();
@@ -565,8 +564,6 @@ forkingMachine<Keycode, Time>::step_in_time_locked(const Time now) // unlocks po
 {
     mdb("%s:\n", __FUNCTION__);
 
-    PluginInstance* const nextPlugin = mPlugin->next;
-
     if (mCurrent_time > now)
         mdb("bug: time moved backwards!");
 
@@ -582,7 +579,7 @@ forkingMachine<Keycode, Time>::step_in_time_locked(const Time now) // unlocks po
        (output) internal queue */
 
     // todo: should be method of machine! machine.empty()
-    if (!plugin_frozen(nextPlugin)
+    if (!environment->output_frozen()
         // this is guaranteed!
         // && input_queue.empty()
         && internal_queue.empty() // i.e. state == st_normal (or st_deactivated?)
@@ -590,7 +587,7 @@ forkingMachine<Keycode, Time>::step_in_time_locked(const Time now) // unlocks po
     {
         unlock();
         /* might this be invoked several times?  */
-        PluginClass(nextPlugin)->ProcessTime(nextPlugin, mCurrent_time);
+        environment->push_time(mCurrent_time);
         lock();
     }
 }
@@ -603,7 +600,6 @@ template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::apply_event_to_normal(key_event *ev) // possibly unlocks
 {
-    const DeviceIntPtr keybd = mPlugin->device;
     PlatformEvent* pevent = ev->p_event;
 
     const KeyCode key = environment->detail_of(pevent);
@@ -615,7 +611,7 @@ forkingMachine<Keycode, Time>::apply_event_to_normal(key_event *ev) // possibly 
     if (environment->press_p(pevent) && forkable_p(config, key)
         /* fixme: is this w/ 1-event precision? (i.e. is the xkb-> updated synchronously) */
         /* todo:  does it have a mouse-related action? */
-        && !environment->ignore_event()) {
+        && !environment->ignore_event(pevent)) {
         /* Either suspect, or detect .- trick to suppress fork */
 
         /* .- trick: by depressing/re-pressing the key rapidly, fork is disabled,
@@ -637,7 +633,7 @@ forkingMachine<Keycode, Time>::apply_event_to_normal(key_event *ev) // possibly 
         {
             change_state(st_suspect);
             suspect = key;
-            suspect_time = time_of(event);
+            suspect_time = environment->time_of(pevent);
             mDecision_time = suspect_time +
                 config->verification_interval_of(key, 0);
             internal_queue.push(ev);
@@ -649,13 +645,13 @@ forkingMachine<Keycode, Time>::apply_event_to_normal(key_event *ev) // possibly 
             output_event(ev);
             return;
         };
-    } else if (release_p(event) && (key_forked(key))) {
+    } else if (environment->release_p(pevent) && (key_forked(key))) {
         mdb("releasing forked key\n");
         // fixme:  we should see if the fork was `used'.
         if (config->consider_forks_for_repeat){
             // C-f   f long becomes fork. now we wanted to repeat it....
-            last_released = detail_of1(event);
-            last_released_time = time_of(event);
+            last_released = environment->detail_of(pevent);
+            last_released_time = environment->time_of(pevent);
         } else {
             // imagine mouse-button during the short 1st press. Then
             // the 2nd press ..... should not relate the the 1st one.
@@ -666,16 +662,17 @@ forkingMachine<Keycode, Time>::apply_event_to_normal(key_event *ev) // possibly 
          *
          * fixme: do i do this in other machine states?
          */
-        event->device_event.detail.key = forkActive[key];
+        environment->rewrite_event(pevent,forkActive[key]);
+
 
         // this is the state (of the keyboard, not the machine).... better to
         // say of the machine!!!
         forkActive[key] = 0;
         output_event(ev);
     } else {
-        if (release_p (event)) {
-            last_released = detail_of1(event);
-            last_released_time = time_of(event);
+        if (environment->release_p(pevent)) {
+            last_released = environment->detail_of(pevent);
+            last_released_time = environment->time_of(pevent);
         };
         // pass along the un-forkable event.
         output_event(ev);
@@ -690,9 +687,9 @@ template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::apply_event_to_suspect(key_event *ev)
 {
-    InternalEvent* event = ev->p_event;
-    Time simulated_time = time_of(event);
-    KeyCode key = detail_of1(event);
+    const PlatformEvent* pevent = ev->p_event;
+    Time simulated_time = environment->time_of(pevent);
+    KeyCode key = environment->detail_of(pevent);
 
     list_with_tail &queue = internal_queue;
 
@@ -713,7 +710,7 @@ forkingMachine<Keycode, Time>::apply_event_to_suspect(key_event *ev)
 
     /* So, we now have a second key, since the duration of 1 key
      * was not enough. */
-    if (release_p(event)) {
+    if (environment->release_p(pevent)) {
         mdb("suspect/release: suspected = %d, time diff: %d\n",
              suspect, (int)(simulated_time - suspect_time));
         if (key == suspect) {
@@ -729,7 +726,7 @@ forkingMachine<Keycode, Time>::apply_event_to_suspect(key_event *ev)
             return;
         };
     } else {
-        if (!press_p (event)) {
+        if (! environment->press_p(pevent)) {
             // RawPress & Device events.
             internal_queue.push(ev);
             return;
@@ -789,9 +786,9 @@ template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::apply_event_to_verify_state(key_event *ev)
 {
-    InternalEvent* event = ev->p_event;
-    Time simulated_time = time_of(event);
-    KeyCode key = detail_of1(event);
+    const PlatformEvent* pevent = ev->p_event;
+    Time simulated_time = environment->time_of(pevent);
+    KeyCode key = environment->detail_of(pevent);
 
     /* We pressed a forkable key, and another one (which could possibly
        use the modifier). Now, either the forkable key was intended
@@ -839,7 +836,7 @@ forkingMachine<Keycode, Time>::apply_event_to_verify_state(key_event *ev)
     if (decision_time < mDecision_time)
         mDecision_time = decision_time;
 
-    if (release_p(event) && (key == suspect)){ // fixme: is release_p(event) useless?
+    if (environment->release_p(pevent) && (key == suspect)){ // fixme: is release_p(event) useless?
         mdb("fork-key released on time: %dms is a tolerated error (< %lu)\n",
              (int)(simulated_time -  suspect_time),
              config->verification_interval_of(suspect,
@@ -847,7 +844,7 @@ forkingMachine<Keycode, Time>::apply_event_to_verify_state(key_event *ev)
         mDecision_time = 0; // useless fixme!
         do_confirm_non_fork_by(ev);
 
-    } else if (release_p(event) && (verificator_keycode == key)){
+    } else if (environment->release_p(pevent) && (verificator_keycode == key)){
         // todo: we might be interested in percentage, Then here we should do the work!
 
         // we should change state:
@@ -876,8 +873,8 @@ forkingMachine<Keycode, Time>::step_fork_automaton_by_key(key_event *ev)
 {
     ErrorF("%s:\n", __func__);
     assert (ev);
-    const InternalEvent* event = ev->p_event;
-    const KeyCode key = detail_of1(event);
+    const PlatformEvent* pevent = ev->p_event;
+    const KeyCode key = environment->detail_of(pevent);
 
     /* Please, first change the state, then enqueue, and then EMIT_EVENT.
      * fixme: should be a function then  !!!*/
@@ -890,7 +887,7 @@ forkingMachine<Keycode, Time>::step_fork_automaton_by_key(key_event *ev)
        This is only necessary if the lower level (keyboard driver) passes through the
        HW auto-repeat events. */
 
-    if ((key_forked(key)) && press_p(event)
+    if ((key_forked(key)) && environment->press_p(pevent)
         && (key != forkActive[key])) // not `self_forked'
     {
         mdb("%s: the key is forked, ignoring\n", __FUNCTION__);
@@ -907,7 +904,8 @@ forkingMachine<Keycode, Time>::step_fork_automaton_by_key(key_event *ev)
 
     ErrorF("%s: 2\n", __func__);
 #if DEBUG
-    if (press_p(event) || release_p(event)) {
+
+    if (environment->press_p(pevent) || environment->release_p(pevent)) {
         log_state_and_event(__func__, ev);
     }
 #endif
