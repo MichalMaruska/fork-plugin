@@ -46,14 +46,15 @@ class XOrgEnvironment : platformEnvironment {
     PluginInstance* const nextPlugin;
     virtual void log_event(const PlatformEvent *event) override;
 
-    virtual void hand_over_event_to_next_plugin(PlatformEvent *pevent) override {
-        auto event = static_cast<XorgEvent*>(pevent)->event;
-        ::hand_over_event_to_next_plugin(event, nextPlugin);
-    }
 
     bool output_frozen() override {
         return plugin_frozen(nextPlugin);
     };
+
+    KeyCode detail_of(const PlatformEvent* pevent) {
+        auto event = static_cast<const XorgEvent*>(pevent)->event;
+        return event->device_event.detail.key;
+        };
 
     //
     virtual void copy_event(PlatformEvent* pevent, archived_event* archived_event) {
@@ -85,7 +86,30 @@ class XOrgEnvironment : platformEnvironment {
         mxfree(event, event->any.length);
     }
 
+    virtual bool press_p(const PlatformEvent* event) {
+        auto event = static_cast<XorgEvent*>(pevent)->event;
+        return (event->any.type == ET_KeyPress);
+    }
+    virtual Time time_of(const PlatformEvent* event) {
+        auto event = static_cast<XorgEvent*>(pevent)->event;
+        return event->any.time;
+    }
 
+    virtual void output_event(PlatformEvent* pevent) {
+        auto event = static_cast<XorgEvent*>(pevent)->event;
+        ::hand_over_event_to_next_plugin(event, nextPlugin);
+    };
+#if 0
+    virtual void hand_over_event_to_next_plugin(PlatformEvent *pevent) override {
+        auto event = static_cast<XorgEvent*>(pevent)->event;
+        ::hand_over_event_to_next_plugin(event, nextPlugin);
+    }
+#endif
+
+
+    virtual void log(const char* fmt ...) {
+        ErrorF(fmt, ##__VA_ARGS__);
+    }
 };
 
 #endif //XORG_H
