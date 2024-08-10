@@ -41,9 +41,18 @@ public:
 };
 
 
-class XOrgEnvironment : platformEnvironment {
-    DeviceIntPtr *keybd;
+class XOrgEnvironment : public platformEnvironment {
+private:
+    const DeviceIntPtr keybd;
     PluginInstance* const nextPlugin;
+    // how to ctor for those 2 members?
+    // XOrgEnvironment()
+public:
+    XOrgEnvironment(const DeviceIntPtr keybd, PluginInstance* const nextPlugin) :
+    keybd(keybd), nextPlugin(nextPlugin){};
+
+    virtual ~XOrgEnvironment() = default;
+
     virtual void log_event(const PlatformEvent *event) override;
 
 
