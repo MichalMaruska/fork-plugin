@@ -108,12 +108,12 @@ public:
         mxfree(event, event->any.length);
     }
 
-    virtual bool press_p(const PlatformEvent* event) {
-        auto event = static_cast<XorgEvent*>(pevent)->event;
+    virtual bool press_p(const PlatformEvent* pevent) {
+        auto event = static_cast<const XorgEvent*>(pevent)->event;
         return (event->any.type == ET_KeyPress);
     }
-    virtual Time time_of(const PlatformEvent* event) {
-        auto event = static_cast<XorgEvent*>(pevent)->event;
+    virtual Time time_of(const PlatformEvent* pevent) {
+        auto event = static_cast<const XorgEvent*>(pevent)->event;
         return event->any.time;
     }
 
