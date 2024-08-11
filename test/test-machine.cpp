@@ -34,7 +34,7 @@ class testEnvironment final : public platformEnvironment {
   MOCK_METHOD(void, output_event,(PlatformEvent* pevent));
   MOCK_METHOD(void, push_time,(Time now));
 
-  // MOCK_METHOD(void, log,(const char* format...));
+  MOCK_METHOD(void, vlog,(const char* format, va_list argptr));
   void log(const char* format...) override
   {
     // ignore
