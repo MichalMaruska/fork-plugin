@@ -25,7 +25,7 @@ find_package(PkgConfig)
 pkg_search_module(xorg-server REQUIRED xorg-server
   IMPORTED_TARGET GLOBAL)
 
-add_executable(test-machine test-machine.cpp ../src/machine.cpp)
+add_executable(test-machine test-machine.cpp ../src/machine.cpp ../src/history.cpp)
 target_include_directories(test-machine SYSTEM PUBLIC ${xorg-server_INCLUDE_DIRS})
 target_link_libraries(test-machine GTest::gtest_main)
 target_link_libraries(test-machine GTest::gmock_main)
