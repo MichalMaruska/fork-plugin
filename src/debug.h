@@ -4,12 +4,12 @@
 #include "config.h"
 
 // #ifndef NDEBUG
-#define DEBUG 1
+// #define DEBUG 1
 
 #if DEBUG
 # define DB(fmt, ...)     ErrorF(fmt, ##__VA_ARGS__)
 # else  /* DEBUG */
-#define DB(x)  do { ; } while (0)
+#define DB(fmt, ...)  do { ; } while (0)
 #endif /* DEBUG */
 
 
