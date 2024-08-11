@@ -214,7 +214,7 @@ void
 forkingMachine<Keycode, Time>::output_event(key_event* ev) // unlocks possibly!
 {
     assert(ev->p_event != nullptr);
-    DB("%s: %p %p\n", __func__, ev, ev->p_event);
+    mdb("%s: %p %p\n", __func__, ev, ev->p_event);
     output_queue.push(ev);
     flush_to_next();
 };
@@ -326,8 +326,8 @@ forkingMachine<Keycode, Time>::try_to_play(Bool force_also)
     // fixme: maybe All I need is the nextPlugin?
 
     // log_queues_and_nextplugin(message)
-    mdb("%s: next %s: internal %d, input: %d\n", __FUNCTION__,
-         (plugin_frozen(nextPlugin)?"frozen":"NOT frozen"),
+    mdb("%s: next %s: internal %d, input: %d\n", __func__,
+         (environment->output_frozen()?"frozen":"NOT frozen"),
          internal_queue.length (),
          input_queue.length ());
 
