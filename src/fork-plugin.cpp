@@ -443,7 +443,7 @@ the plugin should not pass more events.
 static int
 stop_and_exhaust_machine(PluginInstance* plugin)
 {
-    machineRec* machine = plugin_machine(plugin);
+    const auto machine = plugin_machine(plugin);
     machine->lock();
     machine->mdb("%s: what to do?\n", __FUNCTION__);
     // free all the stuff, and then:
