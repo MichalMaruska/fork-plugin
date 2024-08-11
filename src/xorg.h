@@ -37,7 +37,7 @@ extern void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance*
 
 class XorgEvent : public PlatformEvent {
 public:
-    const InternalEvent* event;
+    InternalEvent* event;
 };
 
 
