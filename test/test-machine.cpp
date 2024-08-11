@@ -52,8 +52,10 @@ using machineRec = forkingMachine<Time, KeyCode>;
 class machineTest : public testing::Test {
 protected:
     machineTest() : environment(new testEnvironment() ),
-    fm (new machineRec(environment)) {
-
+                    config (new fork_configuration),
+                    fm (new machineRec(environment)) {
+        fm->config = config;
+        config->debug = 0;
         // q0_ remains empty
         // q1_.push_back(1);
         // q2_.Enqueue(2);
@@ -63,6 +65,7 @@ protected:
     // ~QueueTest() override = default;
 testEnvironment *environment;
     forkingMachine<Time, KeyCode> *fm;
+  fork_configuration *config;
     // Queue<int> q1_;
     // Queue<int> q2_;
 };
