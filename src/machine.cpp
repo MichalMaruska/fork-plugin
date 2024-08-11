@@ -117,6 +117,11 @@ forkingMachine<Keycode, Time>::log_queues(const char* message)
         input_queue.length ());
 }
 
+
+Time queue_time(my_queue<key_event> &queue, platformEnvironment *environment) {
+    return environment->time_of(queue.front()->p_event);
+    }
+
 /* The machine is locked here:
  * Push as many as possible from the OUTPUT queue to the next layer */
 template <typename Keycode, typename Time>
