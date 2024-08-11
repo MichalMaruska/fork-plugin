@@ -37,7 +37,7 @@ mouse_emulation_on(DeviceIntPtr keybd)
 
 template <typename Keycode, typename Time>
 fork_configuration**
-forkingMachine<Keycode, Time>::find_configuration_n(int n)
+forkingMachine<Keycode, Time>::find_configuration_n(const int n)
 {
     fork_configuration** config_p = &config;
 
