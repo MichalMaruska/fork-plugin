@@ -85,18 +85,6 @@ forkingMachine<Keycode, Time>::switch_config(int id)
 }
 
 template <typename Keycode, typename Time>
-void forkingMachine<Keycode, Time>::log_event(const key_event *event, const DeviceIntPtr keybd)
-{
-#if 0 // fixme: DEBUG
-            if (config->debug) {
-                DB("%s<<<", keysym_color);
-                DB("%s", describe_key(keybd, event->ev));
-                DB("%s\n", color_reset);
-            }
-#endif
-}
-
-template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::log_state(const char* message) const
 {
