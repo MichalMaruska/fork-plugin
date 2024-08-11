@@ -109,31 +109,6 @@ forkingMachine<Keycode, Time>::log_state(const char* message) const
 
 template <typename Keycode, typename Time>
 void
-forkingMachine<Keycode, Time>::log_state_and_event(const char* message, const key_event *ev)
-{
-    DeviceIntPtr keybd = mPlugin->device;
-    InternalEvent* event = ev->p_event;
-    KeyCode key = detail_of1(event);
-
-    if (keybd->key)
-    {
-        XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
-        KeySym *sym = XkbKeySymsPtr(xkbi->desc, key);
-        if ((!sym) || (! isalpha(* (unsigned char*) sym)))
-            sym = (KeySym*) " ";
-
-        mdb("%s%s%s state: %s, queue: %d, event: %d %s%c %s %s\n",
-            info_color,message,color_reset,
-            describe_machine_state(),
-            internal_queue.length (),
-            key,
-            key_color, (char)*sym, color_reset,
-            event_type_brief(event));
-    }
-}
-
-template <typename Keycode, typename Time>
-void
 forkingMachine<Keycode, Time>::log_queues(const char* message)
 {
     mdb("%s: Queues: output: %d\t internal: %d\t input: %d \n", message,
