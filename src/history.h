@@ -1,13 +1,18 @@
 #ifndef _HISTORY_H_
 #define _HISTORY_H_
 
+#if 0
 extern "C" {
 #include <xorg/inputstr.h>
 #include "fork_requests.h"
 }
+#endif
 
-#define DEBUG 1
+// #define DEBUG 1
 #include "circular.h"
+#include "platform.h"
+
+#include "../include/archived_event.h"
 
 typedef struct {
   // InternalEvent*
