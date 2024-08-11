@@ -147,6 +147,10 @@ public:
     }
 
 
+    virtual void vlog(const char* format, va_list argptr) {
+        VErrorF(format, argptr);
+    }
+
         void log_event(const std::string &message, const PlatformEvent *pevent) override {
             const auto event = static_cast<const XorgEvent*>(pevent)->event;
 
