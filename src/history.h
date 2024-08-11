@@ -8,11 +8,15 @@ extern "C" {
 }
 #endif
 
+
 // #define DEBUG 1
 #include "circular.h"
 #include "platform.h"
 
-#include "../include/archived_event.h"
+extern "C" {
+#include "fork_requests.h"
+}
+// #include "../include/archived_event.h"
 
 typedef struct {
   // InternalEvent*

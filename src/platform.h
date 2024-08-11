@@ -7,13 +7,16 @@
 
 extern "C" {
 // #include <eventstr.h>
+#include "fork_requests.h"
+#undef max
+#undef min
 }
+// #include "../include/archived_event.h"
 
 class PlatformEvent {
     // abstract
 };
 
-#include "../include/archived_event.h"
 
 class platformEnvironment {
 public:
