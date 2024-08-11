@@ -43,7 +43,7 @@ forkingMachine<Keycode, Time>::find_configuration_n(int n)
 
     while (((*config_p)->next) && ((*config_p)->id != n))
     {
-        ErrorF("%s skipping over %d\n", __FUNCTION__, (*config_p)->id);
+        environment->log("%s skipping over %d\n", __FUNCTION__, (*config_p)->id);
         config_p = &((*config_p) -> next);
     }
     return ((*config_p)->id == n)? config_p: NULL;      // ??? &(config->next);
@@ -55,9 +55,9 @@ template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::switch_config(int id)
 {
-    ErrorF("%s %d\n", __FUNCTION__, id);
+    environment->log("%s %d\n", __FUNCTION__, id);
     fork_configuration** config_p = find_configuration_n(id);
-    ErrorF("%s found\n", __FUNCTION__);
+    environment->log("%s found\n", __FUNCTION__);
 
     // fixme:   `move_to_top'   find an element in a linked list, and move it to the head.
     if ((config_p)
@@ -80,7 +80,7 @@ forkingMachine<Keycode, Time>::switch_config(int id)
         DB("switched configs %d -> %d\n", config->id, id);
         replay_events(FALSE);
     } else {
-        ErrorF("config remains %d\n", config->id);
+        environment->log("config remains %d\n", config->id);
     }
 }
 
@@ -336,7 +336,7 @@ forkingMachine<Keycode, Time>::try_to_play(Bool force_also)
     while (! environment->output_frozen()) {
         environment->log("%s:\n", __func__);
         if (! input_queue.empty()) {
-            ErrorF("%s: ok!\n", __func__);
+            environment->log("%s: ok!\n", __func__);
             key_event *ev = input_queue.pop();
             step_fork_automaton_by_key(ev);
         } else {
@@ -346,7 +346,7 @@ forkingMachine<Keycode, Time>::try_to_play(Bool force_also)
                     // we have to try again.
                     continue;
             }
-            ErrorF("%s:2\n", __func__);
+            environment->log("%s:2\n", __func__);
             if (force_also && (state != st_normal)) {
                 step_fork_automaton_by_force();
             } else {
@@ -365,18 +365,18 @@ forkingMachine<Keycode, Time>::accept_event(PlatformEvent* pevent)
     key_event* ev = (key_event*)malloc(sizeof(key_event));
     if (!ev) {
         /* This message should be static string. otherwise it fails as well? */
-        ErrorF("%s: out-of-memory, dropping\n", __FUNCTION__);
+        environment->log("%s: out-of-memory, dropping\n", __FUNCTION__);
     };
 
     ev->p_event = pevent;
     ev->forked = 0;
 
     mCurrent_time = 0; // time_of(ev->event);
-    ErrorF("%s:\n", __func__);
+    environment->log("%s:\n", __func__);
     input_queue.push(ev);
-    ErrorF("%s: 2\n", __func__);
+    environment->log("%s: 2\n", __func__);
     try_to_play(FALSE);
-    ErrorF("%s: 3\n", __func__);
+    environment->log("%s: 3\n", __func__);
 }
 
 /*
@@ -395,7 +395,7 @@ forkingMachine<Keycode, Time>::step_fork_automaton_by_force()
     }
 
     if (state == st_deactivated) {
-        ErrorF("%s: BUG.\n", __FUNCTION__);
+        environment->log("%s: BUG.\n", __FUNCTION__);
         return;
     }
 
@@ -605,7 +605,7 @@ forkingMachine<Keycode, Time>::apply_event_to_normal(key_event *ev) // possibly 
     const Time simulated_time = environment->time_of(pevent);
 
     assert(internal_queue.empty());
-    // ErrorF("%s: 2\n", __func__);
+    // environment->log("%s: 2\n", __func__);
     // if this key might start a fork....
     if (environment->press_p(pevent) && forkable_p(config, key)
         /* fixme: is this w/ 1-event precision? (i.e. is the xkb-> updated synchronously) */
@@ -870,7 +870,7 @@ template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::step_fork_automaton_by_key(key_event *ev)
 {
-    ErrorF("%s:\n", __func__);
+    environment->log("%s:\n", __func__);
     assert (ev);
     const PlatformEvent* pevent = ev->p_event;
     const KeyCode key = environment->detail_of(pevent);
@@ -901,7 +901,7 @@ forkingMachine<Keycode, Time>::step_fork_automaton_by_key(key_event *ev)
     // A currently forked keycode cannot be (suddenly) pressed 2nd time.
     // assert(release_p(event) || (key < MAX_KEYCODE && forkActive[key] == 0));
 
-    ErrorF("%s: 2\n", __func__);
+    environment->log("%s: 2\n", __func__);
 #if DEBUG
 
     if (environment->press_p(pevent) || environment->release_p(pevent)) {
