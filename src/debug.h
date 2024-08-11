@@ -16,6 +16,9 @@
 extern "C" {
 #include <xorg-server.h>
 #include <xorg/inputstr.h>
+
+#undef max
+#undef min
 }
 
 const char*
