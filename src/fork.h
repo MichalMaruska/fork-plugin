@@ -311,7 +311,8 @@ public:
 
             va_list argptr;
             va_start(argptr, format);
-            VErrorF(new_format, argptr);
+            environment->vlog(new_format, argptr);
+            // VErrorF(new_format, argptr);
             va_end(argptr);
 
             free(new_format);
@@ -324,7 +325,8 @@ public:
         if (config->debug) {
             va_list argptr;
             va_start(argptr, format);
-            VErrorF(format, argptr);
+            environment->vlog(format, argptr);
+            // VErrorF(format, argptr);
             va_end(argptr);
         }
     };
