@@ -158,7 +158,15 @@ typedef struct _xforkGetLastKeys {
 } xforkGetLastKeysReq;
 #define sz_xforkGetLastKeysReq  8
 
-#include "archived_event.h"
+typedef struct
+{
+    Time time;
+    KeyCode key;
+    KeyCode forked;
+    Bool press;                  /* client type? */
+} archived_event;
+/* 10 bytes? i guess 12! */
+
 typedef struct
 {
     int count;
