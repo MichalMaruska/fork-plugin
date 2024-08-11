@@ -200,7 +200,7 @@ public:
     last_events_type *last_events; // history
     int max_last = 100; // can be updated!
 
-    fork_configuration  *config; // list<fork_configuration>
+    fork_configuration *config; // list<fork_configuration>
 
 /* The Static state = configuration.
  * This is the matrix with some Time values:
@@ -303,7 +303,6 @@ public:
     void mdb(const char* format...) const
     {
         if (config->debug) {
-
             // alloca()
             char* new_format = (char*) malloc(strlen(format) + 2);
             new_format[0] = ' ';

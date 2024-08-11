@@ -97,20 +97,20 @@ hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* const nextP
  *  Pause  Pause  -> dump
  */
 static int                      // return, if config-mode continues.
-filter_config_key(PluginInstance* plugin,const InternalEvent *event)
+filter_config_key(PluginInstance* plugin, const InternalEvent *event)
 {
     static KeyCode key_to_fork = 0;         //  what key we want to configure
     machineRec* machine;
 
     if (press_p(event))
         switch (detail_of1(event)) {
-            case 110:
+            case 110: // break
                 machine = plugin_machine(plugin);
                 machine->lock();
                 dump_last_events(plugin);
                 machine->unlock();
                 break;
-            case 19:
+            case 19: //
                 machine = plugin_machine(plugin);
                 machine->lock();
                 machine->switch_config(0); // current ->toggle ?
@@ -369,7 +369,6 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
  * register hooks to other devices,
  *
  * returns: erorr of Success. Should attach stuff by side effect ! */
-
 PluginInstance*
 make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
 {
@@ -464,12 +463,10 @@ destroy_plugin(PluginInstance* plugin)
     // delete machine->last_events;
     DeleteCallback(&DeviceEventCallback, (CallbackProcPtr) mouse_call_back,
                    (void*) plugin);
-
     delete machine;
     // machine->mdb("%s: what to do?\n", __FUNCTION__);
     return 1;
 }
-
 
 
 // This macro helps with providing
