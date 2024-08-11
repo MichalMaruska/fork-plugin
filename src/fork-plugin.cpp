@@ -234,27 +234,13 @@ create_handle_for_event(InternalEvent *event, bool owner)
             return NULL;
         }
     }
-
     auto pevent = new XorgEvent();
-
-    // the handle is deallocated in `flush_to_next'
-    key_event* ev = (key_event*)malloc(sizeof(key_event));
-    if (!ev) {
-        /* This message should be static string. otherwise it fails as well? */
-        ErrorF("%s: out-of-memory, dropping\n", __FUNCTION__);
-        if (!owner)
-            mxfree (qe, event->any.length);
-        return NULL;
-    };
-
     // memcpy(qe, event, event->any.length);
 #if DEBUG > 1
     DB("+++ accepted new event: %s\n",
         event_names[event->any.type - 2 ]);
 #endif
-    ev->p_event = pevent;
-    ev->forked = 0;
-    return ev;
+    return pevent;
 }
 
 
