@@ -559,6 +559,19 @@ forkingMachine<Keycode, Time>::step_in_time_locked(const Time now) // unlocks po
     }
 }
 
+template <typename Keycode, typename Time>
+    void
+    forkingMachine<Keycode, Time>::log_state_and_event(const char* message, const key_event *ev)
+{
+
+    mdb("%s%s%s state: %s, queue: %d\n", // , event: %d %s%c %s %s
+        info_color,message,color_reset,
+        describe_machine_state(),
+        internal_queue.length ()
+        );
+    environment->log_event("event: ", ev->p_event);
+}
+
 
 /** apply_event_to_{STATE} */
 
