@@ -60,7 +60,9 @@ public:
 
   T* pop()                    // top_and_pop()
   {
+#if DEBUG > 1
     DB("%s\n", __func__);
+#endif
     // not thread-safe!
     T* pointer = list.front();
     list.pop_front();
