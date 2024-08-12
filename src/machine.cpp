@@ -6,28 +6,6 @@
 // uses:
 #include "debug.h"
 
-
-extern "C" {
-#include "event_ops.h"
-
-#include <xorg-server.h>
-#include <xorg/xkbsrv.h>
-#include <xorg/xf86Module.h>
-}
-
-static Bool
-mouse_emulation_on(DeviceIntPtr keybd)
-{
-    if (!keybd->key) {
-        ErrorF("%s: keybd is null!", __func__);
-        return 0;
-    }
-
-    XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
-    XkbDescPtr xkb = xkbi->desc;
-    return (xkb->ctrls->enabled_ctrls & XkbMouseKeysMask);
-}
-
 //
 //  pointer->  |  next|-> |   next| ->
 //    ^            ^
