@@ -222,9 +222,11 @@ set_wakeup_time(PluginInstance* plugin)
 }
 
 
-static PlatformEvent*
-create_handle_for_event(InternalEvent *event, bool owner)
+static XorgEvent*
+create_xorg_platform_event(InternalEvent *event, bool owner)
 {
+    ErrorF("%s: %s\n", __func__, owner?"owner":"not owner");
+
     InternalEvent* qe;
     if (owner)
         qe = event;
@@ -233,11 +235,15 @@ create_handle_for_event(InternalEvent *event, bool owner)
         if (!qe)
         {
             // if we are out-of-memory, we probably cannot even process ErrorF, can we?
-            ErrorF("%s: out-of-memory\n", __FUNCTION__);
+            ErrorF("%s: out-of-memory\n", __func__);
             return NULL;
         }
+        memcpy(qe, event, event->any.length);
+        // fixme: I have to copy it!
     }
+
     auto pevent = new XorgEvent();
+    pevent->event = qe;
     // memcpy(qe, event, event->any.length);
 #if DEBUG > 1
     DB("+++ accepted new event: %s\n",
