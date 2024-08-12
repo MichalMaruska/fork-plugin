@@ -34,7 +34,9 @@
  */
 
 
+extern "C" {
 #include <fork_requests.h>
+}
 
 #include "config.h"
 #include "debug.h"
