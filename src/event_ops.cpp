@@ -4,10 +4,14 @@ extern "C"
 #include "event_ops.h"
 }
 
+#include "debug.h"
+
+#if 0
 extern "C" {
-   // specific keysyms:
+  // specific keysyms:
 #include <X11/keysym.h>
 }
+#endif
 
 Bool
 release_p(const InternalEvent* event)
@@ -32,9 +36,10 @@ time_of(const InternalEvent* event)
 KeyCode
 detail_of(const InternalEvent* event)
 {
-   assert(event);
-   return event->device_event.detail.key;
+   ErrorF("%s: %p\n", __func__, event);
+   return (event->device_event.detail.key);
 }
+
 
 // (printable) Name of the event
 const char*
