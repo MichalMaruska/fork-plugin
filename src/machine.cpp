@@ -907,3 +907,9 @@ forkingMachine<Keycode, Time>::step_fork_automaton_by_key(key_event *ev)
             mdb("----------unexpected state---------\n");
     }
 }
+
+// explicit instantation:
+template void forkingMachine<Time, KeyCode>::accept_event(PlatformEvent* pevent);
+template void forkingMachine<Time, KeyCode>::switch_config(int);
+template void forkingMachine<Time, KeyCode>::step_in_time_locked(unsigned char);
+
