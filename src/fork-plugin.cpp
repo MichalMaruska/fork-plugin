@@ -282,7 +282,7 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
 
         ErrorF("%s: middle\n", __func__);
         {
-            auto* ev = create_handle_for_event(event, owner);
+            auto* ev = create_xorg_platform_event(event, owner);
             if (!ev)			// memory problems
                 // what to do with `event' !!
                 goto exit;
