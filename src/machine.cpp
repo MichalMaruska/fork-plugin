@@ -327,10 +327,9 @@ forkingMachine<Keycode, Time>::try_to_play(Bool force_also)
 
 template <typename Keycode, typename Time>
 void
-forkingMachine<Keycode, Time>::accept_event(PlatformEvent* pevent)
-{
-    key_event* ev = (key_event*)malloc(sizeof(key_event));
-    if (!ev) {
+forkingMachine<Keycode, Time>::accept_event(PlatformEvent* pevent) {
+    auto* ev = (key_event*)malloc(sizeof(key_event));
+    if (ev == nullptr) {
         /* This message should be static string. otherwise it fails as well? */
         environment->log("%s: out-of-memory, dropping\n", __FUNCTION__);
     };
@@ -338,12 +337,16 @@ forkingMachine<Keycode, Time>::accept_event(PlatformEvent* pevent)
     ev->p_event = pevent;
     ev->forked = 0;
 
+    // fixme:
     mCurrent_time = 0; // time_of(ev->event);
-    environment->log("%s:\n", __func__);
+
+    environment->log("%s: put on input Q\n", __func__);
     input_queue.push(ev);
-    environment->log("%s: 2\n", __func__);
-    try_to_play(FALSE);
-    environment->log("%s: 3\n", __func__);
+
+    environment->log("%s: try to play2\n", __func__);
+    try_to_play(false);
+
+    environment->log("%s: end\n", __func__);
 }
 
 /*
