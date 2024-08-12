@@ -80,8 +80,6 @@ const char* event_names[] = {
     "XQuartz"
 };
 
-using machineRec = forkingMachine<Time, KeyCode>;
-
 /* memory problems tracking: (used with mxfree & mmalloc) I observe this value. */
 size_t memory_balance = 0;
 
@@ -93,6 +91,9 @@ hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* const nextP
     memory_balance -= event->any.length;
     PluginClass(nextPlugin)->ProcessEvent(nextPlugin, event, TRUE); // we always own the event (up to now)
 }
+
+
+using machineRec = forkingMachine<Time, KeyCode>;
 
 /*
  *  react to some `hot_keys':
