@@ -4,7 +4,6 @@
 #include "memory.h"
 #include "history.h"
 // uses:
-// void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* nextPlugin);
 #include "debug.h"
 
 

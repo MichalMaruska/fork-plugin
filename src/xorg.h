@@ -32,8 +32,8 @@ extern "C" {
 }
 
 
-// extern "C"
-extern void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* const nextPlugin);
+extern void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* nextPlugin);
+
 
 class XorgEvent : public PlatformEvent {
 public:
@@ -120,24 +120,14 @@ public:
 
     virtual void output_event(PlatformEvent* pevent) {
         auto event = static_cast<XorgEvent*>(pevent)->event;
-        const PluginInstance* const nextPlugin = plugin->next;
-        ::hand_over_event_to_next_plugin(event, nextPlugin);
+        PluginInstance* nextPlugin = plugin->next;
+        hand_over_event_to_next_plugin(event, nextPlugin);
     };
 
     virtual void push_time(Time now) {
         PluginInstance* nextPlugin = plugin->next;
         PluginClass(nextPlugin)->ProcessTime(nextPlugin, now);
     }
-
-
-#if 0
-    virtual void hand_over_event_to_next_plugin(PlatformEvent *pevent) override {
-        auto event = static_cast<XorgEvent*>(pevent)->event;
-        const PluginInstance* const nextPlugin = plugin->next;
-        ::hand_over_event_to_next_plugin(event, nextPlugin);
-    }
-#endif
-
 
     virtual void log(const char* format ...) {
         va_list argptr;

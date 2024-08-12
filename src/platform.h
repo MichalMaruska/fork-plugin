@@ -31,7 +31,6 @@ public:
     //!(mouse_emulation_on(keybd))
 
     virtual bool output_frozen() = 0;
-    // virtual void hand_over_event_to_next_plugin(PlatformEvent* event) = 0;
     virtual void output_event(PlatformEvent* pevent) = 0;
     virtual void push_time(Time now) = 0;
 
