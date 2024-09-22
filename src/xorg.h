@@ -126,6 +126,7 @@ public:
 
     virtual void push_time(Time now) {
         PluginInstance* nextPlugin = plugin->next;
+        ErrorF("%s: %" TIME_FMT "\n", __func__, now);
         PluginClass(nextPlugin)->ProcessTime(nextPlugin, now);
     }
 
