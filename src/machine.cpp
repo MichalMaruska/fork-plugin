@@ -113,7 +113,8 @@ forkingMachine<Keycode, Time>::flush_to_next()  // unlocks!
         // 2020: it can!
         // so ... this is front_lock?
         {
-            environment->log_event(ev->p_event);
+            // fixme: was here a bigger message?
+            environment->log_event("", ev->p_event);
             unlock();
             environment->relay_event(ev->p_event);
             lock();
