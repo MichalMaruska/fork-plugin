@@ -182,6 +182,11 @@ filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const
         }
     }
     // `Dump'
+    ErrorF("%s: %p\n", __func__, event);
+    ErrorF("%s: type %d\n", __func__, event->any.type);
+    ErrorF("%s: keycode: %d\n", __func__, event->device_event.detail.key);
+    ErrorF("%s: keycode: %d\n", __func__, detail_of(event));
+    // ErrorF("%s: %d\n", __func__, event->device_event.detail.key);
     if ((detail_of(event) == PAUSE_KEYCODE) && press_p(event))
         /* wait for the next and act ? but start w/ printing the last events: */
     {
