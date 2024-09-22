@@ -28,10 +28,9 @@ public:
     virtual KeyCode detail_of(const PlatformEvent* event) = 0;
 
     virtual bool ignore_event(const PlatformEvent *pevent) = 0;
-    //!(mouse_emulation_on(keybd))
 
     virtual bool output_frozen() = 0;
-    virtual void output_event(PlatformEvent* pevent) = 0;
+    virtual void relay_event(PlatformEvent* pevent) = 0;
     virtual void push_time(Time now) = 0;
 
     virtual void log(const char* format...) = 0;

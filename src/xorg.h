@@ -118,7 +118,7 @@ public:
         return event->any.time;
     }
 
-    virtual void output_event(PlatformEvent* pevent) {
+    virtual void relay_event(PlatformEvent* pevent) {
         auto event = static_cast<XorgEvent*>(pevent)->event;
         PluginInstance* nextPlugin = plugin->next;
         hand_over_event_to_next_plugin(event, nextPlugin);

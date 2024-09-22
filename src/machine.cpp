@@ -115,7 +115,7 @@ forkingMachine<Keycode, Time>::flush_to_next()  // unlocks!
         {
             environment->log_event(ev->p_event);
             unlock();
-            environment->output_event(ev->p_event);
+            environment->relay_event(ev->p_event);
             lock();
         };
     }
@@ -224,7 +224,7 @@ forkingMachine<Keycode, Time>::activate_fork() // possibly unlocks
     /* Change the keycode, but remember the original: */
     forkActive[forked_key] = config->fork_keycode[forked_key];
     environment->rewrite_event(ev->p_event, forkActive[forked_key]);
-    environment->output_event(ev->p_event);
+    environment->relay_event(ev->p_event);
 
     change_state(st_activated);
     mdb("%s the key %d-> forked to: %d. Internal queue has %d events. %s\n", __FUNCTION__,
@@ -396,7 +396,7 @@ forkingMachine<Keycode, Time>::do_confirm_fork_by(key_event *ev)
 /*
   returns:
   state  (in the `machine')
-  output_event   possibly, othewise 0
+  relay_event   possibly, othewise 0
   machine->mDecision_time   ... for another timer.
 */
 
