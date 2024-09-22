@@ -310,7 +310,7 @@ static Bool
 step_in_time(PluginInstance* plugin, Time now)
 {
     machineRec* machine = plugin_machine(plugin);
-    machine->mdb("%s:\n", __FUNCTION__);
+    machine->mdb("%s: %" TIME_FMT "\n", __func__, now);
     machine->lock();
 
     machine->step_in_time_locked(now); // possibly unlocks
