@@ -151,12 +151,12 @@ public:
     void lock()
     {
         mLock=1;
-        mdb_raw("/--\n");
+        // mdb_raw("/--\n");
     }
     void unlock()
     {
         mLock=0;
-        mdb_raw("\\__ (unlock)\n");
+        // mdb_raw("\\__ (unlock)\n");
     }
 #endif
 
@@ -345,22 +345,25 @@ public:
           output_queue("output_queue"),
           config(nullptr),
           environment(environment) {
-        last_events = new last_events_type(max_last);
 
+        environment->log("ctor: allocating last_events\n");
+        last_events = new last_events_type(max_last);
+        environment->log("ctor: resetting forkActive\n");
         for (unsigned char &i: forkActive) {
             i = KEYCODE_UNUSED; /* not active */
         };
+        environment->log("ctor: end\n");
     };
 
     void switch_config(int id);
 
     void step_in_time_locked(Time now);
 
-    void step_fork_automaton_by_force();
+    void step_by_force();
 
-    void step_fork_automaton_by_key(key_event *ev);
+    void step_by_key(key_event *ev);
 
-    bool step_fork_automaton_by_time(Time current_time);
+    bool step_by_time(Time current_time);
 
     void accept_event(PlatformEvent* pevent);
 
