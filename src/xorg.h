@@ -71,18 +71,18 @@ public:
     };
 
     bool ignore_event(const PlatformEvent *pevent) override {
-        // mouse_emulation_on(DeviceIntPtr keybd)
-        auto event = static_cast<const XorgEvent*>(pevent)->event;
-            if (!keybd->key) {
-                ErrorF("%s: keybd is null!", __func__);
-                return 0;
-            }
+        // auto event = static_cast<const XorgEvent*>(pevent)->event;
+        if (!keybd->key) {
+            // should I just assert(keybd)
+            ErrorF("%s: keybd is null!", __func__);
+            return 0;
+        }
 
-            XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
-            XkbDescPtr xkb = xkbi->desc;
-            return (xkb->ctrls->enabled_ctrls & XkbMouseKeysMask);
+        XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
+        XkbDescPtr xkb = xkbi->desc;
+        return (xkb->ctrls->enabled_ctrls & XkbMouseKeysMask);
     }
-    //
+
     virtual void archive_event(PlatformEvent* pevent, archived_event* archived_event) {
 
         auto event = static_cast<XorgEvent*>(pevent)->event;
