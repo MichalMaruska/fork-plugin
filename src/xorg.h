@@ -141,24 +141,30 @@ public:
         VErrorF(format, argptr);
     }
 
-        void log_event(const std::string &message, const PlatformEvent *pevent) override {
-            const auto event = static_cast<const XorgEvent*>(pevent)->event;
+    void log_event(const std::string &message, const PlatformEvent *pevent) override {
+        // const auto event = (static_cast<const XorgEvent *>(pevent))->event;
+#if 0
+        const KeyCode key = detail_of(pevent);
+        bool press = press_p(pevent);
+        bool release = release_p(pevent);
 
-        const KeyCode key = event->device_event.detail.key;
+        //event->device_event.detail.key;
         // KeyCode key = detail_of(event);
-
+#if DEBUG > 1
+        log("%s: trying to resolve to keysym %d through %p\n", __func__, key, keybd);
+#endif
         if (keybd->key) {
-            XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
+            XkbSrvInfoPtr xkbi = keybd->key->xkbInfo;
             KeySym *sym = XkbKeySymsPtr(xkbi->desc, key);
-            if ((!sym) || (! isalpha(* (unsigned char*) sym)))
-                sym = (KeySym*) " ";
+            if ((!sym) || (!isalpha(*(unsigned char *) sym)))
+                sym = (KeySym *) " ";
 
             log("%s: ", key,
-                            key_color, (char)*sym, color_reset,
-                            event_type_brief(event));
+                key_color, (char) *sym, color_reset,
+                (press ? "down" : (release ) ? "up" : "??"));
         }
+#endif
     };
-
 };
 
 #endif //XORG_H
