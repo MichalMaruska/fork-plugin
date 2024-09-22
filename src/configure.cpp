@@ -39,11 +39,12 @@ fork_configuration*
 machine_new_config()
 {
    /* `configuration' */
-   ErrorF("resetting the configuration to defaults\n");
+   // fixme: envi->log
+   DB("resetting the configuration to defaults\n");
    auto *config = MALLOC(fork_configuration);
 
    if (! config){
-      ErrorF("%s: malloc failed (for config)\n", __func__);
+      DB("%s: malloc failed (for config)\n", __func__);
       /* fixme: should free the machine!!! */
       /* in C++ exception which calls all destructors (of the objects on the stack ?? */
       return nullptr;
@@ -71,7 +72,7 @@ machine_new_config()
 
    config->verification_interval[0][0] = 200;
    config->overlap_tolerance[0][0] = 100;
-   ErrorF("fork: init arrays .... done\n");
+   DB("fork: init arrays .... done\n");
 
 
    config->name = "default";
