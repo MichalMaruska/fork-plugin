@@ -32,7 +32,7 @@ extern "C"
 
 static int config_counter = 0;
 
-using machineRec = forkingMachine<Time, KeyCode>;
+using machineRec = forkingMachine<KeyCode, Time>;
 
 // nothing active (forkable) in this configuration
 fork_configuration*

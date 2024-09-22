@@ -93,7 +93,8 @@ hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* const nextP
 }
 
 
-using machineRec = forkingMachine<Time, KeyCode>;
+using machineRec = forkingMachine<KeyCode, Time>;
+template class forkingMachine<KeyCode, Time>;
 
 /*
  *  react to some `hot_keys':

@@ -47,7 +47,7 @@ class testEnvironment final : public platformEnvironment {
 };
 
 
-using machineRec = forkingMachine<Time, KeyCode>;
+using machineRec = forkingMachine<KeyCode, Time>;
 
 class machineTest : public testing::Test {
 protected:
@@ -63,8 +63,9 @@ protected:
     }
 
     // ~QueueTest() override = default;
-testEnvironment *environment;
-    forkingMachine<Time, KeyCode> *fm;
+
+  testEnvironment *environment;
+  machineRec *fm;
   fork_configuration *config;
     // Queue<int> q1_;
     // Queue<int> q2_;
