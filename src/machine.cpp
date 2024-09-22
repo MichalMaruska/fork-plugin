@@ -535,7 +535,7 @@ forkingMachine<Keycode, Time>::step_in_time_locked(const Time now) // unlocks po
     flush_to_next();
 
     /* push the time ! */
-    try_to_play(FALSE);
+    try_to_play(false);
 
     /* I should take the minimum of time and the time of the 1st event in the
        (output) internal queue */
