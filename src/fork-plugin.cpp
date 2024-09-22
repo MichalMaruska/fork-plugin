@@ -144,14 +144,13 @@ filter_config_key(PluginInstance* plugin, const InternalEvent *event)
     return -1;
 }
 
-static int                             // return:  0  nothing  -1  skip it
-filter_config_key_maybe(PluginInstance* plugin,const InternalEvent *event)
+static bool   // return:  true if handled & should be skipped
+filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const event)
 {
     static unsigned char config_mode = 0; // While the Pause key is down.
     static Time last_press_time = 0;
 
-    if (config_mode)
-    {
+    if (config_mode) {
         static int latch = 0;
         // [21/10/04]  I noticed, that some (non-plain ps/2) keyboard generate
         // the release event at the same time as press.
@@ -164,7 +163,7 @@ filter_config_key_maybe(PluginInstance* plugin,const InternalEvent *event)
                 ErrorF("the key seems buggy, tolerating %" TIME_FMT ": %d! .. & latching config mode\n",
                        time_of(event), (int)(time_of(event) - last_press_time));
                 latch = 1;
-                return -1;
+                return true;
             }
             config_mode = 0;
             // fixme: key_to_fork = 0;
@@ -191,10 +190,12 @@ filter_config_key_maybe(PluginInstance* plugin,const InternalEvent *event)
         config_mode = 1;
 
         /* fixme: should I update the ->down bitarray? */
-        return -1;
+        return true;
     } else
         last_press_time = 0;
-    return 0;
+
+    ErrorF("%s: end\n", __func__);
+    return false;
 }
 
 static Time
