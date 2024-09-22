@@ -278,29 +278,23 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
 
     {
         const auto machine = plugin_machine(plugin);
-
         machine->check_unlocked();
         machine->lock();           // fixme: mouse must not interrupt us.
-
-        ErrorF("%s: middle\n", __func__);
         {
             auto* ev = create_xorg_platform_event(event, owner);
             if (!ev)			// memory problems
                 // what to do with `event' !!
                 goto exit;
-
             // machine->log_event(ev, keybd);
             machine->accept_event(ev);
         }
 
-        ErrorF("%s: middle 2\n", __func__);
         set_wakeup_time(plugin);
         machine->unlock();
     }
 
     // always:
   exit:
-    ErrorF("%s: end\n", __func__);
     return PLUGIN_NON_FROZEN;
 };
 
