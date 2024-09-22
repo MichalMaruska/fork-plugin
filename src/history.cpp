@@ -38,19 +38,8 @@ make_archived_event(const key_event* const ev)
   DB("%s: %d %p %p\n", __func__, __LINE__, ev, ev->p_event);
   DB("%s:%d into %p\n", __func__, __LINE__, event);
 
-  DB("%s:%d type: %d\n", __func__, __LINE__, ev->event->any.type);
-  DB("%s:%d keycode: %d\n", __func__, __LINE__, ev->event->device_event.detail.key);
-  DB("%s:%d keycode via function: %d\n", __func__, __LINE__, detail_of2()); // ev->event
 
-  event->key = detail_of1(ev->event);
-    DB("%s: %d\n", __func__, __LINE__);
-  event->time = time_of(ev->event);
-    DB("%s: %d\n", __func__, __LINE__);
-  event->press = press_p(ev->event);
-    DB("%s: %d\n", __func__, __LINE__);
-  event->forked = ev->forked;
-
-    DB("%s: end\n", __func__);
+  DB("%s: end\n", __func__);
   return event;
 }
 
@@ -119,7 +108,7 @@ dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
            XkbDescPtr xkb, XkbSrvInfoPtr xkbi, Time prev_time)
 {
     char* ksname = xkb->names->keys[key].name;
-    ErrorF("%d %.4s\n", key, ksname);
+    DB("%d %.4s\n", key, ksname);
 
     // 0.1   keysym bound to the key:
     KeySym* sym= XkbKeySymsPtr(xkbi->desc,key); // mmc: is this enough ?
@@ -144,9 +133,9 @@ dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
         ] 33   18502021        1048
     */
 
-    ErrorF("%s %d (%d)" ,(press?" ]":"[ "),
+    DB("%s %d (%d)" ,(press?" ]":"[ "),
            static_cast<int>(key), static_cast<int>(fork));
-    ErrorF(" %.4s (%5.5s) %" TIME_FMT "\t%" TIME_FMT "\n",
+    DB(" %.4s (%5.5s) %" TIME_FMT "\t%" TIME_FMT "\n",
            ksname, sname,
            event_time,
            event_time - prev_time);
@@ -188,7 +177,7 @@ void
 dump_last_events(PluginInstance* plugin)
 {
   machineRec* machine = plugin_machine(plugin);
-  ErrorF("%s(%s) %" SIZE_FMT "\n", __FUNCTION__,
+  DB("%s(%s) %" SIZE_FMT "\n", __FUNCTION__,
          plugin->device->name,
          machine->last_events->size());
 
