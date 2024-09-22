@@ -86,7 +86,7 @@ public:
         DB("%s:%d keycode via function: %d\n", __func__, __LINE__, detail_of2()); // ev->event
 
 #if 0
-        archived_event->key = detail_of1(event);
+        archived_event->key = detail_of(event);
         DB("%s: %d\n", __func__, __LINE__);
         archived_event->time = time_of(event);
         DB("%s: %d\n", __func__, __LINE__);

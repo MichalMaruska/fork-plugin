@@ -107,7 +107,7 @@ filter_config_key(PluginInstance* plugin, const InternalEvent *event)
     machineRec* machine;
 
     if (press_p(event))
-        switch (detail_of1(event)) {
+        switch (detail_of(event)) {
             case 110: // break
                 machine = plugin_machine(plugin);
                 machine->lock();
@@ -121,7 +121,7 @@ filter_config_key(PluginInstance* plugin, const InternalEvent *event)
                 machine->unlock();
 
                 /* fixme: but this is default! */
-                machine->forkActive[detail_of1(event)] = 0; /* ignore the release as well. */
+                machine->forkActive[detail_of(event)] = 0; /* ignore the release as well. */
                 break;
             case 10:
                 machine = plugin_machine(plugin);
@@ -129,14 +129,14 @@ filter_config_key(PluginInstance* plugin, const InternalEvent *event)
                 machine->lock();
                 machine->switch_config(1); // current ->toggle ?
                 machine->unlock();
-                machine->forkActive[detail_of1(event)] = 0;
+                machine->forkActive[detail_of(event)] = 0;
                 break;
             default:            /* todo: remove this: */
                 if (key_to_fork == 0){
-                    key_to_fork = detail_of1(event);
+                    key_to_fork = detail_of(event);
                 } else {
                     machineRec* machine = plugin_machine(plugin);
-                    machine->config->fork_keycode[key_to_fork] = detail_of1(event);
+                    machine->config->fork_keycode[key_to_fork] = detail_of(event);
                     key_to_fork = 0;
                 }
             };
@@ -158,7 +158,7 @@ filter_config_key_maybe(PluginInstance* plugin,const InternalEvent *event)
         // So, to overcome this limitation, I detect this short-lasting `down' &
         // take the `next' event as in `config_mode'   (latch)
 
-        if ((detail_of1(event) == PAUSE_KEYCODE) && release_p(event)) { //  fake ?
+        if ((detail_of(event) == PAUSE_KEYCODE) && release_p(event)) { //  fake ?
             if ( (time_of(event) - last_press_time) < 30) // fixme: configurable!
             {
                 ErrorF("the key seems buggy, tolerating %" TIME_FMT ": %d! .. & latching config mode\n",
@@ -183,7 +183,7 @@ filter_config_key_maybe(PluginInstance* plugin,const InternalEvent *event)
         }
     }
     // `Dump'
-    if ((detail_of1(event) == PAUSE_KEYCODE) && press_p(event))
+    if ((detail_of(event) == PAUSE_KEYCODE) && press_p(event))
         /* wait for the next and act ? but start w/ printing the last events: */
     {
         last_press_time = time_of(event);

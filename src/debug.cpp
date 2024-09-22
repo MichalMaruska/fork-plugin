@@ -30,7 +30,7 @@ describe_key(DeviceIntPtr keybd, InternalEvent *event)
 {
     assert(event);
     static char buffer[BufferLength];
-    KeyCode key = detail_of1(event);
+    KeyCode key = detail_of(event);
 
     const char *keycode_name = "";
     KeySym sym = XK_space;
