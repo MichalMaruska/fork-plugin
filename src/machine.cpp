@@ -271,17 +271,24 @@ forkingMachine<Keycode, Time>::try_to_play(Bool force_also)
     // fixme: maybe All I need is the nextPlugin?
 
     // log_queues_and_nextplugin(message)
-    mdb("%s: next %s: internal %d, input: %d\n", __func__,
-         (environment->output_frozen()?"frozen":"NOT frozen"),
-         internal_queue.length (),
-         input_queue.length ());
+    if (environment->output_frozen() ||
+        (!input_queue.empty() || !internal_queue.empty())
+        ){
+        mdb("%s: next %s: internal %d, input: %d\n", __func__,
+             (environment->output_frozen()?"frozen":"NOT frozen"),
+             internal_queue.length (),
+             input_queue.length ());
+    }
 
     // notice that instead of recursion, all the calls to `rewind_machine' are
     // followed by return to this cycle!
     while (! environment->output_frozen()) {
-        environment->log("%s:\n", __func__);
+        // environment->log("%s:\n", __func__);
+
         if (! input_queue.empty()) {
-            environment->log("%s: ok!\n", __func__);
+#if DEBUG > 1
+            environment->log("%s: pop!\n", __func__);
+#endif
             key_event *ev = input_queue.pop();
             step_fork_automaton_by_key(ev);
         } else {
@@ -291,7 +298,7 @@ forkingMachine<Keycode, Time>::try_to_play(Bool force_also)
                     // we have to try again.
                     continue;
             }
-            environment->log("%s:2\n", __func__);
+           // environment->log("%s:2\n", __func__);
             if (force_also && (state != st_normal)) {
                 step_fork_automaton_by_force();
             } else {
@@ -317,14 +324,19 @@ forkingMachine<Keycode, Time>::accept_event(PlatformEvent* pevent) {
 
     // fixme:
     mCurrent_time = 0; // time_of(ev->event);
-
+#if DEBUG > 1
     environment->log("%s: put on input Q\n", __func__);
+#endif
     input_queue.push(ev);
 
+#if DEBUG > 1
     environment->log("%s: try to play2\n", __func__);
+#endif
     try_to_play(false);
 
+#if DEBUG > 1
     environment->log("%s: end\n", __func__);
+#endif
 }
 
 /*
@@ -510,7 +522,9 @@ template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::step_in_time_locked(const Time now) // unlocks possibly!
 {
-    mdb("%s:\n", __func__);
+    if (!output_queue.empty() || !input_queue.empty() || !internal_queue.empty()) {
+        mdb("%s: %" TIME_FMT "\n", __func__, now);
+    }
     if (mCurrent_time > now)
         mdb("bug: time moved backwards!");
 
@@ -831,7 +845,9 @@ template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::step_fork_automaton_by_key(key_event *ev)
 {
+#if DEBUG > 1
     environment->log("%s:\n", __func__);
+#endif
     assert (ev);
     const PlatformEvent* pevent = ev->p_event;
     const KeyCode key = environment->detail_of(pevent);
@@ -861,10 +877,11 @@ forkingMachine<Keycode, Time>::step_fork_automaton_by_key(key_event *ev)
 
     // A currently forked keycode cannot be (suddenly) pressed 2nd time.
     // assert(release_p(event) || (key < MAX_KEYCODE && forkActive[key] == 0));
+#if DEBUG > 1
+    environment->log("%s: %d\n", __func__, __LINE__);
+#endif
 
-    environment->log("%s: 2\n", __func__);
 #if DEBUG
-
     if (environment->press_p(pevent) || environment->release_p(pevent)) {
         log_state_and_event(__func__, ev);
     }
