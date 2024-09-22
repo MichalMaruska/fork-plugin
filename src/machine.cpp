@@ -290,17 +290,18 @@ forkingMachine<Keycode, Time>::try_to_play(Bool force_also)
             environment->log("%s: pop!\n", __func__);
 #endif
             key_event *ev = input_queue.pop();
-            step_fork_automaton_by_key(ev);
+
+            step_by_key(ev);
         } else {
             if (mCurrent_time && (state != st_normal)) {
-                if (step_fork_automaton_by_time(mCurrent_time))
+                if (step_by_time(mCurrent_time))
                     // If this time helped to decide -> machine rewound,
                     // we have to try again.
                     continue;
             }
            // environment->log("%s:2\n", __func__);
             if (force_also && (state != st_normal)) {
-                step_fork_automaton_by_force();
+                step_by_force();
             } else {
                 return;
             }
@@ -347,7 +348,7 @@ forkingMachine<Keycode, Time>::accept_event(PlatformEvent* pevent) {
  */
 template <typename Keycode, typename Time>
 void
-forkingMachine<Keycode, Time>::step_fork_automaton_by_force()
+forkingMachine<Keycode, Time>::step_by_force()
 {
     if ((state == st_normal) || (internal_queue.empty())) {
         // doe  this imply  that ^^^ ?
@@ -469,7 +470,7 @@ forkingMachine<Keycode, Time>::key_pressed_in_parallel(Time current_time)
 
 template <typename Keycode, typename Time>
 bool
-forkingMachine<Keycode, Time>::step_fork_automaton_by_time(Time current_time)
+forkingMachine<Keycode, Time>::step_by_time(Time current_time)
 {
     // confirm fork:
     int reason;
@@ -843,7 +844,7 @@ forkingMachine<Keycode, Time>::apply_event_to_verify_state(key_event *ev)
  */
 template <typename Keycode, typename Time>
 void
-forkingMachine<Keycode, Time>::step_fork_automaton_by_key(key_event *ev)
+forkingMachine<Keycode, Time>::step_by_key(key_event *ev)
 {
 #if DEBUG > 1
     environment->log("%s:\n", __func__);

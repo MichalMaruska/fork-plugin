@@ -370,7 +370,7 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
         /* bug: if we were frozen, then we have a sequence of keys, which
          * might be already released, so the head is not to be forked!
          */
-        machine->step_fork_automaton_by_force();
+        machine->step_by_force();
         machine->unlock();
     }
 }
