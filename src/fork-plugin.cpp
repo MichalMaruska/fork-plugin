@@ -232,7 +232,9 @@ set_wakeup_time(PluginInstance* plugin)
 static XorgEvent*
 create_xorg_platform_event(InternalEvent *event, bool owner)
 {
+#if DEBUG > 1
     ErrorF("%s: %s\n", __func__, owner?"owner":"not owner");
+#endif
 
     InternalEvent* qe;
     if (owner)
