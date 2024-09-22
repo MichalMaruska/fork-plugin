@@ -393,39 +393,16 @@ make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
     plugin->device = keybd;
     plugin->frozen = FALSE;
 
-    // I create 2 config sets.  1 w/o forking.
-    // They are numbered:  0 is the no-op.
-    auto *config_no_fork = machine_new_config(); // configuration number 0
-    if (!config_no_fork)
-    {
-        return NULL;
-    }
-    config_no_fork->debug = 0;   // should be settable somehow.
 
-    auto *config = machine_new_config();
-    if (!config)
-    {
-        // fixme: some uniq_pointer<> ?
-        free(config_no_fork);
-        return NULL;
-    }
-
-    // make a method chain_to()?
-    config->next = config_no_fork;
-    // config->id = config_no_fork->id + 1;
-    // so we start w/ config 1. 0 is empty and should not be modifiable
-
-    ErrorF("%s: constructing the machine %d (official release: %s)\n",
-           __FUNCTION__, PLUGIN_VERSION, VERSION_STRING);
+    ErrorF("%s: constructing the machine. Version %d (official release: %s)\n",
+           __func__, PLUGIN_VERSION, VERSION_STRING);
 
     auto* xorg = new XOrgEnvironment(keybd, plugin);
     auto* const forking_machine = new machineRec(xorg);
+    forking_machine->create_configs();
 
     // set_wakeup_time(plugin, 0);
     plugin->wakeup_time = 0;
-    // fixme: dangerous: this should be part of the ctor!
-    config->debug = 1;
-    forking_machine->config = config;
 
     forking_machine->unlock();
 
