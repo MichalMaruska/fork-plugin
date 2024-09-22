@@ -59,9 +59,16 @@ public:
     };
 
     KeyCode detail_of(const PlatformEvent* pevent) {
-        auto event = static_cast<const XorgEvent*>(pevent)->event;
+#if DEBUG > 1
+        log("%s: looking at %p\n", __func__, pevent);
+#endif
+        auto event = (static_cast<const XorgEvent*>(pevent))->event;
+#if DEBUG > 1
+        log("%s: looking closer at %p\n", __func__, event);
+        log("%s: and it is %d\n", __func__, event->device_event.detail.key);
+#endif
         return event->device_event.detail.key;
-        };
+    };
 
     bool ignore_event(const PlatformEvent *pevent) override {
         // mouse_emulation_on(DeviceIntPtr keybd)
