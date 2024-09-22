@@ -95,10 +95,15 @@ dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int max_req
 
    DB("sending %d events: + %zd!\n", max_requested, appendix_len);
 
+// BUG -- at least for the test?
+# if 0
    int r = xkb_plugin_send_reply(client, plugin, start, appendix_len);
    if (r == 0)
       return client->noClientException;
    return r;
+#else
+   return 0;
+#endif
 }
 
 
@@ -115,8 +120,10 @@ dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
     char* sname = nullptr;
 
     if (sym){
+#if 0
+        // todo: fixme!
         sname = XkbKeysymText(*sym,XkbCFile); // doesn't work inside server !!
-
+#endif
         // my ascii hack
         if (! isalpha(* reinterpret_cast<unsigned char *>(sym))){
             sym = (KeySym*) " ";
