@@ -375,13 +375,12 @@ public:
         else return 0;
     }
 
+    bool create_configs();
 };
 
 extern fork_configuration* machine_new_config();
 
 // extern int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n);
-
-void hand_over_event_to_next_plugin(InternalEvent *event, const PluginInstance* plugin);
 
 enum {
   PAUSE_KEYCODE = 127

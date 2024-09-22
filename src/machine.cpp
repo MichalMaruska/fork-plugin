@@ -889,6 +889,39 @@ forkingMachine<Keycode, Time>::step_fork_automaton_by_key(key_event *ev)
     }
 }
 
+template <typename Keycode, typename Time>
+bool
+forkingMachine<Keycode, Time>::create_configs() {
+    environment->log("%s\n", __func__);
+    // I create 2 config sets.
+    // 0. w/o forking.  no-op.
+    // 1. user-configuraable
+    auto *config_no_fork = machine_new_config(); // configuration number 0
+    if (!config_no_fork)
+    {
+        return false;
+    }
+    config_no_fork->debug = 0;   // should be settable somehow.
+
+    auto *config = machine_new_config();
+    if (!config)
+    {
+        // fixme: some uniq_pointer<> ?
+        free(config_no_fork);
+        return false;
+    }
+
+    // make a method chain_to()?
+    config->next = config_no_fork;
+    // config->id = config_no_fork->id + 1;
+    // so we start w/ config 1. 0 is empty and should not be modifiable
+    // fixme: dangerous: this should be part of the ctor!
+    config->debug = 1;
+
+    this->config = config;
+    return true;
+}
+
 // explicit instantation:
 template void forkingMachine<KeyCode, Time>::accept_event(PlatformEvent* pevent);
 template void forkingMachine<KeyCode, Time>::switch_config(int);
