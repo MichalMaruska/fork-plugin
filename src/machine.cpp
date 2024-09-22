@@ -146,7 +146,7 @@ forkingMachine<Keycode, Time>::flush_to_next()  // unlocks!
         }
     }
     if (!output_queue.empty ())
-        mdb("%s: still %d events to output\n", __FUNCTION__, output_queue.length ());
+        mdb("%s: still %d events to output\n", __func__, output_queue.length ());
 }
 
 // Another event has been determined. So:
