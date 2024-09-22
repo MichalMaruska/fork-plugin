@@ -85,14 +85,14 @@ public:
 
     virtual void archive_event(PlatformEvent* pevent, archived_event* archived_event) {
 
+#if 0
         auto event = static_cast<XorgEvent*>(pevent)->event;
         // dynamic_cast
 
         DB("%s:%d type: %d\n", __func__, __LINE__, event->any.type);
-        DB("%s:%d keycode: %d\n", __func__, __LINE__, event->device_event.detail.key);
-        DB("%s:%d keycode via function: %d\n", __func__, __LINE__, detail_of2()); // ev->event
+        DB("%s:%d keycode: %d\n", __func__, __LINE__, detail_of(pevent));
+        DB("%s:%d keycode via function: %d\n", __func__, __LINE__, detail_of(pevent));
 
-#if 0
         archived_event->key = detail_of(event);
         DB("%s: %d\n", __func__, __LINE__);
         archived_event->time = time_of(event);
