@@ -215,16 +215,19 @@ set_wakeup_time(PluginInstance* plugin)
 {
     machineRec* machine = plugin_machine(plugin);
     machine->check_locked();
-
+    Time next = machine->next_decision_time();
     plugin->wakeup_time =
         // fixme:  but ZERO has certain meaning!
         // this is wrong: if machine waits, it cannot pass to the next-plugin!
-        first_non_zero(machine->next_decision_time(), plugin->next->wakeup_time);
+        first_non_zero(next, plugin->next->wakeup_time);
 
     // || ( DEBUG > 1 )
     if (plugin->wakeup_time != 0) {
-        machine->mdb("%s %s wakeup_time = %d, next wants: %u, we %" TIME_FMT "\n", FORK_PLUGIN_NAME, __FUNCTION__,
-                     (int)plugin->wakeup_time, (int)plugin->next->wakeup_time, machine->next_decision_time());
+        if (next != 0) {
+            machine->mdb("%s %s wakeup_time = %d, next wants: %u, we %" TIME_FMT "\n",
+                FORK_PLUGIN_NAME, __func__,
+                (int)plugin->wakeup_time, (int)plugin->next->wakeup_time, next);
+        }
     }
 }
 
