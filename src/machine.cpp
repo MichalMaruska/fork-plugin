@@ -882,7 +882,8 @@ forkingMachine<Keycode, Time>::step_by_key(key_event *ev)
 
         environment->free_event(ev->p_event);
 
-        mxfree(ev, sizeof(key_event));
+        // mxfree(ev, sizeof(key_event));
+        free(ev);
         return;
     }
 #endif
