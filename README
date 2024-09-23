@@ -1,35 +1,36 @@
-
 * What it is
-This is a plugin for an alternative (pipeline) architecture of
+This is a plugin for an alternative, pipeline architecture of
 key-event processing in Xorg server.
 
-The patch for this is currently available as a debian package.
-   https://launchpad.net/~mmaruska/+archive/mmc-pipeline
-(This plugin is available there too, but this git repo is updated).
+The patch for this pipeline is currently available in github and a debian package.
+
+https://github.com/MichalMaruska/xserver/commits/mmc-all
+debian packages in https://github.com/MichalMaruska/michalmaruska.github.io
+
+This plugin is available as debian package there.
 
 There is some explanation of what this plugin does at:
 http://www.ruska.it/michal/fork.html
-
+https://maruska7.blogspot.com/2014/08/forking-multitouch-on-keyboard.html
 
 
 
 * Implementation:
 
-We are called through these calls:
+Plugins on the pipeline have following api:
 
 - ProcessEvent
 - mouse_call_back
 - step_in_time  (...We provide the time at which we want to be woken)
 
 
+* Specificly "forking" plugin
 We look at the Parallelism of key strokes (also mouse movement parallelism)
 and can change some Events (the keycode).
 
 
-
 There is also synchronization with device Freeze/Thaw.
 - fork_thaw_notify
-
 
 * Configuration parameters:
 
@@ -48,4 +49,3 @@ This much after. code.
 
 * bit map
 Forkable.
-
