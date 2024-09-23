@@ -33,7 +33,6 @@
  * from internal Q is returned/prepended to the input Q.
  */
 
-
 extern "C" {
 #include <fork_requests.h>
 }
@@ -273,37 +272,43 @@ create_xorg_platform_event(InternalEvent *event, bool owner)
 static Bool
 ProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
 {
-    const DeviceIntPtr keybd = plugin->device;
-    ErrorF("%s: start %d\n", __func__, event->any.type);
-    if ((event->any.type != ET_KeyPress) && (event->any.type != ET_KeyRelease))
+    // ErrorF("%s: start %d %s\n", __func__, event->any.type, owner?"owner":"not owner");
+    if ((event->any.type != ET_KeyPress) && (event->any.type != ET_KeyRelease)) {
         // ET_RawKeyPress
-        goto exit;
-    if (filter_config_key_maybe(plugin, event) < 0)
-    {
-        // fixme: I should at least push the time of (plugin->next)!
-        if (owner)
-            free(event);
-        goto exit;
+        ErrorF("ignoring this type of event\n");
+        goto exit_free;
+    }
+
+    // this could be a different plugin!
+    if (filter_config_key_maybe(plugin, event)) {
+        // todo: I should at least push the time of (plugin->next)!
+        ErrorF("not passing this event to forking-machine\n");
+
+        goto exit_free;
     };
 
     {
+        // This is C++ code:
         const auto machine = plugin_machine(plugin);
         machine->check_unlocked();
         machine->lock();           // fixme: mouse must not interrupt us.
         {
             auto* ev = create_xorg_platform_event(event, owner);
-            if (!ev)			// memory problems
-                // what to do with `event' !!
-                goto exit;
-            // machine->log_event(ev, keybd);
+            if (!ev) // memory problems
+                goto exit_free;
             machine->accept_event(ev);
         }
 
         set_wakeup_time(plugin);
         machine->unlock();
     }
+    // by now, if owner, we consumed the event.
+    goto exit;
 
-    // always:
+  exit_free:
+    if (owner)
+        free(event);
+
   exit:
     return PLUGIN_NON_FROZEN;
 };
