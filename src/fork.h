@@ -113,7 +113,7 @@ typedef enum {
 // typename PlatformEvent, typename platformEnvironment,
 template <typename Keycode, typename Time>
 // so key_event
-struct forkingMachine
+class forkingMachine
 {
     // history:
     typedef my_queue<key_event> list_with_tail;
