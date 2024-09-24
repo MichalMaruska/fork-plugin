@@ -401,7 +401,7 @@ class circular_buffer
 
         reference at_checked(size_type index) const
         {
-            if (size >= contents_size_)
+            if (index >= contents_size_)
             {
                 throw std::out_of_range(__func__);
             }
