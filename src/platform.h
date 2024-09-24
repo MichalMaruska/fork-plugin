@@ -1,24 +1,21 @@
-//
-// Created by michal on 8/10/24.
-//
+#pragma once
 
-#ifndef PLATFORM_H
-#define PLATFORM_H
+/**
+ * Created by michal on 8/10/24.
+ *
+ */
+
 
 extern "C" {
-// #include <eventstr.h>
-    // archived_event
+// todo: archived_event coud be avoided ... it's X specific
 #include "fork_requests.h"
 #undef max
 #undef min
 }
-// #include "../include/archived_event.h"
 
-class PlatformEvent {
-    // abstract
-};
+class PlatformEvent {};
 
-
+// todo: template on <Keycode, Time> ?
 class platformEnvironment {
 public:
     platformEnvironment() = default;
@@ -42,10 +39,5 @@ public:
     virtual void free_event(PlatformEvent* pevent) = 0;
     virtual void rewrite_event(PlatformEvent* pevent, KeyCode code) = 0;
 
- // do not generate it:?
-    virtual ~platformEnvironment() {};
-    // = default;
+    virtual ~platformEnvironment() = default;
 };
-
-
-#endif //PLATFORM_H
