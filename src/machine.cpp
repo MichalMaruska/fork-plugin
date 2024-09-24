@@ -106,8 +106,6 @@ forkingMachine<Keycode, Time>::flush_to_next()  // unlocks!
         // last_events->push_back(tmp);
 
         InternalEvent* event = ev->event;
-        mxfree(ev, sizeof(key_event));
-
         // this block (hand_over_event_to_next_plugin) can re-enter into this
         // machine. fixme: it's not true -- it cannot!
         // 2020: it can!
@@ -119,6 +117,10 @@ forkingMachine<Keycode, Time>::flush_to_next()  // unlocks!
             environment->relay_event(ev->p_event);
             lock();
         };
+
+        // mxfree(ev, sizeof(key_event));
+        // bug: environment->free_event(ev->p_event);
+        free(ev);
     }
 
     // interesting: after handing over, the nextPlugin might need to be refreshed.
