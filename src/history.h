@@ -15,6 +15,7 @@ typedef struct {
 } key_event;
 
 /* (100) */
+// not value-semantics
 typedef circular_buffer<archived_event*> last_events_type;
 
 // why extern?
