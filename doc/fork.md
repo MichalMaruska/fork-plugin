@@ -1,11 +1,11 @@
 # 'key-forking' extension to Xfree86 server
 
-skip to | other docs:
+## related documents:
 
-history & motivation  ... <a href="http://technophobe.net/keyboards_modifiers_and_chords.html">keyboards&#44;&#32;modifiers&#32;and&#32;chords</a>
-<li>  How to <a href="fork-install.html">install</a> (<a href="fork-installation.html">downloads</a>)
-<li>  future <a href="fork-future.html">development</a> (w/ some  screenshots)
-<li> <a href="fork-license.html">license</a> !
+* history & motivation  ... <a href="http://technophobe.net/keyboards_modifiers_and_chords.html">keyboards&#44;&#32;modifiers&#32;and&#32;chords</a>
+* How to <a href="fork-install.html">install</a> (<a href="fork-installation.html">downloads</a>)
+* future <a href="fork-future.html">development</a> (w/ some  screenshots)
+* <a href="fork-license.html">license</a> !
 
 
 
@@ -23,8 +23,8 @@ history & motivation  ... <a href="http://technophobe.net/keyboards_modifiers_an
 ## Forking
 
 
-> The basic idea is: detect when you use a (letter) key as if it was a modifier key, and switch the keycode it produces to that of the real modifier key.
-
+| The basic idea is: detect when you use a (letter) key as if it was a modifier key, and switch the keycode it produces to that of the real modifier key. |
+| ---- |
 
    > So, what is the different, when I press a modifier key? Well, sometimes I press a modifier (Hyper for example), and then think what I want to do. Or I change my mind and don't do anything and release the modifier. I want the 'forked' keys to have such do-nothing-if-i-think behaviour. That rules out repetition, though. If I press "a" for a long
    > period, and want it to do nothing, I can't generate anything, (there is no way to go back, undo).
