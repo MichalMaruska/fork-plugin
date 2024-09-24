@@ -1,7 +1,9 @@
-include(GoogleTest)
-
+# So I don't use this:
 # include(CTest)
 # add_test(NAME test-circular COMMAND ExecutableToRun arg1 arg2 ...)
+
+# this should be compatible with ctest(1).
+include(GoogleTest)
 
 # this was crucial to use GTest::gtest_main
 find_package(GTest REQUIRED)
@@ -20,8 +22,10 @@ target_include_directories(test-queue SYSTEM PUBLIC
   ${xorg-server_INCLUDE_DIRS}
   "../include/")
 
-gtest_discover_tests(test-queue)
+# here we also use fork_requests to get archive_events:
+target_include_directories(test-queue SYSTEM PUBLIC ${xorg-server_INCLUDE_DIRS})
 
+gtest_discover_tests(test-queue)
 
 
 find_package(PkgConfig)
@@ -34,12 +38,9 @@ target_include_directories(test-machine SYSTEM PUBLIC
   "../include/")
 
 #include_directories()
-
 target_link_libraries(test-machine GTest::gtest_main)
 target_link_libraries(test-machine GTest::gmock_main)
 
 gtest_discover_tests(test-machine)
-
-
 
 

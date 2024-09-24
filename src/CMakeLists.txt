@@ -12,6 +12,10 @@ set(CMAKE_DEBUG_TARGET_PROPERTIES
   AUTOUIC_OPTIONS
   POSITION_INDEPENDENT_CODE
   )
+
+# source only library:
+# the header file?
+
 # not GLOB_RECURSE
 # file(GLOB sources "*.cpp"  "*.c")
 set(sources
@@ -22,6 +26,8 @@ set(sources
   machine.cpp
   history.cpp
 
+  # header files?
+  fork.h
   platform.h
   xorg.h
 )

@@ -3,6 +3,7 @@
 #include "../src/circular.h"
 
 class circular_bufferTest : public testing::Test {
+  // there is a reason: derived classes:
  protected:
   circular_bufferTest() {
      // q0_ remains empty
@@ -10,6 +11,16 @@ class circular_bufferTest : public testing::Test {
      // q2_.Enqueue(2);
      // q2_.Enqueue(3);
   }
+
+  // If necessary, write a default constructor or SetUp() function to prepare
+  // override void SetUp() {};
+  void SetUp() override {};
+
+  // write a destructor or TearDown()
+  // throwing in a destructor leads to undefined behavior and usually will kill your program right away.
+  // you shouldn’t use GoogleTest assertions in a destructor if your code could run on such a platform.
+  void TearDown() override {};
+
 
   // ~QueueTest() override = default;
 

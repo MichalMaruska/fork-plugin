@@ -6,6 +6,16 @@
 // uses:
 #include "debug.h"
 
+// I need Time:
+extern "C"
+{
+#include <xorg-server.h>
+#include <X11/X.h>
+
+}
+
+
+
 //
 //  pointer->  |  next|-> |   next| ->
 //    ^            ^
@@ -538,7 +548,6 @@ forkingMachine<Keycode, Time>::step_in_time_locked(const Time now) // unlocks po
     }
     if (mCurrent_time > now)
         mdb("bug: time moved backwards!");
-
     mCurrent_time = now;
 
     /* this is run also when thawn, so this is the right moment to retry: */
