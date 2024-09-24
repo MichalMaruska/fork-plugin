@@ -1,6 +1,4 @@
-#ifndef _HISTORY_H_
-#define _HISTORY_H_
-
+#pragma once
 
 // #define DEBUG 1
 #include "circular.h"
@@ -23,5 +21,3 @@ typedef circular_buffer<archived_event*> last_events_type;
 archived_event* make_archived_event(const key_event *ev);
 int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n);
 void dump_last_events(PluginInstance* plugin);
-
-#endif
