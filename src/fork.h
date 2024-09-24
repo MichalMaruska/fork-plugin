@@ -336,15 +336,16 @@ public:
         };
 
     explicit forkingMachine(platformEnvironment* environment)
-        : mLock(0), state(st_normal), suspect(0), verificator_keycode(0), suspect_time(0),
+        : mLock(0),
+          environment(environment),
+          state(st_normal), suspect(0), verificator_keycode(0), suspect_time(0),
           last_released(KEYCODE_UNUSED), last_released_time(0),
           mDecision_time(0),
           mCurrent_time(0),
           internal_queue("internal"),
           input_queue("input_queue"),
           output_queue("output_queue"),
-          config(nullptr),
-          environment(environment) {
+          config(nullptr) {
 
         environment->log("ctor: allocating last_events\n");
         last_events = new last_events_type(max_last);
