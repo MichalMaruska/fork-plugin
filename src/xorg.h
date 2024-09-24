@@ -1,11 +1,6 @@
-#ifndef XORG_H
-#define XORG_H
+#pragma once
 
 #include "platform.h"
-
-extern "C" {
-#include <xorg/events.h>
-}
 
 extern "C" {
     // /usr/include/xorg/xorg-server.h
@@ -15,7 +10,7 @@ extern "C" {
 #error "This is useful only when the xorg-server is configured with --enable-pipeline"
 #endif
 
-    // _XSERVER64
+// _XSERVER64
 #include <X11/X.h>
 #include <X11/Xproto.h>
 #include <xorg/inputstr.h>
@@ -45,16 +40,14 @@ class XOrgEnvironment : public platformEnvironment {
 private:
     const DeviceIntPtr keybd;
     PluginInstance* const plugin;
-    // how to ctor for those 2 members?
-    // XOrgEnvironment()
+
 public:
-    XOrgEnvironment(const DeviceIntPtr keybd, PluginInstance* plugin) :
-    keybd(keybd), plugin(plugin){};
+    XOrgEnvironment(const DeviceIntPtr keybd, PluginInstance* plugin): keybd(keybd), plugin(plugin){};
 
     virtual ~XOrgEnvironment() = default;
 
-        bool output_frozen() override {
-            const PluginInstance* const nextPlugin = plugin->next;
+    bool output_frozen() override {
+        const PluginInstance* const nextPlugin = plugin->next;
         return plugin_frozen(nextPlugin);
     };
 
@@ -75,7 +68,7 @@ public:
         if (!keybd->key) {
             // should I just assert(keybd)
             ErrorF("%s: keybd is null!", __func__);
-            return 0;
+            return false;
         }
 
         XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
@@ -83,8 +76,8 @@ public:
         return (xkb->ctrls->enabled_ctrls & XkbMouseKeysMask);
     }
 
-    virtual void archive_event(PlatformEvent* pevent, archived_event* archived_event) {
 
+    void archive_event(PlatformEvent* pevent, archived_event* archived_event) override {
 #if 0
         auto event = static_cast<XorgEvent*>(pevent)->event;
         // dynamic_cast
@@ -103,35 +96,35 @@ public:
 #endif
     };
 
-    virtual void rewrite_event(PlatformEvent* pevent, KeyCode code) {
+    virtual void rewrite_event(PlatformEvent* pevent, KeyCode code) override {
         auto event = static_cast<XorgEvent*>(pevent)->event;
         event->device_event.detail.key = code;
     }
 
-    virtual void free_event(PlatformEvent* pevent) {
+    virtual void free_event(PlatformEvent* pevent) override {
         auto event = static_cast<XorgEvent*>(pevent)->event;
         free(event);
     }
-    virtual bool press_p(const PlatformEvent* pevent) {
+    virtual bool press_p(const PlatformEvent* pevent) override {
         auto event = static_cast<const XorgEvent*>(pevent)->event;
         return (event->any.type == ET_KeyPress);
     }
-    virtual bool release_p(const PlatformEvent* pevent) {
+    virtual bool release_p(const PlatformEvent* pevent) override {
         auto event = static_cast<const XorgEvent*>(pevent)->event;
         return (event->any.type == ET_KeyRelease);
     }
-    virtual Time time_of(const PlatformEvent* pevent) {
+    virtual Time time_of(const PlatformEvent* pevent) override {
         auto event = static_cast<const XorgEvent*>(pevent)->event;
         return event->any.time;
     }
 
-    virtual void relay_event(PlatformEvent* pevent) {
+    virtual void relay_event(PlatformEvent* pevent) override {
         auto event = static_cast<XorgEvent*>(pevent)->event;
         PluginInstance* nextPlugin = plugin->next;
         hand_over_event_to_next_plugin(event, nextPlugin);
     };
 
-    virtual void push_time(Time now) {
+    virtual void push_time(Time now) override {
         PluginInstance* nextPlugin = plugin->next;
         ErrorF("%s: %" TIME_FMT "\n", __func__, now);
         PluginClass(nextPlugin)->ProcessTime(nextPlugin, now);
@@ -143,7 +136,6 @@ public:
         VErrorF(format, argptr);
         va_end(argptr);
     }
-
 
     virtual void vlog(const char* format, va_list argptr) {
         VErrorF(format, argptr);
@@ -174,5 +166,3 @@ public:
 #endif
     };
 };
-
-#endif //XORG_H
