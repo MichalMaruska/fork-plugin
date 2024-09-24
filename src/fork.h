@@ -1,5 +1,4 @@
-#ifndef _FORK_H_
-#define _FORK_H_
+#pragma once
 
 
 #include <cstdarg>
@@ -389,5 +388,3 @@ extern fork_configuration* machine_new_config();
 enum {
   PAUSE_KEYCODE = 127
 };
-
-#endif  /* _FORK_H_ */
