@@ -87,26 +87,33 @@ Time queue_time(my_queue<key_event> &queue, platformEnvironment *environment) {
     return environment->time_of(queue.front()->p_event);
     }
 
-/* The machine is locked here:
- * Push as many as possible from the OUTPUT queue to the next layer */
+/**
+ * The machine is locked here:
+ * Push as many as possible from the OUTPUT queue to the next layer
+ * Unlocks!
+ **/
 template <typename Keycode, typename Time>
 void
-forkingMachine<Keycode, Time>::flush_to_next()  // unlocks!
+forkingMachine<Keycode, Time>::flush_to_next()
 {
     // todo: lock in this scope only?
     check_locked();
-    log_queues(__func__);
+    if (!output_queue.empty() || !input_queue.empty() || !internal_queue.empty()) {
+        log_queues(__func__);
+    }
 
     while(! environment->output_frozen() && !output_queue.empty()) {
         key_event* ev = output_queue.pop();
 
+        // now we are the owner. And
+        // (ORDER) this event must be delivered before any other!
+        // so no preemption of this part! fixme!
+#if 0
         auto tmp = make_archived_event(ev);
         environment->archive_event(ev->p_event, tmp);
-
         // last_events->push_back(tmp);
+#endif
 
-        InternalEvent* event = ev->event;
-        // this block (hand_over_event_to_next_plugin) can re-enter into this
         // machine. fixme: it's not true -- it cannot!
         // 2020: it can!
         // so ... this is front_lock?
@@ -114,6 +121,7 @@ forkingMachine<Keycode, Time>::flush_to_next()  // unlocks!
             // fixme: was here a bigger message?
             environment->log_event("", ev->p_event);
             unlock();
+            // we must gurantee ORDER
             environment->relay_event(ev->p_event);
             lock();
         };
