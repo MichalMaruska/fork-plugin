@@ -1,4 +1,6 @@
-// In this file: processing X11 requests to configure the plugin.
+// In this file: processing requests to configure the plugin.
+// see  struct _DevicePluginRec in ./fork-plugin.cpp
+
 // It accesses: ->config and ->max_last
 
 #include "config.h"
