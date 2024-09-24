@@ -16,6 +16,9 @@ gtest_discover_tests(test-circular)
 
 add_executable(test-queue test-queue.cpp)
 target_link_libraries(test-queue GTest::gtest_main)
+target_include_directories(test-queue SYSTEM PUBLIC
+  ${xorg-server_INCLUDE_DIRS}
+  "../include/")
 
 gtest_discover_tests(test-queue)
 
@@ -25,8 +28,13 @@ find_package(PkgConfig)
 pkg_search_module(xorg-server REQUIRED xorg-server
   IMPORTED_TARGET GLOBAL)
 
-add_executable(test-machine test-machine.cpp ../src/machine.cpp ../src/history.cpp)
-target_include_directories(test-machine SYSTEM PUBLIC ${xorg-server_INCLUDE_DIRS})
+add_executable(test-machine test-machine.cpp ../src/machine.cpp ../src/history.cpp ../src/configure.cpp)
+target_include_directories(test-machine SYSTEM PUBLIC
+  ${xorg-server_INCLUDE_DIRS}
+  "../include/")
+
+#include_directories()
+
 target_link_libraries(test-machine GTest::gtest_main)
 target_link_libraries(test-machine GTest::gmock_main)
 
