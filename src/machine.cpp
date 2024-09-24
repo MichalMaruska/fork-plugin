@@ -18,13 +18,13 @@ forkingMachine<Keycode, Time>::find_configuration_n(const int n)
 {
     fork_configuration** config_p = &config;
 
-    while (((*config_p)->next) && ((*config_p)->id != n))
-    {
+    while (((*config_p)->next) && ((*config_p)->id != n)) {
         environment->log("%s skipping over %d\n", __FUNCTION__, (*config_p)->id);
         config_p = &((*config_p) -> next);
     }
     return ((*config_p)->id == n)? config_p: NULL;      // ??? &(config->next);
 }
+
 
 // and replay whatever is inside the machine!
 // locked?
@@ -40,8 +40,7 @@ forkingMachine<Keycode, Time>::switch_config(int id)
     if ((config_p)
         // useless:
         && (*config_p)
-        && (*config_p != config))
-    {
+        && (*config_p != config)) {
         DB("switching configs %d -> %d\n", config->id, id);
 
         fork_configuration* new_current = *config_p;
