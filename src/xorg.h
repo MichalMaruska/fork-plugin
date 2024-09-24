@@ -110,7 +110,7 @@ public:
 
     virtual void free_event(PlatformEvent* pevent) {
         auto event = static_cast<XorgEvent*>(pevent)->event;
-        mxfree(event, event->any.length);
+        free(event);
     }
     virtual bool press_p(const PlatformEvent* pevent) {
         auto event = static_cast<const XorgEvent*>(pevent)->event;
