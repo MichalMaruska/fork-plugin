@@ -1,5 +1,4 @@
-#ifndef _MEMORY_H_
-#define _MEMORY_H_
+#pragma once
 
 // I want to track the memory usage, and warn when it's too high.
 extern size_t memory_balance;
@@ -31,5 +30,3 @@ mxfree(void* p, const size_t size)
   memory_balance -= size;
   free(p);
 }
-
-#endif // _MEMORY_H_
