@@ -26,6 +26,7 @@ extern "C" {
 #undef min
 }
 
+#include <string>
 
 extern void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* nextPlugin);
 
@@ -51,7 +52,7 @@ public:
         return plugin_frozen(nextPlugin);
     };
 
-    KeyCode detail_of(const PlatformEvent* pevent) {
+    KeyCode detail_of(const PlatformEvent* pevent) override{
 #if DEBUG > 1
         log("%s: looking at %p\n", __func__, pevent);
 #endif
@@ -130,18 +131,18 @@ public:
         PluginClass(nextPlugin)->ProcessTime(nextPlugin, now);
     }
 
-    virtual void log(const char* format ...) {
+    virtual void log(const char* format ...) override{
         va_list argptr;
         va_start(argptr, format);
         VErrorF(format, argptr);
         va_end(argptr);
     }
 
-    virtual void vlog(const char* format, va_list argptr) {
+    virtual void vlog(const char* format, va_list argptr) override{
         VErrorF(format, argptr);
     }
 
-    void log_event(const std::string &message, const PlatformEvent *pevent) override {
+    virtual void log_event(const std::string &message, const PlatformEvent *pevent) override {
         // const auto event = (static_cast<const XorgEvent *>(pevent))->event;
 #if 0
         const KeyCode key = detail_of(pevent);

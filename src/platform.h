@@ -13,6 +13,8 @@ extern "C" {
 #undef min
 }
 
+#include <string>
+
 class PlatformEvent {};
 
 // todo: template on <Keycode, Time> ?
@@ -33,7 +35,7 @@ public:
 
     virtual void log(const char* format...) = 0;
     virtual void vlog(const char* format, va_list argptr) = 0;
-    virtual void log_event(const std::string &message, const PlatformEvent *event) = 0;
+    virtual void log_event(const std::string &message, const PlatformEvent *pevent) = 0;
 
     virtual void archive_event(PlatformEvent* pevent, archived_event* archived_event) = 0;
     virtual void free_event(PlatformEvent* pevent) = 0;
