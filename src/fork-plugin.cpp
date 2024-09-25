@@ -1,8 +1,7 @@
 /*
- * Copyright (C) 2003-2005-2010 Michal Maruska <mmaruska@gmail.com>
+ * Copyright (C) 2003-2005-2010-2024 Michal Maruska <mmaruska@gmail.com>
  * License:  Creative Commons Attribution-ShareAlike 3.0 Unported License
  */
-
 
 /* How we operate:
  *
@@ -27,7 +26,7 @@
  *               ^ forked?
  *
  * We push at the end of input Q.  Then we pop from that Q and push on
- * Internal when we determine for 1 event, if forked/non-forked.
+ * Internal where we determine for 1 event, if forked/non-forked.
  *
  * Then we push on the output Q. At that moment, we also restart: all
  * from internal Q is returned/prepended to the input Q.
@@ -91,7 +90,7 @@ hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* const nextP
     PluginClass(nextPlugin)->ProcessEvent(nextPlugin, event, TRUE); // we always own the event (up to now)
 }
 
-
+// template instantiation:
 using machineRec = forkingMachine<KeyCode, Time>;
 template class forkingMachine<KeyCode, Time>;
 
