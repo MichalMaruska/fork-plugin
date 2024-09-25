@@ -145,11 +145,11 @@ filter_config_key(PluginInstance* plugin, const InternalEvent *event)
 static bool   // return:  true if handled & should be skipped
 filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const event)
 {
-    static unsigned char config_mode = 0; // While the Pause key is down.
+    static bool config_mode = false; // While the Pause key is down.
     static Time last_press_time = 0;
 
     if (config_mode) {
-        static int latch = 0;
+        static bool latch = false;
         // [21/10/04]  I noticed, that some (non-plain ps/2) keyboard generate
         // the release event at the same time as press.
         // So, to overcome this limitation, I detect this short-lasting `down' &
@@ -160,10 +160,10 @@ filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const
             {
                 ErrorF("the key seems buggy, tolerating %" TIME_FMT ": %d! .. & latching config mode\n",
                        time_of(event), (int)(time_of(event) - last_press_time));
-                latch = 1;
+                latch = true;
                 return true;
             }
-            config_mode = 0;
+            config_mode = false;
             // fixme: key_to_fork = 0;
             ErrorF("dumping (%s) %" TIME_FMT ": %d!\n",
                    plugin->device->name,
@@ -174,7 +174,7 @@ filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const
         else {
             last_press_time = 0;
             if (latch) {
-                config_mode = latch = 0;
+                config_mode = latch = false;
             };
             config_mode = filter_config_key (plugin, event);
         }
@@ -190,7 +190,7 @@ filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const
     {
         last_press_time = time_of(event);
         ErrorF("entering config_mode & discarding the event: %" TIME_FMT "!\n", last_press_time);
-        config_mode = 1;
+        config_mode = true;
 
         /* fixme: should I update the ->down bitarray? */
         return true;
