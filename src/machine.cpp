@@ -29,7 +29,7 @@ forkingMachine<Keycode, Time>::find_configuration_n(const int n)
     fork_configuration** config_p = &config;
 
     while (((*config_p)->next) && ((*config_p)->id != n)) {
-        environment->log("%s skipping over %d\n", __FUNCTION__, (*config_p)->id);
+        environment->log("%s skipping over %d\n", __func__, (*config_p)->id);
         config_p = &((*config_p) -> next);
     }
     return ((*config_p)->id == n)? config_p: NULL;      // ??? &(config->next);
@@ -42,9 +42,9 @@ template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::switch_config(int id)
 {
-    environment->log("%s %d\n", __FUNCTION__, id);
+    environment->log("%s %d\n", __func__, id);
     fork_configuration** config_p = find_configuration_n(id);
-    environment->log("%s found\n", __FUNCTION__);
+    environment->log("%s found\n", __func__);
 
     // fixme:   `move_to_top'   find an element in a linked list, and move it to the head.
     if ((config_p)
@@ -75,7 +75,7 @@ void
 forkingMachine<Keycode, Time>::log_state(const char* message) const
 {
     mdb("%s%s%s state: %s, queue: %d .... %s\n",
-        fork_color, __FUNCTION__, color_reset,
+        fork_color, __func__, color_reset,
         describe_machine_state(),
         internal_queue.length (),
         message);
@@ -244,7 +244,7 @@ forkingMachine<Keycode, Time>::activate_fork() // possibly unlocks
     environment->relay_event(ev->p_event);
 
     change_state(st_activated);
-    mdb("%s the key %d-> forked to: %d. Internal queue has %d events. %s\n", __FUNCTION__,
+    mdb("%s the key %d-> forked to: %d. Internal queue has %d events. %s\n", __func__,
         forked_key, forkActive[forked_key],
         internal_queue.length (),
         describe_machine_state());
@@ -262,7 +262,7 @@ template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::replay_events(Bool force_also)
 {
-    mdb("%s\n", __FUNCTION__);
+    mdb("%s\n", __func__);
     check_locked();
 
     if (!internal_queue.empty()) {
@@ -334,7 +334,7 @@ forkingMachine<Keycode, Time>::accept_event(PlatformEvent* pevent) {
     auto* ev = (key_event*)malloc(sizeof(key_event));
     if (ev == nullptr) {
         /* This message should be static string. otherwise it fails as well? */
-        environment->log("%s: out-of-memory, dropping\n", __FUNCTION__);
+        environment->log("%s: out-of-memory, dropping\n", __func__);
     };
 
     ev->p_event = pevent;
@@ -373,13 +373,13 @@ forkingMachine<Keycode, Time>::step_by_force()
     }
 
     if (state == st_deactivated) {
-        environment->log("%s: BUG.\n", __FUNCTION__);
+        environment->log("%s: BUG.\n", __func__);
         return;
     }
 
     /* so, the state is one of: verify, suspect or activated. */
 
-    log_state(__FUNCTION__);
+    log_state(__func__);
 
     // todo: move it inside?
     mDecision_time = 0;
@@ -492,7 +492,7 @@ forkingMachine<Keycode, Time>::step_by_time(Time current_time)
     // confirm fork:
     int reason;
     mdb("%s%s%s state: %s, queue: %d, time: %u key: %d\n",
-         fork_color, __FUNCTION__, color_reset,
+         fork_color, __func__, color_reset,
          describe_machine_state(),
          internal_queue.length (), (int)current_time,
          suspect);
@@ -530,7 +530,7 @@ forkingMachine<Keycode, Time>::step_by_time(Time current_time)
 
     /* So, we were woken too early. */
     mdb("*** %s: returning with some more time-to-wait: %lu"
-        "(prematurely woken)\n", __FUNCTION__,
+        "(prematurely woken)\n", __func__,
         mDecision_time - current_time);
     return false;
 }
@@ -883,7 +883,7 @@ forkingMachine<Keycode, Time>::step_by_key(key_event *ev)
     if ((key_forked(key)) && environment->press_p(pevent)
         && (key != forkActive[key])) // not `self_forked'
     {
-        mdb("%s: the key is forked, ignoring\n", __FUNCTION__);
+        mdb("%s: the key is forked, ignoring\n", __func__);
 
         environment->free_event(ev->p_event);
 
