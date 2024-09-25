@@ -39,11 +39,12 @@ public:
 
 class XOrgEnvironment : public platformEnvironment {
 private:
-    const DeviceIntPtr keybd;
+    const DeviceIntPtr &keybd; // reference
     PluginInstance* const plugin;
 
 public:
     XOrgEnvironment(const DeviceIntPtr keybd, PluginInstance* plugin): keybd(keybd), plugin(plugin){};
+    // should I just assert(keybd)
 
     virtual ~XOrgEnvironment() = default;
 
@@ -52,23 +53,15 @@ public:
         return plugin_frozen(nextPlugin);
     };
 
-    KeyCode detail_of(const PlatformEvent* pevent) override{
-#if DEBUG > 1
-        log("%s: looking at %p\n", __func__, pevent);
-#endif
-        auto event = (static_cast<const XorgEvent*>(pevent))->event;
-#if DEBUG > 1
-        log("%s: looking closer at %p\n", __func__, event);
-        log("%s: and it is %d\n", __func__, event->device_event.detail.key);
-#endif
+    KeyCode detail_of(const PlatformEvent* pevent) override {
+        auto event = static_cast<const XorgEvent*>(pevent)->event;
         return event->device_event.detail.key;
     };
 
     bool ignore_event(const PlatformEvent *pevent) override {
-        // auto event = static_cast<const XorgEvent*>(pevent)->event;
         if (!keybd->key) {
             // should I just assert(keybd)
-            ErrorF("%s: keybd is null!", __func__);
+            ErrorF("%s: keybd is wrong!", __func__);
             return false;
         }
 
