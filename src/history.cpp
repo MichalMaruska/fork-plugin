@@ -29,20 +29,6 @@ extern "C" {
 
 using machineRec = forkingMachine<Time, KeyCode>;
 
-archived_event*
-make_archived_event(const key_event* const ev)
-{
-  auto *event = MALLOC(archived_event);
-  if (event == nullptr)
-    return NULL;
-  DB("%s: %d %p %p\n", __func__, __LINE__, ev, ev->p_event);
-  DB("%s:%d into %p\n", __func__, __LINE__, event);
-
-
-  DB("%s: end\n", __func__);
-  return event;
-}
-
 /* ---------------------
  * Return the message to send as Xreply, len is filled with the length.
  * length<0  means error!
@@ -161,14 +147,14 @@ private:
   Time previous_time;
 
 public:
-  void operator() (archived_event*& event)
+  void operator() (archived_event& event)
   {
-    dump_event(event->key,
-               event->forked,
-               event->press,
-               event->time,
+    dump_event(event.key,
+               event.forked,
+               event.press,
+               event.time,
                xkb, xkbi, previous_time);
-    previous_time = event->time;
+    previous_time = event.time;
   };
 
   explicit event_dumper(const PluginInstance* plugin, int i = 0) : index(i), previous_time(0)
@@ -186,7 +172,7 @@ dump_last_events(PluginInstance* plugin)
   machineRec* machine = plugin_machine(plugin);
   DB("%s(%s) %" SIZE_FMT "\n", __FUNCTION__,
          plugin->device->name,
-         machine->last_events->size());
+         machine->last_events.size());
 
   for_each(machine->last_events.begin(),
            machine->last_events.end(),

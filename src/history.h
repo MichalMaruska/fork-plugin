@@ -17,9 +17,8 @@ struct key_event {
 
 /* (100) */
 // not value-semantics
-typedef boost::circular_buffer<archived_event*> last_events_type;
+typedef boost::circular_buffer<archived_event> last_events_type;
 
 // why extern?
-archived_event* make_archived_event(const key_event *ev);
 int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n);
 void dump_last_events(PluginInstance* plugin);

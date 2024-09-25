@@ -72,8 +72,10 @@ public:
 
 
     // so this is orthogonal? platform-independent?
-    void archive_event(const key_event& event, archived_event* archived_event) override {
+    archived_event archive_event(const key_event& event) override {
         PlatformEvent* pevent = event.p_event;
+
+        archived_event archived_event;
 
         auto xevent = static_cast<XorgEvent*>(pevent)->event;
         // dynamic_cast
@@ -82,10 +84,12 @@ public:
         log("%s:%d keycode: %d\n", __func__, __LINE__, detail_of(pevent));
         log("%s:%d keycode via function: %d\n", __func__, __LINE__, detail_of(pevent));
 #endif
-        archived_event->key = detail_of(pevent);
-        archived_event->time = time_of(pevent);
-        archived_event->press = press_p(pevent);
-        archived_event->forked = event.forked;
+        archived_event.key = detail_of(pevent);
+        archived_event.time = time_of(pevent);
+        archived_event.press = press_p(pevent);
+        archived_event.forked = event.forked;
+
+        return archived_event;
     };
 
     virtual void rewrite_event(PlatformEvent* pevent, KeyCode code) override {

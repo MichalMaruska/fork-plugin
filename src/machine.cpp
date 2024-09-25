@@ -117,11 +117,8 @@ forkingMachine<Keycode, Time>::flush_to_next()
         // now we are the owner. And
         // (ORDER) this event must be delivered before any other!
         // so no preemption of this part! fixme!
-#if 0
-        auto tmp = make_archived_event(ev);
-        environment->archive_event(ev->p_event, tmp);
-        // last_events->push_back(tmp);
-#endif
+        // yet, the next plugin could call in here? to do what?
+        last_events.push_back(environment->archive_event(*ev));
 
         // machine. fixme: it's not true -- it cannot!
         // 2020: it can!
