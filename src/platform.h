@@ -13,6 +13,7 @@ extern "C" {
 #undef min
 }
 
+#include "history.h"
 #include <string>
 
 class PlatformEvent {};
@@ -37,7 +38,7 @@ public:
     virtual void vlog(const char* format, va_list argptr) = 0;
     virtual void log_event(const std::string &message, const PlatformEvent *pevent) = 0;
 
-    virtual void archive_event(PlatformEvent* pevent, archived_event* archived_event) = 0;
+    virtual void archive_event(const key_event& event, archived_event* archived_event) = 0;
     virtual void free_event(PlatformEvent* pevent) = 0;
     virtual void rewrite_event(PlatformEvent* pevent, KeyCode code) = 0;
 

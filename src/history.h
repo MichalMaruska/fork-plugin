@@ -2,17 +2,18 @@
 
 // #define DEBUG 1
 #include <boost/circular_buffer.hpp>
-#include "platform.h"
 
 extern "C" {
 #include "fork_requests.h"
 }
 // #include "../include/archived_event.h"
 
-typedef struct {
+class PlatformEvent;
+
+struct key_event {
   PlatformEvent*  p_event;
   KeyCode forked; /* if forked to (another keycode), this is the original key */
-} key_event;
+};
 
 /* (100) */
 // not value-semantics
