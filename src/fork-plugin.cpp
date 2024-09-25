@@ -95,10 +95,10 @@ using machineRec = forkingMachine<KeyCode, Time>;
 template class forkingMachine<KeyCode, Time>;
 
 /*
- *  react to some `hot_keys':
- *  Pause  Pause  -> dump
+ * React to some `hot_keys':
+ * Pause  Pause  -> dump
  */
-static int                      // return, if config-mode continues.
+static bool // return, if config-mode continues.
 filter_config_key(PluginInstance* plugin, const InternalEvent *event)
 {
     static KeyCode key_to_fork = 0;         //  what key we want to configure
@@ -139,7 +139,7 @@ filter_config_key(PluginInstance* plugin, const InternalEvent *event)
                 }
             };
     // should we update the XKB `down' array, to signal that the key is up/down?
-    return -1;
+    return true;
 }
 
 static bool   // return:  true if handled & should be skipped
