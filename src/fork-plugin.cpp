@@ -113,7 +113,7 @@ filter_config_key(PluginInstance* plugin, const InternalEvent *event)
     machineRec* machine;
 
     if (press_p(event))
-        switch (detail_of(event)) {
+        switch (auto keycode = detail_of(event); keycode) {
             case keycodes::pc_break:
                 machine = plugin_machine(plugin);
                 machine->lock();
@@ -127,7 +127,7 @@ filter_config_key(PluginInstance* plugin, const InternalEvent *event)
                 machine->unlock();
 
                 /* fixme: but this is default! */
-                machine->forkActive[detail_of(event)] = 0; /* ignore the release as well. */
+                machine->forkActive[keycode] = 0; /* ignore the release as well. */
                 break;
             case keycodes::one:
                 machine = plugin_machine(plugin);
@@ -135,14 +135,14 @@ filter_config_key(PluginInstance* plugin, const InternalEvent *event)
                 machine->lock();
                 machine->switch_config(1); // current ->toggle ?
                 machine->unlock();
-                machine->forkActive[detail_of(event)] = 0;
+                machine->forkActive[keycode] = 0;
                 break;
             default:            /* todo: remove this: */
-                if (key_to_fork == 0){
-                    key_to_fork = detail_of(event);
+                if (key_to_fork == 0) {
+                    key_to_fork = keycode;
                 } else {
                     machineRec* machine = plugin_machine(plugin);
-                    machine->config->fork_keycode[key_to_fork] = detail_of(event);
+                    machine->config->fork_keycode[key_to_fork] = keycode;
                     key_to_fork = 0;
                 }
             };
