@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../src/circular.h"
+#include <boost/circular_buffer.hpp>
 
 class circular_bufferTest : public testing::Test {
   // there is a reason: derived classes:
@@ -24,7 +24,7 @@ class circular_bufferTest : public testing::Test {
 
   // ~QueueTest() override = default;
 
-  circular_buffer<int> q0_;
+  boost::circular_buffer<int> q0_;
   // Queue<int> q1_;
   // Queue<int> q2_;
 };
@@ -38,6 +38,7 @@ TEST_F(circular_bufferTest, IsEmptyInitially) {
 
 TEST_F(circular_bufferTest, push_backWorks) {
   // int* n =
+  q0_.set_capacity(1);
   q0_.push_back(1);
   EXPECT_EQ(q0_.size(), 1);
 

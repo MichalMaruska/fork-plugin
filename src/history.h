@@ -1,7 +1,7 @@
 #pragma once
 
 // #define DEBUG 1
-#include "circular.h"
+#include <boost/circular_buffer.hpp>
 #include "platform.h"
 
 extern "C" {
@@ -16,7 +16,7 @@ typedef struct {
 
 /* (100) */
 // not value-semantics
-typedef circular_buffer<archived_event*> last_events_type;
+typedef boost::circular_buffer<archived_event*> last_events_type;
 
 // why extern?
 archived_event* make_archived_event(const key_event *ev);

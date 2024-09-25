@@ -222,7 +222,7 @@ public:
         }
         else
         {
-            last_events->reserve(new_max);
+            last_events->set_capacity(new_max);
         }
 
         max_last = new_max;
