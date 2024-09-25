@@ -196,7 +196,7 @@ public:
        forked keycode for the release event. */
     KeyCode          forkActive[MAX_KEYCODE];
 
-    last_events_type *last_events; // history
+    last_events_type last_events; // history
     int max_last = 100; // can be updated!
 
     fork_configuration *config; // list<fork_configuration>
@@ -222,7 +222,7 @@ public:
         }
         else
         {
-            last_events->set_capacity(new_max);
+            last_events.set_capacity(new_max);
         }
 
         max_last = new_max;
@@ -329,10 +329,7 @@ public:
         }
     };
 
-    ~forkingMachine()
-        {
-            delete last_events;
-        };
+    ~forkingMachine() {};
 
     explicit forkingMachine(platformEnvironment* environment)
         : mLock(0),
@@ -347,7 +344,7 @@ public:
           config(nullptr) {
 
         environment->log("ctor: allocating last_events\n");
-        last_events = new last_events_type(max_last);
+        last_events.set_capacity(max_last);
         environment->log("ctor: resetting forkActive\n");
         for (unsigned char &i: forkActive) {
             i = KEYCODE_UNUSED; /* not active */

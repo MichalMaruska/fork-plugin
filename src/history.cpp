@@ -188,7 +188,7 @@ dump_last_events(PluginInstance* plugin)
          plugin->device->name,
          machine->last_events->size());
 
-  for_each(machine->last_events->begin(),
-           machine->last_events->end(),
+  for_each(machine->last_events.begin(),
+           machine->last_events.end(),
            event_dumper(plugin));
 }
