@@ -345,7 +345,7 @@ static void
 fork_thaw_notify(PluginInstance* plugin, Time now)
 {
     machineRec* machine = plugin_machine(plugin);
-    machine->mdb("%s @ time %u\n", __FUNCTION__, (int)now);
+    machine->mdb("%s @ time %u\n", __func__, (int)now);
     machine->check_unlocked();
 
     machine->lock();
@@ -356,13 +356,13 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
         /* thaw the previous! */
         set_wakeup_time(plugin);
         machine->unlock();
-        machine->mdb("%s -- sending thaw Notify upwards!\n", __FUNCTION__);
+        machine->mdb("%s -- sending thaw Notify upwards!\n", __func__);
         /* fixme:  Tail-recursion! */
         PluginClass(plugin->prev)->NotifyThaw(plugin->prev, now);
         /* I could move now to the time of our event. */
         /* step_in_time_locked(plugin); */
     } else {
-        machine->mdb("%s -- NOT sending thaw Notify upwards %s!\n", __FUNCTION__,
+        machine->mdb("%s -- NOT sending thaw Notify upwards %s!\n", __func__,
              plugin_frozen(plugin->next)?"next is frozen":"prev has not NotifyThaw");
         machine->unlock();
     }
@@ -382,7 +382,7 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
 #if 0
         // fixme:
         if (machine->mLock)
-            ErrorF("%s running, while the machine is locked!\n", __FUNCTION__);
+            ErrorF("%s running, while the machine is locked!\n", __func__);
 #endif
         /* else */
         machine->lock();
@@ -451,7 +451,7 @@ stop_and_exhaust_machine(PluginInstance* plugin)
 {
     const auto machine = plugin_machine(plugin);
     machine->lock();
-    machine->mdb("%s: what to do?\n", __FUNCTION__);
+    machine->mdb("%s: what to do?\n", __func__);
     // free all the stuff, and then:
     // machine->unlock();
 
@@ -471,7 +471,7 @@ destroy_plugin(PluginInstance* plugin)
     DeleteCallback(&DeviceEventCallback, (CallbackProcPtr) mouse_call_back,
                    (void*) plugin);
     delete machine;
-    // machine->mdb("%s: what to do?\n", __FUNCTION__);
+    // machine->mdb("%s: what to do?\n", __func__);
     return 1;
 }
 
@@ -492,7 +492,7 @@ fork_plug(void          *options,
           int		*errmin,
           void* dynamic_module)
 {
-  ErrorF("%s: %s version %d\n", __FUNCTION__, FORK_PLUGIN_NAME, PLUGIN_VERSION);
+  ErrorF("%s: %s version %d\n", __func__, FORK_PLUGIN_NAME, PLUGIN_VERSION);
 
   static struct _DevicePluginRec plugin_class = {
     // slot name,     value
@@ -522,7 +522,7 @@ fork_plug(void          *options,
 #if 0
 void __attribute__((constructor)) on_init()
 {
-    ErrorF("%s: %s\n", __FUNCTION__, VERSION); /* impossible */
+    ErrorF("%s: %s\n", __func__, VERSION); /* impossible */
     fork_plug(NULL,NULL,NULL);
 }
 #endif
