@@ -381,7 +381,3 @@ public:
 extern fork_configuration* machine_new_config();
 
 // extern int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n);
-
-enum {
-  PAUSE_KEYCODE = 127
-};

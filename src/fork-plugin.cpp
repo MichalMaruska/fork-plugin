@@ -94,6 +94,14 @@ hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* const nextP
 using machineRec = forkingMachine<KeyCode, Time>;
 template class forkingMachine<KeyCode, Time>;
 
+
+enum keycodes {
+    zero = 19,
+    one = 10,
+    pc_break = 110,
+    PAUSE = 127,
+};
+
 /*
  * React to some `hot_keys':
  * Pause  Pause  -> dump
@@ -106,13 +114,13 @@ filter_config_key(PluginInstance* plugin, const InternalEvent *event)
 
     if (press_p(event))
         switch (detail_of(event)) {
-            case 110: // break
+            case keycodes::pc_break:
                 machine = plugin_machine(plugin);
                 machine->lock();
                 dump_last_events(plugin);
                 machine->unlock();
                 break;
-            case 19: //
+            case keycodes::zero:
                 machine = plugin_machine(plugin);
                 machine->lock();
                 machine->switch_config(0); // current ->toggle ?
@@ -121,7 +129,7 @@ filter_config_key(PluginInstance* plugin, const InternalEvent *event)
                 /* fixme: but this is default! */
                 machine->forkActive[detail_of(event)] = 0; /* ignore the release as well. */
                 break;
-            case 10:
+            case keycodes::one:
                 machine = plugin_machine(plugin);
 
                 machine->lock();
@@ -155,7 +163,7 @@ filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const
         // So, to overcome this limitation, I detect this short-lasting `down' &
         // take the `next' event as in `config_mode'   (latch)
 
-        if ((detail_of(event) == PAUSE_KEYCODE) && release_p(event)) { //  fake ?
+        if ((detail_of(event) == keycodes::PAUSE) && release_p(event)) { //  fake ?
             if ( (time_of(event) - last_press_time) < 30) // fixme: configurable!
             {
                 ErrorF("the key seems buggy, tolerating %" TIME_FMT ": %d! .. & latching config mode\n",
@@ -185,7 +193,7 @@ filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const
     ErrorF("%s: keycode: %d\n", __func__, event->device_event.detail.key);
     ErrorF("%s: keycode: %d\n", __func__, detail_of(event));
     // ErrorF("%s: %d\n", __func__, event->device_event.detail.key);
-    if ((detail_of(event) == PAUSE_KEYCODE) && press_p(event))
+    if ((detail_of(event) == keycodes::PAUSE) && press_p(event))
         /* wait for the next and act ? but start w/ printing the last events: */
     {
         last_press_time = time_of(event);
