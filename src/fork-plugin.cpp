@@ -106,9 +106,10 @@ enum keycodes {
  * React to some `hot_keys':
  * Pause  Pause  -> dump
  */
-static bool // return, if config-mode continues.
+static bool // return @true if config-mode continues.
 filter_config_key(PluginInstance* plugin, const InternalEvent *event)
 {
+    // I could use optional
     static KeyCode key_to_fork = 0;         //  what key we want to configure
     machineRec* machine;
 
@@ -138,6 +139,8 @@ filter_config_key(PluginInstance* plugin, const InternalEvent *event)
                 machine->forkActive[keycode] = 0;
                 break;
             default:            /* todo: remove this: */
+                // so press BREAK FROM TO
+                // to have FROM fork to TO
                 if (key_to_fork == 0) {
                     key_to_fork = keycode;
                 } else {
@@ -145,8 +148,7 @@ filter_config_key(PluginInstance* plugin, const InternalEvent *event)
                     machine->config->fork_keycode[key_to_fork] = keycode;
                     key_to_fork = 0;
                 }
-            };
-    // should we update the XKB `down' array, to signal that the key is up/down?
+        };
     return true;
 }
 
@@ -184,7 +186,7 @@ filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const
             if (latch) {
                 config_mode = latch = false;
             };
-            config_mode = filter_config_key (plugin, event);
+            config_mode = filter_config_key(plugin, event);
         }
     }
     // `Dump'
@@ -288,6 +290,7 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
 
     // this could be a different plugin!
     if (filter_config_key_maybe(plugin, event)) {
+        // should we update the XKB `down' array, to signal that the key is up/down?
         // todo: I should at least push the time of (plugin->next)!
         ErrorF("not passing this event to forking-machine\n");
 
