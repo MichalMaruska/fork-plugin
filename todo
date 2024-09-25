@@ -4,10 +4,6 @@ src/config.h  printf format PRIu32
 
 * split fork_archived_events.h
 
-* last_events ... why pointers? not value semantics?
-* drop make_archived_event
-
-
 
 * install with correct path!
 
