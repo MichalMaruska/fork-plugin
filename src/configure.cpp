@@ -32,56 +32,8 @@ extern "C"
 #undef min
 }
 
-static int config_counter = 0;
 
 using machineRec = forkingMachine<KeyCode, Time>;
-
-// nothing active (forkable) in this configuration
-fork_configuration*
-machine_new_config()
-{
-   /* `configuration' */
-   // fixme: envi->log
-   DB("resetting the configuration to defaults\n");
-   auto *config = MALLOC(fork_configuration);
-
-   if (! config){
-      DB("%s: malloc failed (for config)\n", __func__);
-      /* fixme: should free the machine!!! */
-      /* in C++ exception which calls all destructors (of the objects on the stack ?? */
-      return nullptr;
-   }
-
-   config->repeat_max = 80;
-   config->consider_forks_for_repeat = TRUE;
-   config->debug = 1;        //  2
-   config->clear_interval = 0;
-
-   // use bzero!
-   for (int i=0;i<256;i++) {
-       // local timings:  0 = use global timing
-       for (int j=0;j<256;j++){         /* 1 ? */
-           config->overlap_tolerance[i][j] = 0;
-           config->verification_interval[i][j] = 0;
-       };
-
-       config->fork_keycode[i] = 0;
-       /*  config->forkCancel[i] = 0; */
-       config->fork_repeatable[i] = FALSE;
-       /* repetition is supported by default (not ignored)  True False*/
-   }
-   /* ms: could be XkbDfltRepeatDelay */
-
-   config->verification_interval[0][0] = 200;
-   config->overlap_tolerance[0][0] = 100;
-   DB("fork: init arrays .... done\n");
-
-
-   config->name = "default";
-   config->id = config_counter++;
-   config->next = nullptr;
-   return config;
-}
 
 /* fixme:  where is the documentation: fork_requests.h ? */
 static int

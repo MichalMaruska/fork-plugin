@@ -51,6 +51,8 @@ public:
 
 using machineRec = forkingMachine<KeyCode, Time>;
 
+int fork_configuration::config_counter = 0;
+
 class machineTest : public testing::Test {
 
 protected:

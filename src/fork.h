@@ -37,13 +37,11 @@ typedef int keycode_parameter_matrix[MAX_KEYCODE][MAX_KEYCODE];
 
 // namespace fork {
 
-/* We can switch between configs. */
-typedef struct _fork_configuration fork_configuration;
-
 // todo: use a C++ <list> ?
-struct _fork_configuration
-{
+class fork_configuration {
     /* static data of the machine: i.e.  `configuration' */
+private:
+    static int config_counter; //  = 0
 
 private:
     static Time
@@ -59,7 +57,55 @@ private:
                  matrix[0][0]));
     }
 
+    public:
+
+    KeyCode          fork_keycode[MAX_KEYCODE];
+    Bool          fork_repeatable[MAX_KEYCODE]; /* True -> if repeat, cancel possible fork. */
+
+    /* we don't consider an overlap, until this ms.
+       fixme: we need better. a ration between `before'/`overlap'/`after' */
+    keycode_parameter_matrix overlap_tolerance;
+
+    /* After how many m-secs, we decide for the modifier.
+       (x,0) just by pressing the X key
+       (x,y) pressing x while y also pressed.
+
+       hint: should be around the key-repetition rate (1st pause) */
+    keycode_parameter_matrix verification_interval;
+
+    int clear_interval = 0;
+    int repeat_max  = 80;
+    Bool consider_forks_for_repeat = true;
+
+    int debug = 1; // todo: boolean?
+    const char* name = "default";
+    int id;
+
+    // valid?
+    fork_configuration*   next = nullptr;
+
 public:
+    fork_configuration() : id(config_counter++) {
+
+        // use bzero!
+        for (int i = 0; i < 256; i++) {
+            // local timings:  0 = use global timing
+            for (int j = 0; j < 256; j++) { /* 1 ? */
+                overlap_tolerance[i][j] = 0;
+                verification_interval[i][j] = 0;
+            };
+            fork_keycode[i] = 0;
+            /*  config->forkCancel[i] = 0; */
+            fork_repeatable[i] = FALSE;
+            /* repetition is supported by default (not ignored)  True False*/
+        }
+        /* ms: could be XkbDfltRepeatDelay */
+
+        // Global fallback:
+        verification_interval[0][0] = 200;
+        overlap_tolerance[0][0] = 100;
+    }
+
     // note: depending on verificator is strange. There might be none!
     // fork_configuration* config,
     Time verification_interval_of(KeyCode code, KeyCode verificator)
@@ -71,30 +117,6 @@ public:
     {
         return get_value_from_matrix(this->overlap_tolerance, code, verificator);
     }
-
-  KeyCode          fork_keycode[MAX_KEYCODE];
-  Bool          fork_repeatable[MAX_KEYCODE]; /* True -> if repeat, cancel possible fork. */
-
-  /* we don't consider an overlap, until this ms.
-     fixme: we need better. a ration between `before'/`overlap'/`after' */
-  keycode_parameter_matrix overlap_tolerance;
-
-  /* After how many m-secs, we decide for the modifier.
-     (x,0) just by pressing the X key
-     (x,y) pressing x while y also pressed.
-
-     hint: should be around the key-repetition rate (1st pause) */
-  keycode_parameter_matrix verification_interval;
-
-  int clear_interval;
-  int repeat_max;
-  Bool consider_forks_for_repeat;
-
-  int debug;
-  const char* name;
-  int id;
-
-  fork_configuration*   next;
 };
 
 
