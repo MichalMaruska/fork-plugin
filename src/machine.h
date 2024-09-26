@@ -16,13 +16,6 @@
 
 
 /* states of the automaton: */
-typedef enum {
-  st_normal,
-  st_suspect,
-  st_verify,
-  st_deactivated,
-  st_activated
-} fork_state_t;
 
 /* `machine': the dynamic `state' */
 
@@ -40,6 +33,18 @@ class forkingMachine
         reason_overlap,             // key press overlaps with another key
         reason_force                // mouse-button was pressed & triggered fork.
     };
+
+    typedef enum {
+        st_normal,
+        st_suspect,
+        st_verify,
+        st_deactivated,
+        st_activated
+    } fork_state_t;
+
+
+
+
 
 private:
     /* used only for debugging */
