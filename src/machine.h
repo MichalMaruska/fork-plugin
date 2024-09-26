@@ -11,8 +11,6 @@
 
 #include "fork_configuration.h"
 
-#define plugin_machine(plugin) ((machineRec*)(plugin->data))
-
 // namespace fork {
 
 

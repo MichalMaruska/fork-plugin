@@ -41,4 +41,5 @@
 #define TIME_FMT  "u"
 #define SIZE_FMT  "lu"
 
+#define plugin_machine(plugin) ((machineRec*)(plugin->data))
 #endif
