@@ -1,5 +1,4 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#pragma once
 
 // I want the version string settable from the command line!!
 #ifndef VERSION_STRING
@@ -42,4 +41,4 @@
 #define SIZE_FMT  "lu"
 
 #define plugin_machine(plugin) ((machineRec*)(plugin->data))
-#endif
+
