@@ -28,6 +28,7 @@ set(sources
 
   # header files?
   machine.h
+  colors.h
   platform.h
   xorg.h
 )

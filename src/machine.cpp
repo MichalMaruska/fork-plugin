@@ -5,6 +5,7 @@
 #include "history.h"
 // uses:
 #include "debug.h"
+#include "colors.h"
 
 // I need Time:
 extern "C"
