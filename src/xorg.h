@@ -80,9 +80,10 @@ public:
 
         archived_event archived_event;
 
+#if DEBUG > 1
         auto xevent = static_cast<XorgEvent*>(pevent)->event;
         // dynamic_cast
-#if 1
+
         log("%s:%d type: %d\n", __func__, __LINE__, xevent->any.type);
         log("%s:%d keycode: %d\n", __func__, __LINE__, detail_of(pevent));
         log("%s:%d keycode via function: %d\n", __func__, __LINE__, detail_of(pevent));
