@@ -234,7 +234,7 @@ forkingMachine<Keycode, Time>::activate_fork() // possibly unlocks
     assert(!internal_queue.empty());
 
     key_event* ev = internal_queue.pop();
-    KeyCode forked_key = environment->detail_of(ev->p_event);
+    Keycode forked_key = environment->detail_of(ev->p_event);
     // assert(forked_key == suspect);
 
     ev->forked = forked_key;
@@ -594,7 +594,7 @@ forkingMachine<Keycode, Time>::apply_event_to_normal(key_event *ev) // possibly 
 {
     PlatformEvent* pevent = ev->p_event;
 
-    const KeyCode key = environment->detail_of(pevent);
+    const Keycode key = environment->detail_of(pevent);
     const Time simulated_time = environment->time_of(pevent);
 
     assert(internal_queue.empty());
@@ -681,7 +681,7 @@ forkingMachine<Keycode, Time>::apply_event_to_suspect(key_event *ev)
 {
     const PlatformEvent* pevent = ev->p_event;
     Time simulated_time = environment->time_of(pevent);
-    KeyCode key = environment->detail_of(pevent);
+    Keycode key = environment->detail_of(pevent);
 
     list_with_tail &queue = internal_queue;
 
@@ -780,7 +780,7 @@ forkingMachine<Keycode, Time>::apply_event_to_verify_state(key_event *ev)
 {
     const PlatformEvent* pevent = ev->p_event;
     Time simulated_time = environment->time_of(pevent);
-    KeyCode key = environment->detail_of(pevent);
+    Keycode key = environment->detail_of(pevent);
 
     /* We pressed a forkable key, and another one (which could possibly
        use the modifier). Now, either the forkable key was intended
@@ -868,7 +868,7 @@ forkingMachine<Keycode, Time>::step_by_key(key_event *ev)
 #endif
     assert (ev);
     const PlatformEvent* pevent = ev->p_event;
-    const KeyCode key = environment->detail_of(pevent);
+    const Keycode key = environment->detail_of(pevent);
 
     /* Please, first change the state, then enqueue, and then EMIT_EVENT.
      * fixme: should be a function then  !!!*/
