@@ -150,22 +150,23 @@ private:
     Time previous_time;
 
 public:
-  void operator() (archived_event& event)
-  {
-    dump_event(event.key,
-               event.forked,
-               event.press,
-               event.time,
-               xkb, xkbi, previous_time);
-    previous_time = event.time;
-  };
+    void operator() (const archived_event& event) {
+        DB("%s:\n", __func__);
+        DB("%s: %d\n", __func__, event.key);
+        dump_event(event.key,
+                   event.forked,
+                   event.press,
+                   event.time,
+                   xkb, xkbi, previous_time);
+        previous_time = event.time;
+        DB("%s: done\n", __func__);
+    };
 
-  explicit event_dumper(const PluginInstance* plugin, int i = 0) : index(i), previous_time(0)
-  {
-    keybd = plugin->device;
-    xkbi = keybd->key->xkbInfo;
-    xkb = xkbi->desc;
-  };
+    explicit event_dumper(const PluginInstance* plugin):
+        keybd(plugin->device),
+        xkbi(keybd->key->xkbInfo),
+        xkb(xkbi->desc),
+        previous_time(0) {};
 };
 
 
@@ -177,7 +178,10 @@ dump_last_events(PluginInstance* plugin)
          plugin->device->name,
          machine->last_events.size());
 
+#if 0
+  // broken
   for_each(machine->last_events.begin(),
-           machine->last_events.end(),
+           machine->last_events.end() - 1,
            event_dumper(plugin));
+#endif
 }
