@@ -4,8 +4,6 @@
 // I want to track the memory usage, and warn when it's too high.
 extern size_t memory_balance;
 
-// using machineRec = machineRec<Time, Keycode>;
-
 inline
 void* mmalloc(size_t size)
 {
