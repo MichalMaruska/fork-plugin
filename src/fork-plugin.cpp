@@ -110,7 +110,7 @@ enum keycodes {
  * Pause  Pause  -> dump
  */
 static bool // return @true if config-mode continues.
-filter_config_key(PluginInstance* plugin, const InternalEvent *event)
+handle_config_key(PluginInstance* plugin, const InternalEvent *event)
 {
     // I could use optional
     static KeyCode key_to_fork = 0;         //  what key we want to configure
@@ -194,10 +194,10 @@ filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const
         }
         else {
             last_press_time = 0;
+            config_mode = handle_config_key(plugin, event);
             if (latch) {
                 config_mode = latch = false;
             };
-            config_mode = filter_config_key(plugin, event);
         }
     }
     // `Dump'
