@@ -149,7 +149,6 @@ public:
         return 0;
     }
 
-    // void log_event(const key_event *event, DeviceIntPtr keybd);
 private:
     static Bool
     forkable_p(const fork_configuration* config, KeyCode code)

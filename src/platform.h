@@ -36,7 +36,7 @@ public:
 
     virtual void log(const char* format...) = 0;
     virtual void vlog(const char* format, va_list argptr) = 0;
-    virtual void log_event(const std::string &message, const PlatformEvent *pevent) = 0;
+    virtual std::string fmt_event(const PlatformEvent *pevent) = 0;
 
     virtual archived_event archive_event(const key_event& event) = 0;
     virtual void free_event(PlatformEvent* pevent) = 0;

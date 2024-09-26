@@ -126,7 +126,7 @@ forkingMachine<Keycode, Time>::flush_to_next()
         // so ... this is front_lock?
         {
             // fixme: was here a bigger message?
-            environment->log_event("", ev->p_event);
+            environment->fmt_event(ev->p_event);
             unlock();
             // we must gurantee ORDER
             environment->relay_event(ev->p_event);
@@ -581,7 +581,7 @@ template <typename Keycode, typename Time>
         describe_machine_state(),
         internal_queue.length ()
         );
-    environment->log_event("event: ", ev->p_event);
+    environment->fmt_event(ev->p_event);
 }
 
 

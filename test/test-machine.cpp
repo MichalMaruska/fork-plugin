@@ -41,7 +41,7 @@ public:
   {
     // ignore
   };
-  MOCK_METHOD(void, log_event,(const std::string &message, const PlatformEvent *event));
+  MOCK_METHOD(std::string, fmt_event,(const PlatformEvent *event));
 
   MOCK_METHOD(archived_event, archive_event,(const key_event& event));
   MOCK_METHOD(void, free_event,(PlatformEvent* pevent));

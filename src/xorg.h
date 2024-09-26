@@ -140,7 +140,7 @@ public:
         VErrorF(format, argptr);
     }
 
-    virtual void log_event(const std::string &message, const PlatformEvent *pevent) override {
+    virtual std::string fmt_event(const PlatformEvent *pevent) override {
         // const auto event = (static_cast<const XorgEvent *>(pevent))->event;
 #if 0
         const KeyCode key = detail_of(pevent);
@@ -163,5 +163,6 @@ public:
                 (press ? "down" : (release ) ? "up" : "??"));
         }
 #endif
+        return "";
     };
 };
