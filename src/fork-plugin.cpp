@@ -401,8 +401,7 @@ make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
     DB("%s @%p\n", __func__, static_cast<void *>(keybd->name));
 
     assert (strcmp(plugin_class->name, FORK_PLUGIN_NAME) == 0);
-
-    auto* plugin = MALLOC(PluginInstance);
+    PluginInstance* plugin = (PluginInstance*) malloc(sizeof(PluginInstance));
     plugin->pclass = plugin_class;
     plugin->device = keybd;
     plugin->frozen = FALSE;

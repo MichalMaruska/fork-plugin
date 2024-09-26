@@ -12,8 +12,6 @@
 #include "fork_configuration.h"
 
 #define plugin_machine(plugin) ((machineRec*)(plugin->data))
-#define MALLOC(type)   (type *) malloc(sizeof (type))
-
 
 // namespace fork {
 
