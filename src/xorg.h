@@ -33,6 +33,9 @@ extern void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance*
 
 class XorgEvent : public PlatformEvent {
 public:
+    // take ownership:
+    XorgEvent(InternalEvent* event) : event(event) {};
+    // so why not UniquePointer?
     InternalEvent* event;
 };
 

@@ -252,24 +252,19 @@ create_xorg_platform_event(InternalEvent *event, bool owner)
         qe = event;
     else {
         qe = (InternalEvent*)malloc(event->any.length);
-        if (!qe)
-        {
-            // if we are out-of-memory, we probably cannot even process ErrorF, can we?
+        if (!qe) {
             ErrorF("%s: out-of-memory\n", __func__);
             return NULL;
         }
+
         memcpy(qe, event, event->any.length);
-        // fixme: I have to copy it!
     }
 
-    auto pevent = new XorgEvent();
-    pevent->event = qe;
-    // memcpy(qe, event, event->any.length);
 #if DEBUG > 1
-    DB("+++ accepted new event: %s\n",
-        event_names[event->any.type - 2 ]);
+    DB("+++ accepted new event: %s\n", event_names[event->any.type - 2 ]);
 #endif
-    return pevent;
+
+    return new XorgEvent(qe);
 }
 
 
