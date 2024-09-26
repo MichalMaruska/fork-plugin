@@ -28,22 +28,19 @@ class forkingMachine
     typedef my_queue<key_event> list_with_tail;
 
     /* How we decided for the fork */
-    enum {
+    enum class fork_reason {
         reason_total,               // key pressed too long
         reason_overlap,             // key press overlaps with another key
         reason_force                // mouse-button was pressed & triggered fork.
     };
 
-    typedef enum {
+    enum fork_state_t {  // states of the automaton
         st_normal,
         st_suspect,
         st_verify,
         st_deactivated,
         st_activated
-    } fork_state_t;
-
-
-
+    };
 
 
 private:
@@ -83,8 +80,7 @@ public:
 
 
 private:
-    // fork_state_t
-    unsigned char state;
+    fork_state_t state;
     // only for certain states we keep (updated):
 
     KeyCode suspect;

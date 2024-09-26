@@ -491,7 +491,7 @@ bool
 forkingMachine<Keycode, Time>::step_by_time(Time current_time)
 {
     // confirm fork:
-    int reason;
+    fork_reason reason; // fixme: unused!
     mdb("%s%s%s state: %s, queue: %d, time: %u key: %d\n",
          fork_color, __func__, color_reset,
          describe_machine_state(),
@@ -505,7 +505,7 @@ forkingMachine<Keycode, Time>::step_by_time(Time current_time)
     // notice, how mDecision_time is rewritten here:
     if (0 == (mDecision_time =
               key_pressed_too_long(current_time))) {
-        reason = reason_total;
+        reason = fork_reason::reason_total;
 
         activate_fork();
         return true;
@@ -517,7 +517,7 @@ forkingMachine<Keycode, Time>::step_by_time(Time current_time)
         Time decision_time = key_pressed_in_parallel(current_time);
 
         if (decision_time == 0) {
-            reason = reason_overlap;
+            reason = fork_reason::reason_overlap;
             activate_fork();
             return true;
         }
