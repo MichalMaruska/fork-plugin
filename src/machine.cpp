@@ -491,7 +491,7 @@ bool
 forkingMachine<Keycode, Time>::step_by_time(Time current_time)
 {
     // confirm fork:
-    fork_reason reason; // fixme: unused!
+    [[maybe_unused]] fork_reason reason; // fixme: unused!
     mdb("%s%s%s state: %s, queue: %d, time: %u key: %d\n",
          fork_color, __func__, color_reset,
          describe_machine_state(),
@@ -950,7 +950,7 @@ forkingMachine<Keycode, Time>::create_configs() {
         config = user_configurable.release();
         return true;
 
-    } catch (std::bad_alloc) {
+    } catch (std::bad_alloc &exc) {
         return false;
     }
 
