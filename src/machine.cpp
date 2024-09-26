@@ -23,7 +23,7 @@ extern "C"
 //  return a _pointer_ to the pointer  on a searched-for item.
 
 template <typename Keycode, typename Time>
-fork_configuration**
+ForkConfiguration<Keycode, Time>**
 forkingMachine<Keycode, Time>::find_configuration_n(const int n)
 {
     fork_configuration** config_p = &config;

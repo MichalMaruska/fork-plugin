@@ -471,7 +471,8 @@ destroy_plugin(PluginInstance* plugin)
 }
 
 
-int fork_configuration::config_counter = 0;
+template<>
+int ForkConfiguration<KeyCode, Time>::config_counter = 0;
 
 
 // This macro helps with providing
