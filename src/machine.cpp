@@ -947,7 +947,7 @@ forkingMachine<Keycode, Time>::create_configs() {
         user_configurable->debug = 1;
 
         // move semantics?
-        config = user_configurable.get();
+        config = user_configurable.release();
         return true;
 
     } catch (std::bad_alloc) {
