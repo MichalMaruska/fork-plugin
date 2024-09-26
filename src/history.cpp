@@ -98,12 +98,15 @@ static void
 dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
            XkbDescPtr xkb, XkbSrvInfoPtr xkbi, Time prev_time)
 {
-    char* ksname = xkb->names->keys[key].name;
-    DB("%d %.4s\n", key, ksname);
+    if (key == 0)
+        return;
+    DB("%s: %d %.4s\n", __func__,
+       key,
+       xkb->names->keys[key].name);
 
     // 0.1   keysym bound to the key:
     KeySym* sym= XkbKeySymsPtr(xkbi->desc,key); // mmc: is this enough ?
-    char* sname = nullptr;
+    [[maybe_unused]] char* sname = nullptr;
 
     if (sym){
 #if 0
@@ -126,10 +129,11 @@ dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
         ] 33   18502021        1048
     */
 
-    DB("%s %d (%d)" ,(press?" ]":"[ "),
-           static_cast<int>(key), static_cast<int>(fork));
+    DB("%s %d (%d)",
+       (press?" ]":"[ "),
+       static_cast<int>(key), static_cast<int>(fork));
     DB(" %.4s (%5.5s) %" TIME_FMT "\t%" TIME_FMT "\n",
-           ksname, sname,
+           sname, sname,
            event_time,
            event_time - prev_time);
 }
@@ -139,12 +143,11 @@ dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
 class event_dumper
 {
 private:
-  DeviceIntPtr keybd;
-  XkbSrvInfoPtr xkbi;
-  XkbDescPtr xkb;
+    DeviceIntPtr keybd;
+    XkbSrvInfoPtr xkbi;
+    XkbDescPtr xkb;
 
-  int index;
-  Time previous_time;
+    Time previous_time;
 
 public:
   void operator() (archived_event& event)
