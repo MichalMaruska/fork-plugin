@@ -36,7 +36,6 @@ time_of(const InternalEvent* event)
 KeyCode
 detail_of(const InternalEvent* event)
 {
-   ErrorF("%s: %p\n", __func__, event);
    return (event->device_event.detail.key);
 }
 

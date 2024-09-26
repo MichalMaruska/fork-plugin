@@ -170,6 +170,9 @@ filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const
     static Time last_press_time = 0;
 
     if (config_mode) {
+#if DEBUG > 3
+        ErrorF("in config_mode ...\n");
+#endif
         static bool latch = false;
         // [21/10/04]  I noticed, that some (non-plain ps/2) keyboard generate
         // the release event at the same time as press.
@@ -184,6 +187,9 @@ filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const
                 latch = true;
                 return true;
             }
+#if DEBUG > 3
+            ErrorF("exiting config_mode\n");
+#endif
             config_mode = false;
             // fixme: key_to_fork = 0;
             ErrorF("dumping (%s) %" TIME_FMT ": %d!\n",
@@ -201,24 +207,28 @@ filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const
         }
     }
     // `Dump'
-    ErrorF("%s: %p\n", __func__, event);
-    ErrorF("%s: type %d\n", __func__, event->any.type);
-    ErrorF("%s: keycode: %d\n", __func__, event->device_event.detail.key);
+#if DEBUG > 3
+    // ErrorF("%s: %p\n", __func__, event);
+    ErrorF("%s: type %s\n", __func__, event_type_brief(event));
     ErrorF("%s: keycode: %d\n", __func__, detail_of(event));
     // ErrorF("%s: %d\n", __func__, event->device_event.detail.key);
+#endif
     if ((detail_of(event) == keycodes::PAUSE) && press_p(event))
         /* wait for the next and act ? but start w/ printing the last events: */
     {
         last_press_time = time_of(event);
+#if DEBUG > 3
         ErrorF("entering config_mode & discarding the event: %" TIME_FMT "!\n", last_press_time);
+#endif
         config_mode = true;
 
         /* fixme: should I update the ->down bitarray? */
         return true;
     } else
         last_press_time = 0;
-
+#if DEBUG > 3
     ErrorF("%s: end\n", __func__);
+#endif
     return false;
 }
 
@@ -290,7 +300,9 @@ ProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
     // ErrorF("%s: start %d %s\n", __func__, event->any.type, owner?"owner":"not owner");
     if ((event->any.type != ET_KeyPress) && (event->any.type != ET_KeyRelease)) {
         // ET_RawKeyPress
-        ErrorF("ignoring this type of event\n");
+#if DEBUG > 1
+        ErrorF("ignoring this type of event %d\n", event->any.type);
+#endif
         goto exit_free;
     }
 
