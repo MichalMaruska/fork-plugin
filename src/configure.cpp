@@ -16,7 +16,7 @@ extern "C" {
 
 // bug these 2 ^ v
 #include "configure.h"
-#include "fork.h"
+#include "machine.h"
 #include "history.h"
 
 /* something to define NULL */

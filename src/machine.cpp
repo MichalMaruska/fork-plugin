@@ -1,6 +1,6 @@
 #define USE_LOCKING 1
 
-#include "fork.h"
+#include "machine.h"
 #include "memory.h"
 #include "history.h"
 // uses:

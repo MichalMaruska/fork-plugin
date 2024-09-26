@@ -27,7 +27,7 @@ set(sources
   history.cpp
 
   # header files?
-  fork.h
+  machine.h
   platform.h
   xorg.h
 )

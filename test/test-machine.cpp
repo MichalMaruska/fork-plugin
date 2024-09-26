@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../src/fork.h"
+#include "../src/machine.h"
 #include "../src/platform.h"
 #include <gmock/gmock.h>
 // fixme:

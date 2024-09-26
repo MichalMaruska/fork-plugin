@@ -6,7 +6,7 @@
 #include "debug.h"
 
 #include "history.h"
-#include "fork.h"
+#include "machine.h"
 
 extern "C" {
 #include "fork_requests.h"

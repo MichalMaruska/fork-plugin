@@ -41,7 +41,7 @@ extern "C" {
 
 #include "configure.h"
 #include "history.h"
-#include "fork.h"
+#include "machine.h"
 #include "memory.h"
 #include "xorg.h"
 
