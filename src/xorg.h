@@ -42,7 +42,7 @@ public:
 
 class XOrgEnvironment : public platformEnvironment {
 private:
-    const DeviceIntPtr &keybd; // reference
+    const DeviceIntPtr keybd; // reference
     PluginInstance* const plugin;
 
 public:
@@ -62,7 +62,7 @@ public:
     };
 
     bool ignore_event(const PlatformEvent *pevent) override {
-        if (!keybd->key) {
+        if (!keybd || !keybd->key) {
             // should I just assert(keybd)
             ErrorF("%s: keybd is wrong!", __func__);
             return false;
