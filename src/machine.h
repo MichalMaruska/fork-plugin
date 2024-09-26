@@ -229,7 +229,6 @@ public:
             va_list argptr;
             va_start(argptr, format);
             environment->vlog(new_format, argptr);
-            // VErrorF(new_format, argptr);
             va_end(argptr);
 
             free(new_format);
@@ -237,13 +236,11 @@ public:
     };
 
     // without the leading space
-    void mdb_raw(const char* format...) const
-    {
+    void mdb_raw(const char* format...) const {
         if (config->debug) {
             va_list argptr;
             va_start(argptr, format);
             environment->vlog(format, argptr);
-            // VErrorF(format, argptr);
             va_end(argptr);
         }
     };
