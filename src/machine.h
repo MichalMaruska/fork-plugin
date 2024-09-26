@@ -83,8 +83,8 @@ private:
     fork_state_t state;
     // only for certain states we keep (updated):
 
-    KeyCode suspect;
-    KeyCode verificator_keycode;
+    Keycode suspect;
+    Keycode verificator_keycode;
 
     // these are "registers"
     Time suspect_time;           /* time of the 1st event in the queue. */
@@ -95,7 +95,7 @@ private:
      * So, this is for the detector:
      *
      * This means I cannot do this trick w/ 2 keys, only 1 is the last/considered! */
-    KeyCode last_released; // .- trick
+    Keycode last_released; // .- trick
     int last_released_time;
 
     // calculated:
@@ -112,10 +112,10 @@ private:
 public:
     /* we cannot hold only a Bool, since when we have to reconfigure, we need the original
        forked keycode for the release event. */
-    KeyCode          forkActive[MAX_KEYCODE];
+    Keycode          forkActive[MAX_KEYCODE];
 
     last_events_type last_events; // history
-    int max_last = 100; // can be updated!
+    int max_last = 10; // can be updated!
 
     using fork_configuration = ForkConfiguration<Keycode, Time>;
 
@@ -123,7 +123,7 @@ public:
 
 /* The Static state = configuration.
  * This is the matrix with some Time values:
- * using the fact, that valid KeyCodes are non zero, we use
+ * using the fact, that valid Keycodes are non zero, we use
  * the 0 column for `code's global values
 
  * Global      xxxxxxxx unused xxxxxx
@@ -151,7 +151,7 @@ public:
 
 private:
     static Bool
-    forkable_p(const fork_configuration* config, KeyCode code)
+    forkable_p(const fork_configuration* config, Keycode code)
     {
         return (config->fork_keycode[code]);
     }
@@ -206,7 +206,7 @@ private:
    /* Return the keycode into which CODE has forked _last_ time.
    Returns code itself, if not forked. */
     [[nodiscard]] Bool
-    key_forked(KeyCode code) const {
+    key_forked(Keycode code) const {
         return (forkActive[code]);
     }
 
@@ -261,6 +261,8 @@ public:
 
         environment->log("ctor: allocating last_events\n");
         last_events.set_capacity(max_last);
+        environment->log("ctor: allocated last_events %lu (%lu\n", last_events.size(), max_last);
+
         environment->log("ctor: resetting forkActive\n");
         for (unsigned char &i: forkActive) {
             i = KEYCODE_UNUSED; /* not active */
