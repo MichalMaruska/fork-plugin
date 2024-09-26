@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <boost/circular_buffer.hpp>
+#include <ostream>
 
 class circular_bufferTest : public testing::Test {
   // there is a reason: derived classes:
@@ -57,6 +58,66 @@ TEST_F(circular_bufferTest, push_backWorks) {
 #endif
 
 }
+
+class event_dumper {
+private:
+
+public:
+  int count = 0;
+
+  void operator() (const int& item) {
+    std::cerr << item << " " // std::endl
+              << ++count << " "
+              << (void*) this
+              << std::endl;
+  }
+};
+
+
+
+TEST_F(circular_bufferTest, for_each) {
+  const int cap = 30;
+  const int n = 20;
+
+
+  q0_.set_capacity(cap);
+
+  for(int i = 0; i< n; i++) {
+    q0_.push_back(i);
+  }
+  // q0_.push_back(2);
+
+  auto dumper = event_dumper{};
+
+  for(auto i = q0_.begin(); i !=q0_.end(); i++) {
+    dumper(*i);
+  };
+
+  std::cerr << "size: " << q0_.size()
+            << std::endl
+            << "buff: " << q0_.m_buff
+            << std::endl
+            << "end: " << q0_.m_end
+            << std::endl
+            << "first: " << q0_.m_first
+            << std::endl
+            << "last: " << q0_.m_last
+            << std::endl;
+
+  EXPECT_EQ(dumper.count, n);
+  std::cerr << "count: " << dumper.count << std::endl;
+
+  for_each(q0_.begin(),
+           q0_.end(),
+           // bug: copies!
+           dumper);
+  std::cerr << "count: " << dumper.count << " " << &dumper << std::endl;
+
+  EXPECT_EQ(dumper.count, 2* n);
+  // delete dumper;
+}
+
+
 
 
 int main(int argc, char **argv) {
