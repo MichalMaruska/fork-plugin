@@ -102,6 +102,7 @@ enum keycodes {
     one = 10,
     pc_break = 110,
     PAUSE = 127,
+    key_l = 46,
 };
 
 /*
@@ -139,6 +140,14 @@ filter_config_key(PluginInstance* plugin, const InternalEvent *event)
                 machine->switch_config(1); // current ->toggle ?
                 machine->unlock();
                 machine->forkActive[keycode] = 0;
+                break;
+
+            case keycodes::key_l:
+                machine = plugin_machine(plugin);
+                machine->lock();
+                ErrorF("%s: toggle debug\n", __func__);
+                machine->config->debug = (machine->config->debug? 0: 1);
+                machine->unlock();
                 break;
             default:            /* todo: remove this: */
                 // so press BREAK FROM TO
