@@ -21,7 +21,4 @@ extern "C" {
 #undef min
 }
 
-const char*
-describe_key(DeviceIntPtr keybd, InternalEvent *event);
-
 #endif /* _DEBUG_H_ */
