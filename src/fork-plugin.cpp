@@ -197,8 +197,8 @@ filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const
                    time_of(event), (int)(time_of(event) - last_press_time));
             // todo: send a message to listening clients.
             dump_last_events(plugin);
-        }
-        else {
+
+        } else {
             last_press_time = 0;
             config_mode = handle_config_key(plugin, event);
             if (latch) {
