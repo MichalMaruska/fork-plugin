@@ -45,8 +45,7 @@ private:
 
 private:
     static Time
-    get_value_from_matrix(keycode_parameter_matrix matrix, KeyCode code, KeyCode verificator)
-    {
+    get_value_from_matrix(keycode_parameter_matrix matrix, KeyCode code, KeyCode verificator) {
         return (matrix[code][verificator]?
                 // code/verificator specific:
                 matrix[code][verificator]:
@@ -108,13 +107,12 @@ public:
 
     // note: depending on verificator is strange. There might be none!
     // fork_configuration* config,
-    Time verification_interval_of(KeyCode code, KeyCode verificator)
-    {
+    Time verification_interval_of(KeyCode code, KeyCode verificator) {
         return get_value_from_matrix(this->verification_interval, code, verificator);
     }
+
     Time
-    overlap_tolerance_of(KeyCode code, KeyCode verificator)
-    {
+    overlap_tolerance_of(KeyCode code, KeyCode verificator) {
         return get_value_from_matrix(this->overlap_tolerance, code, verificator);
     }
 };
