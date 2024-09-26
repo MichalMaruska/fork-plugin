@@ -164,8 +164,8 @@ private:
         static char buffer[BufferLength];
 
         snprintf(buffer, BufferLength, "%s[%dm%s%s",
-                 escape_sequence, 32 + this->state,
-                 state_description[this->state], color_reset);
+                 escape_sequence, 32 + state,
+                 state_description[state], color_reset);
         return buffer;
     }
 
@@ -191,7 +191,7 @@ private:
     void
     change_state(fork_state_t new_state)
     {
-        this->state = new_state;
+        state = new_state;
         mdb(" --->%s[%dm%s%s\n", escape_sequence, 32 + new_state,
             state_description[new_state], color_reset);
     }
