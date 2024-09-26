@@ -15,9 +15,6 @@
 // I like colored tracing (in 256-color xterm)
 #define USE_COLORS 1
 
-#define STATIC_LAST 1
-
-
 /** What does the lock protect?  ... access to the  queues,state
  * mouse signal handler cannot just make "fork", while a key event is being analyzed.
  *
@@ -36,7 +33,7 @@
 
 
 
-// inside the X server: #define TIME_FORMAT PRIu32
+// Inside the X server: #define TIME_FORMAT PRIu32
 #define TIME_FMT  "u"
 #define SIZE_FMT  "lu"
 
