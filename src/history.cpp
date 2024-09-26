@@ -170,7 +170,7 @@ void
 dump_last_events(PluginInstance* plugin)
 {
   machineRec* machine = plugin_machine(plugin);
-  DB("%s(%s) %" SIZE_FMT "\n", __FUNCTION__,
+  DB("%s(%s) %" SIZE_FMT "\n", __func__,
          plugin->device->name,
          machine->last_events.size());
 
