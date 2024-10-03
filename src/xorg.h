@@ -1,6 +1,7 @@
 #pragma once
 
 #include "platform.h"
+#include "debug.h"
 
 extern "C" {
     // /usr/include/xorg/xorg-server.h
