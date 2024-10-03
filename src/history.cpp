@@ -26,8 +26,8 @@ extern "C" {
 }
 
 #include "event_ops.h"
+#include "xmachine.h"
 
-using machineRec = forkingMachine<KeyCode, Time>;
 /* ---------------------
  * Return the message to send as Xreply, len is filled with the length.
  * length<0  means error!

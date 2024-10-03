@@ -32,8 +32,7 @@ extern "C"
 #undef min
 }
 
-
-using machineRec = forkingMachine<KeyCode, Time>;
+#include "xmachine.h"
 
 /* fixme:  where is the documentation: fork_requests.h ? */
 static int

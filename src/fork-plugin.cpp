@@ -51,6 +51,8 @@ extern "C" {
 #include <xorg/xf86Module.h>
 }
 
+#include "xmachine.h"
+
 // is it available from somewhere else?
 const char* event_names[] = {
     "KeyPress",
@@ -91,10 +93,7 @@ hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* const nextP
 }
 
 // template instantiation:
-using machineRec = forkingMachine<KeyCode, Time>;
 template class forkingMachine<KeyCode, Time>;
-
-#define plugin_machine(plugin) ((machineRec*)(plugin->data))
 // used elsewhere :(
 
 enum keycodes {
