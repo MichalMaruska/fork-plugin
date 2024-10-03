@@ -96,13 +96,18 @@ TEST_F(circular_bufferTest, for_each) {
   EXPECT_EQ(dumper.count, n);
   std::cerr << "count: " << dumper.count << std::endl;
 
+
+  dumper.count = 0;
   for_each(q0_.begin(),
            q0_.end(),
            // bug: copies!
            dumper);
-  std::cerr << "count: " << dumper.count << " " << &dumper << std::endl;
+  // it copies, so the count raises in the clone, not in our
+  // object. (does not propagate back)
 
-  EXPECT_EQ(dumper.count, 2* n);
+  std::cerr << "count: " << dumper.count << " " << &dumper << std::endl;
+  // n
+  EXPECT_EQ(dumper.count, 0);
   // delete dumper;
 }
 
