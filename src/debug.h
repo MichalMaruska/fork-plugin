@@ -1,7 +1,11 @@
-#ifndef _DEBUG_H_
-#define _DEBUG_H_
+#pragma once
 
 #include "config.h"
+
+/*
+ * Logging for code which does not yet have the `machine'.
+ * X specific.
+ */
 
 // #ifndef NDEBUG
 // #define DEBUG 1
@@ -11,14 +15,3 @@
 # else  /* DEBUG */
 #define DB(fmt, ...)  do { ; } while (0)
 #endif /* DEBUG */
-
-
-extern "C" {
-#include <xorg-server.h>
-#include <xorg/inputstr.h>
-
-#undef max
-#undef min
-}
-
-#endif /* _DEBUG_H_ */
