@@ -13,16 +13,6 @@ extern "C" {
 
 #include <xorg-server.h>
 #include <xorg/xkbsrv.h>
-#include <X11/X.h>
-#include <X11/Xproto.h>
-
-/* `probably' I use it only to print out the keysym in debugging stuff*/
-#if 0
-#include <xorg/eventstr.h>
-#endif
-
-#undef max
-#undef min
 }
 
 #include "event_ops.h"

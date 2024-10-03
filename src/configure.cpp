@@ -6,33 +6,19 @@
 #include "config.h"
 #include "debug.h"
 
-extern "C" {
-#include <xorg-server.h>
-#include <xorg/inputstr.h>
-
-#include <X11/X.h>
-#include <X11/Xproto.h>
-}
 
 // bug these 2 ^ v
+#include "xmachine.h"
+
 #include "configure.h"
-#include "machine.h"
 #include "history.h"
 
 /* something to define NULL */
 extern "C"
 {
 #include "fork_requests.h"
-
-#include <stdlib.h>
-#include <string.h>
-#include <xorg/misc.h>
-
-#undef max
-#undef min
 }
 
-#include "xmachine.h"
 
 /* fixme:  where is the documentation: fork_requests.h ? */
 static int

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "machine.h"
 // KeyCode and Time:
 extern "C"
 {
