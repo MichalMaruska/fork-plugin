@@ -228,15 +228,12 @@ private:
 
 public:
     void operator() (const archived_event& event) override {
-        DB("%s:\n", __func__);
-        DB("%s: %d\n", __func__, event.key);
         dump_event(event.key,
                    event.forked,
                    event.press,
                    event.time,
                    xkb, xkbi, previous_time);
         previous_time = event.time;
-        DB("%s: done\n", __func__);
     };
 
     explicit xorg_event_dumper(const PluginInstance* plugin):
