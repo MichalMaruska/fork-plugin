@@ -19,7 +19,7 @@ struct key_event {
 
 class event_dumper {
     public:
-    virtual void operator() (const archived_event& event) const = 0;
+    virtual void operator() (const archived_event& event) = 0;
 };
 
 /* (100) */

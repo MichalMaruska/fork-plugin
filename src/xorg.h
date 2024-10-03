@@ -222,11 +222,10 @@ private:
     DeviceIntPtr keybd;
     XkbSrvInfoPtr xkbi;
     XkbDescPtr xkb;
-
-    mutable Time previous_time;
+    Time previous_time;
 
 public:
-    void operator() (const archived_event& event) const override {
+    void operator() (const archived_event& event) override {
         DB("%s:\n", __func__);
         DB("%s: %d\n", __func__, event.key);
         dump_event(event.key,

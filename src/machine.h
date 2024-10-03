@@ -297,13 +297,13 @@ public:
 
     bool create_configs();
 
-    void dump_last_events(const event_dumper& dumper) const {
+    void dump_last_events(event_dumper* dumper) const {
 #if 0
         std::function<void(const event_dumper&, const archived_event&)> doit0 = &event_dumper::operator();
         // lambda?
         std::function<void(const archived_event&)> doit = std::bind(&event_dumper::operator(), doit, placeholders::_1);
 #else
-        std::function<void(const archived_event&)> lambda = [&dumper](const archived_event& ev){ dumper(ev); };
+        std::function<void(const archived_event&)> lambda = [dumper](const archived_event& ev){ dumper->operator()(ev); };
 #endif
 
         std::for_each(last_events.begin(),

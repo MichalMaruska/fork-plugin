@@ -45,6 +45,7 @@ extern "C" {
 #include "configure.h"
 #include "history.h"
 #include "memory.h"
+#include <memory>
 #include "xorg.h"
 
 extern "C" {
@@ -122,7 +123,7 @@ handle_config_key(PluginInstance* plugin, const InternalEvent *event)
             case keycodes::pc_break:
                 machine = plugin_machine(plugin);
                 machine->lock();
-                machine->dump_last_events(xorg_event_dumper(plugin));
+                machine->dump_last_events(make_unique<xorg_event_dumper>(plugin).get());
                 machine->unlock();
                 break;
             case keycodes::zero:
@@ -197,7 +198,7 @@ filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const
                    plugin->device->name,
                    time_of(event), (int)(time_of(event) - last_press_time));
             // todo: send a message to listening clients.
-            plugin_machine(plugin)->dump_last_events(xorg_event_dumper(plugin));
+            plugin_machine(plugin)->dump_last_events(make_unique<xorg_event_dumper>(plugin).get());
 
         } else {
             last_press_time = 0;

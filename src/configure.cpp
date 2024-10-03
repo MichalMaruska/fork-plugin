@@ -12,6 +12,7 @@
 
 #include "configure.h"
 #include "history.h"
+#include <memory>
 
 /* something to define NULL */
 extern "C"
@@ -131,7 +132,7 @@ machine_configure_global(PluginInstance* plugin, machineRec* machine, int type,
       break;
 
    case fork_server_dump_keys:
-       machine->dump_last_events(xorg_event_dumper(plugin));
+       machine->dump_last_events(make_unique<xorg_event_dumper>(plugin).get());
       break;
 
       // mmc: this is special:
