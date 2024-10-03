@@ -130,14 +130,14 @@ public:
         PluginClass(nextPlugin)->ProcessTime(nextPlugin, now);
     }
 
-    virtual void log(const char* format ...) override{
+    virtual void log(const char* format ...) override {
         va_list argptr;
         va_start(argptr, format);
         VErrorF(format, argptr);
         va_end(argptr);
     }
 
-    virtual void vlog(const char* format, va_list argptr) override{
+    virtual void vlog(const char* format, va_list argptr) override {
         VErrorF(format, argptr);
     }
 
