@@ -131,7 +131,7 @@ machine_configure_global(PluginInstance* plugin, machineRec* machine, int type,
       break;
 
    case fork_server_dump_keys:
-      dump_last_events(plugin);
+       machine->dump_last_events(xorg_event_dumper(plugin));
       break;
 
       // mmc: this is special:

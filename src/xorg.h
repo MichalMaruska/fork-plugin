@@ -25,7 +25,7 @@ extern "C" {
 #undef max
 #undef min
 }
-
+#include "history.h"
 #include <string>
 
 extern void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* nextPlugin);
@@ -166,4 +166,81 @@ public:
 #endif
         return "";
     };
+};
+
+
+
+// prints into the Xorg.*.log
+static void
+dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
+           XkbDescPtr xkb, XkbSrvInfoPtr xkbi, Time prev_time)
+{
+    if (key == 0)
+        return;
+    DB("%s: %d %.4s\n", __func__,
+       key,
+       xkb->names->keys[key].name);
+
+    // 0.1   keysym bound to the key:
+    KeySym* sym= XkbKeySymsPtr(xkbi->desc,key); // mmc: is this enough ?
+    [[maybe_unused]] char* sname = nullptr;
+
+    if (sym){
+#if 0
+        // todo: fixme!
+        sname = XkbKeysymText(*sym,XkbCFile); // doesn't work inside server !!
+#endif
+        // my ascii hack
+        if (! isalpha(* reinterpret_cast<unsigned char *>(sym))){
+            sym = (KeySym*) " ";
+        } else {
+            static char keysymname[15];
+            sprintf(keysymname, "%c",(* (char*)sym)); // fixme!
+            sname = keysymname;
+        };
+    };
+    /*  Format:
+        keycode
+        press/release
+        [  57 4 18500973        112
+        ] 33   18502021        1048
+    */
+
+    DB("%s %d (%d)",
+       (press?" ]":"[ "),
+       static_cast<int>(key), static_cast<int>(fork));
+    DB(" %.4s (%5.5s) %" TIME_FMT "\t%" TIME_FMT "\n",
+           sname, sname,
+           event_time,
+           event_time - prev_time);
+}
+
+// Closure
+class xorg_event_dumper : public event_dumper
+{
+private:
+    DeviceIntPtr keybd;
+    XkbSrvInfoPtr xkbi;
+    XkbDescPtr xkb;
+
+    Time previous_time;
+
+public:
+    void operator() (const archived_event& event) override {
+        DB("%s:\n", __func__);
+        DB("%s: %d\n", __func__, event.key);
+        dump_event(event.key,
+                   event.forked,
+                   event.press,
+                   event.time,
+                   xkb, xkbi, previous_time);
+        previous_time = event.time;
+        DB("%s: done\n", __func__);
+    };
+
+    explicit xorg_event_dumper(const PluginInstance* plugin):
+        keybd(plugin->device),
+        xkbi(keybd->key->xkbInfo),
+        xkb(xkbi->desc),
+        previous_time(0) {};
 };

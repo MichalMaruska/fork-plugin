@@ -122,7 +122,7 @@ handle_config_key(PluginInstance* plugin, const InternalEvent *event)
             case keycodes::pc_break:
                 machine = plugin_machine(plugin);
                 machine->lock();
-                dump_last_events(plugin);
+                machine->dump_last_events(xorg_event_dumper(plugin));
                 machine->unlock();
                 break;
             case keycodes::zero:
@@ -197,7 +197,7 @@ filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const
                    plugin->device->name,
                    time_of(event), (int)(time_of(event) - last_press_time));
             // todo: send a message to listening clients.
-            dump_last_events(plugin);
+            plugin_machine(plugin)->dump_last_events(xorg_event_dumper(plugin));
 
         } else {
             last_press_time = 0;

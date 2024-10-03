@@ -294,6 +294,13 @@ public:
     }
 
     bool create_configs();
+
+    void dump_last_events(const event_dumper& dumper) const {
+        for_each(last_events.begin(),
+                 last_events.end() - 1,
+                 dumper);
+    }
+
 };
 
 // extern int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n);

@@ -17,10 +17,14 @@ struct key_event {
   KeyCode forked; /* if forked to (another keycode), this is the original key */
 };
 
+class event_dumper {
+    public:
+    virtual void operator() (const archived_event& event);
+};
+
 /* (100) */
 // not value-semantics
 typedef boost::circular_buffer<archived_event> last_events_type;
 
 // why extern?
 int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n);
-void dump_last_events(PluginInstance* plugin);
