@@ -177,9 +177,10 @@ dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
 {
     if (key == 0)
         return;
-    DB("%s: %d %.4s\n", __func__,
-       key,
-       xkb->names->keys[key].name);
+
+    ErrorF("%s: %d %.4s\n", __func__,
+           key,
+           xkb->names->keys[key].name);
 
     // 0.1   keysym bound to the key:
     KeySym* sym= XkbKeySymsPtr(xkbi->desc,key); // mmc: is this enough ?
@@ -206,10 +207,10 @@ dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
         ] 33   18502021        1048
     */
 
-    DB("%s %d (%d)",
-       (press?" ]":"[ "),
-       static_cast<int>(key), static_cast<int>(fork));
-    DB(" %.4s (%5.5s) %" TIME_FMT "\t%" TIME_FMT "\n",
+    ErrorF("%s %d (%d)",
+           (press?" ]":"[ "),
+           static_cast<int>(key), static_cast<int>(fork));
+    ErrorF(" %.4s (%5.5s) %" TIME_FMT "\t%" TIME_FMT "\n",
            sname, sname,
            event_time,
            event_time - prev_time);
