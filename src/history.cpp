@@ -10,9 +10,6 @@
 
 extern "C" {
 #include "fork_requests.h"
-
-#include <xorg-server.h>
-#include <xorg/xkbsrv.h>
 }
 
 #include "event_ops.h"
