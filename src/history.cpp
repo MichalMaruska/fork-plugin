@@ -171,34 +171,8 @@ public:
 void
 dump_last_events(PluginInstance* plugin)
 {
-
   const auto machine = plugin_machine(plugin);
-#if 0
-  DB("%s(%s) %p %p %ld\n", __func__, // SIZE_FMT
-     plugin->device->name,
-     machine,
-     machine->last_events.m_buff,
-     sizeof(machineRec));
-#endif
-
-
   for_each(machine->last_events.begin(),
            machine->last_events.end() - 1,
            event_dumper(plugin));
-#if 0
-  auto dumper = event_dumper(plugin);
-
-  DB("%s %p\n", __func__,machine->last_events.m_buff);
-  DB("size: %ld buff: %p end: %p first: %p, last %p\n",
-     last_events.size(),
-     last_events.m_buff,
-     last_events.m_end,
-     last_events.m_first,
-     last_events.m_last
-     );
-
-  for(auto i = machine->last_events.begin(); i != machine->last_events.end(); i++) {
-      dumper(*i);
-  };
-#endif
 }
