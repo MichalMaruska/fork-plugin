@@ -93,17 +93,6 @@ TEST_F(circular_bufferTest, for_each) {
     dumper(*i);
   };
 
-  std::cerr << "size: " << q0_.size()
-            << std::endl
-            << "buff: " << q0_.m_buff
-            << std::endl
-            << "end: " << q0_.m_end
-            << std::endl
-            << "first: " << q0_.m_first
-            << std::endl
-            << "last: " << q0_.m_last
-            << std::endl;
-
   EXPECT_EQ(dumper.count, n);
   std::cerr << "count: " << dumper.count << std::endl;
 
