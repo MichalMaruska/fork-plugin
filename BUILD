@@ -4,8 +4,10 @@
 mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=debug -G Ninja  ../
-
 cmake --build .
+
+# for some IDE:
+ln -s build/compile_commands.json .
 
 * debug:
 script zapis  -c ninja
@@ -14,6 +16,19 @@ script zapis  -c ninja
 * Xorg headers files not clean to be used by C++ compiler
 
 ** min/max macros
+
+/usr/include/xorg/misc.h
+#define min(a, b) (((a) < (b)) ? (a) : (b))
+#define max(a, b) (((a) > (b)) ? (a) : (b))
+from...
+/usr/include/xorg/misc.h
+/usr/include/xorg/gc.h
+/usr/include/xorg/dix.h
+/usr/include/xorg/dixstruct.h
+/usr/include/xorg/inputstr.h
+
+
+
 
 ** wrong files picked by:
 #include <math.h>
@@ -38,8 +53,6 @@ error: redeclaration of 'Time machineRec::mCurrent_time'
 
 
 * CMake Error: INSTALL(EXPORT) given unknown export "EXPORT_module"
-
-
 
 * ctest:
 ai libgtest-dev
@@ -74,6 +87,7 @@ exactly one unit test by using ctest -R MyTest.TestA.
 #else
 #define EXTERNC
 #endif
+
 EXTERNC void mylibrary_mytype_doit(mylibrary_mytype_t self, int param);
 
 #undef EXTERNC
