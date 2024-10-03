@@ -223,10 +223,10 @@ private:
     XkbSrvInfoPtr xkbi;
     XkbDescPtr xkb;
 
-    Time previous_time;
+    mutable Time previous_time;
 
 public:
-    void operator() (const archived_event& event) override {
+    void operator() (const archived_event& event) const override {
         DB("%s:\n", __func__);
         DB("%s: %d\n", __func__, event.key);
         dump_event(event.key,
