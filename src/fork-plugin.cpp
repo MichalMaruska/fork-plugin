@@ -39,9 +39,9 @@ extern "C" {
 #include "config.h"
 #include "debug.h"
 
+#include "xmachine.h"
 #include "configure.h"
 #include "history.h"
-#include "machine.h"
 #include "memory.h"
 #include "xorg.h"
 
@@ -51,7 +51,7 @@ extern "C" {
 #include <xorg/xf86Module.h>
 }
 
-#include "xmachine.h"
+
 
 // is it available from somewhere else?
 const char* event_names[] = {
