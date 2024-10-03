@@ -9,6 +9,7 @@
 
 // bug these 2 ^ v
 #include "xmachine.h"
+#include "xorg.h"
 
 #include "configure.h"
 #include "history.h"
