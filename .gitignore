@@ -97,3 +97,6 @@ clean-repo
 debian/fork-plugin
 
 build/
+/.idea/
+/.cache/
+/compile_commands.json
