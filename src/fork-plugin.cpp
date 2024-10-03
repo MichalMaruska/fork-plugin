@@ -34,6 +34,8 @@
 
 extern "C" {
 #include <fork_requests.h>
+#undef max
+#undef min
 }
 
 #include "config.h"
