@@ -280,6 +280,7 @@ public:
     int configure_twins(int type, Keycode key, Keycode twin, int value, Bool set);
     int configure_key(int type, Keycode key, int value, Bool set);
 
+    int dump_last_events_to_client(event_publisher* publisher, int max_requested);
 
     void step_in_time_locked(Time now);
 

@@ -43,6 +43,44 @@ public:
 };
 
 
+class xorg_event_publisher : public event_publisher
+{
+    private:
+    char* memory;
+    const ClientPtr client;
+    /* const */ PluginInstance* plugin;
+    std::size_t appendix_len;
+
+    public:
+    xorg_event_publisher(ClientPtr client, PluginInstance* plugin) : client(client), plugin(plugin) {};
+
+    virtual ~xorg_event_publisher() {
+        free(memory);
+        memory = nullptr;
+    }
+
+    virtual void prepare(int max_events) override{
+        // memory =
+        appendix_len = sizeof(fork_events_reply) + (max_events * sizeof(archived_event));
+        memory = (char*) malloc(appendix_len);
+        // if this fails?
+    }
+
+    virtual int commit() override{
+        xkb_plugin_send_reply(client, plugin, memory, appendix_len);
+          /* What XReply to send?? */
+
+        // can do now:
+        free(memory);
+        memory = nullptr;
+        return 0;
+    }
+    virtual void event(const archived_event& event) {
+
+    }
+};
+
+
 // Closure
 class xorg_event_dumper : public event_dumper
 {
@@ -206,6 +244,18 @@ public:
         return std::make_unique<xorg_event_dumper>(keybd);
     }
 
+#if 0
+    virtual
+    std::unique_ptr<event_publisher> get_event_publisher() override {
+        return std::make_unique<xorg_event_publisher>(keybd);
+    }
+#endif
+
+
+    // specific, not virtual!:
+    std::unique_ptr<event_publisher> get_event_publisher(ClientPtr client, PluginInstance *plugin) {
+        return std::make_unique<xorg_event_publisher>(client, plugin);
+    }
 };
 
 

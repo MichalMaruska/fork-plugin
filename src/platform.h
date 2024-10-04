@@ -29,6 +29,16 @@ class event_dumper {
     virtual ~event_dumper() = 0;
 };
 
+class event_publisher {
+    public:
+    virtual void prepare(int max_events) = 0;
+    virtual int commit() = 0;
+    virtual void event(const archived_event& event) = 0;
+    virtual ~event_publisher() = 0;
+};
+
+
+
 // fixme: template on <Keycode, Time> ?
 class platformEnvironment {
 public:

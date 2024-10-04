@@ -549,17 +549,23 @@ machine_command(ClientPtr client, PluginInstance* plugin, int cmd, int data1,
                 int data2, int data3, int data4)
 {
   DB("%s cmd %d, data %d ...\n", __func__, cmd, data1);
-  switch (cmd)
-    {
-    case fork_client_dump_keys:
-      /* DB("%s %d %.3s\n", __func__, len, data); */
-      dump_last_events_to_client(plugin, client, data1);
-      break;
-    default:
-      DB("%s Unknown command!\n", __func__);
-      break;
-      /* What XReply to send?? */
-    }
+
+  machineRec* machine = plugin_machine(plugin);
+  auto env = dynamic_cast<XOrgEnvironment*>(machine->environment);
+
+  switch (cmd) {
+      case fork_client_dump_keys:
+      {
+          auto dumper = env->get_event_publisher(client, plugin);
+
+          /* DB("%s %d %.3s\n", __func__, len, data); */
+          machine->dump_last_events_to_client(dumper.get(), data1);
+          break;
+      }
+      default:
+          DB("%s Unknown command!\n", __func__);
+          // break;
+  }
 }
 
 

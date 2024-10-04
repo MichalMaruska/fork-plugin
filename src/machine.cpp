@@ -219,6 +219,37 @@ forkingMachine<Keycode, Time>::configure_key(int type, Keycode key, int value, b
 }
 
 
+template <typename Keycode, typename Time>
+int
+forkingMachine<Keycode, Time>::dump_last_events_to_client(event_publisher* publisher, int max_requested)
+{
+   // I don't need to count them! last_events_count
+   // how many in the store?
+   // upper bound
+   // trim/clamp?
+   int queue_count = max_last;
+   if (max_requested > queue_count) {
+       max_requested = queue_count;
+   };
+
+   publisher->prepare(max_requested);
+
+   std::function<void(const archived_event&)> lambda =
+       [publisher](const archived_event& ev){ publisher->event(ev); };
+   // auto f = std::function<void(const archived_event&)>(bind(publisher->event(), publisher,));
+
+   // todo:
+   // fixme: we need to increase an iterator .. pointer .... to the C array!
+   // last_events.
+   for_each(last_events.begin(),
+            last_events.end(),
+            lambda);
+
+   mdb("sending %d events\n", max_requested);
+
+   return publisher->commit();
+}
+
 
 
 /** logging
