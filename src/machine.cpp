@@ -98,21 +98,24 @@ forkingMachine<Keycode, Time>::log_state(const char* message) const
     mdb("%s%s%s state: %s, queue: %d .... %s\n",
         fork_color, __func__, color_reset,
         describe_machine_state(),
-        internal_queue.length (),
-        message);
+        internal_queue.length(),
+        message
+        );
 }
 
 template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::log_queues(const char* message)
 {
-    mdb("%s: Queues: output: %d\t internal: %d\t input: %d \n", message,
-        output_queue.length (),
-        internal_queue.length (),
-        input_queue.length ());
+    mdb("%s: Queues: output: %d\t internal: %d\t input: %d\n",
+        message,
+        output_queue.length(),
+        internal_queue.length(),
+        input_queue.length());
 }
 
 
+// min_time
 Time queue_time(my_queue<key_event> &queue, platformEnvironment *environment) {
     return environment->time_of(queue.front()->p_event);
 }
@@ -134,7 +137,7 @@ template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::flush_to_next()
 {
-    // todo: lock in this scope only?
+    // todo: could I lock only in this scope?
     check_locked();
 
     if (queues_non_empty()) {
@@ -892,10 +895,9 @@ template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::step_by_key(key_event *ev)
 {
-#if DEBUG > 1
-    environment->log("%s:\n", __func__);
-#endif
-    assert (ev);
+    mdb("%s:\n", __func__);
+
+    assert(ev);
     const PlatformEvent* pevent = ev->p_event;
     const Keycode key = environment->detail_of(pevent);
 
