@@ -1122,6 +1122,13 @@ forkingMachine<Keycode, Time>::step_by_key(key_event *ev)
 // explicit instantation:
 template void forkingMachine<KeyCode, Time>::accept_event(PlatformEvent* pevent);
 template void forkingMachine<KeyCode, Time>::switch_config(int);
-template void forkingMachine<KeyCode, Time>::step_in_time_locked(Time);
+template void forkingMachine<KeyCode, Time>::step_in_time_locked(const Time);
 template bool forkingMachine<KeyCode, Time>::create_configs();
 
+template int forkingMachine<KeyCode, Time>::configure_key(int type, KeyCode key, int value, bool set);
+
+template int forkingMachine<KeyCode, Time>::configure_global(int type, int value, bool set);
+
+template int forkingMachine<KeyCode, Time>::configure_twins(int type, KeyCode key, KeyCode twin, int value, bool set);
+
+template int forkingMachine<KeyCode, Time>::dump_last_events_to_client(event_publisher* publisher, int max_requested);
