@@ -153,7 +153,7 @@ public:
     }
 
 private:
-    static Bool
+    static bool
     forkable_p(const fork_configuration* config, Keycode code)
     {
         return (config->fork_keycode[code]);
@@ -183,9 +183,9 @@ private:
 
     static void reverse_splice(list_with_tail &pre, list_with_tail &post);
 
-    void try_to_play(Bool force);
+    void try_to_play(bool force);
 
-    void replay_events(Bool force_also);
+    void replay_events(bool force_also);
 
     void apply_event_to_suspect(key_event *ev);
 
@@ -209,7 +209,7 @@ private:
 
    /* Return the keycode into which CODE has forked _last_ time.
    Returns code itself, if not forked. */
-    [[nodiscard]] Bool
+    [[nodiscard]] bool
     key_forked(Keycode code) const {
         return (forkActive[code]);
     }
@@ -276,9 +276,9 @@ public:
 
     void switch_config(int id);
 
-    int configure_global(int type, int value, Bool set);
-    int configure_twins(int type, Keycode key, Keycode twin, int value, Bool set);
-    int configure_key(int type, Keycode key, int value, Bool set);
+    int configure_global(int type, int value, bool set);
+    int configure_twins(int type, Keycode key, Keycode twin, int value, bool set);
+    int configure_key(int type, Keycode key, int value, bool set);
 
     int dump_last_events_to_client(event_publisher* publisher, int max_requested);
 

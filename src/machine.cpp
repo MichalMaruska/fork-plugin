@@ -456,7 +456,7 @@ forkingMachine<Keycode, Time>::activate_fork() // possibly unlocks
  */
 template <typename Keycode, typename Time>
 void
-forkingMachine<Keycode, Time>::replay_events(Bool force_also)
+forkingMachine<Keycode, Time>::replay_events(bool force_also)
 {
     mdb("%s\n", __func__);
     check_locked();
@@ -479,7 +479,7 @@ forkingMachine<Keycode, Time>::replay_events(Bool force_also)
  */
 template <typename Keycode, typename Time>
 void
-forkingMachine<Keycode, Time>::try_to_play(Bool force_also)
+forkingMachine<Keycode, Time>::try_to_play(bool force_also)
 {
     // fixme: maybe All I need is the nextPlugin?
 

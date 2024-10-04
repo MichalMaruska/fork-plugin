@@ -1,14 +1,14 @@
 #include "debug.h"
 #include "event_ops.h"
 
-Bool
+bool
 release_p(const InternalEvent* event)
 {
    assert(event);
    return (event->any.type == ET_KeyRelease);
 }
 
-Bool
+bool
 press_p(const InternalEvent* event)
 {
    assert(event);
