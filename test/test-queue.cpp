@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "../src/queue.h"
-#include "../src/history.h"
+#include "../src/platform.h"
 
 class queueTest : public testing::Test {
 protected:

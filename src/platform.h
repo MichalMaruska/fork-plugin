@@ -13,12 +13,21 @@ extern "C" {
 #undef min
 }
 
-#include "history.h"
 #include <string>
-
+#include <memory>
 class PlatformEvent {};
 
-// todo: template on <Keycode, Time> ?
+struct key_event {
+  PlatformEvent* p_event;
+  KeyCode forked; /* if forked to (another keycode), this is the original key */
+};
+
+class event_dumper {
+    public:
+    virtual void operator() (const archived_event& event) = 0;
+};
+
+// fixme: template on <Keycode, Time> ?
 class platformEnvironment {
 public:
     platformEnvironment() = default;
@@ -41,6 +50,9 @@ public:
     virtual archived_event archive_event(const key_event& event) = 0;
     virtual void free_event(PlatformEvent* pevent) = 0;
     virtual void rewrite_event(PlatformEvent* pevent, KeyCode code) = 0;
+
+
+    virtual std::unique_ptr<event_dumper> get_event_dumper() = 0;
 
     virtual ~platformEnvironment() = default;
 };

@@ -2,6 +2,7 @@
 
 #include "platform.h"
 #include "debug.h"
+#include <memory>
 
 extern "C" {
     // /usr/include/xorg/xorg-server.h
@@ -26,10 +27,12 @@ extern "C" {
 #undef max
 #undef min
 }
-#include "history.h"
+// #include "history.h"
 #include <string>
 
 extern void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* nextPlugin);
+static void dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
+                       XkbDescPtr xkb, XkbSrvInfoPtr xkbi, Time prev_time);
 
 
 class XorgEvent : public PlatformEvent {
@@ -39,6 +42,34 @@ public:
     // so why not UniquePointer?
     InternalEvent* event;
 };
+
+
+// Closure
+class xorg_event_dumper : public event_dumper
+{
+private:
+    const DeviceIntPtr keybd;
+    const XkbSrvInfoPtr xkbi;
+    const XkbDescPtr xkb;
+    Time previous_time;
+
+public:
+    void operator() (const archived_event& event) override {
+        dump_event(event.key,
+                   event.forked,
+                   event.press,
+                   event.time,
+                   xkb, xkbi, previous_time);
+        previous_time = event.time;
+    };
+
+    explicit xorg_event_dumper(const DeviceIntPtr keybd):
+        keybd(keybd),
+        xkbi(keybd->key->xkbInfo),
+        xkb(xkbi->desc),
+        previous_time(0) {};
+};
+
 
 
 class XOrgEnvironment : public platformEnvironment {
@@ -167,6 +198,12 @@ public:
 #endif
         return "";
     };
+
+    virtual
+    std::unique_ptr<event_dumper> get_event_dumper() override {
+        return std::make_unique<xorg_event_dumper>(keybd);
+    }
+
 };
 
 
@@ -216,29 +253,3 @@ dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
            event_time,
            event_time - prev_time);
 }
-
-// Closure
-class xorg_event_dumper : public event_dumper
-{
-private:
-    const DeviceIntPtr keybd;
-    const XkbSrvInfoPtr xkbi;
-    const XkbDescPtr xkb;
-    Time previous_time;
-
-public:
-    void operator() (const archived_event& event) override {
-        dump_event(event.key,
-                   event.forked,
-                   event.press,
-                   event.time,
-                   xkb, xkbi, previous_time);
-        previous_time = event.time;
-    };
-
-    explicit xorg_event_dumper(const DeviceIntPtr keybd):
-        keybd(keybd),
-        xkbi(keybd->key->xkbInfo),
-        xkb(xkbi->desc),
-        previous_time(0) {};
-};
