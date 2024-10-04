@@ -221,9 +221,9 @@ dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
 class xorg_event_dumper : public event_dumper
 {
 private:
-    DeviceIntPtr keybd;
-    XkbSrvInfoPtr xkbi;
-    XkbDescPtr xkb;
+    const DeviceIntPtr keybd;
+    const XkbSrvInfoPtr xkbi;
+    const XkbDescPtr xkb;
     Time previous_time;
 
 public:
@@ -236,8 +236,8 @@ public:
         previous_time = event.time;
     };
 
-    explicit xorg_event_dumper(const PluginInstance* plugin):
-        keybd(plugin->device),
+    explicit xorg_event_dumper(const DeviceIntPtr keybd):
+        keybd(keybd),
         xkbi(keybd->key->xkbInfo),
         xkb(xkbi->desc),
         previous_time(0) {};
