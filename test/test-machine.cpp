@@ -46,6 +46,9 @@ public:
   MOCK_METHOD(archived_event, archive_event,(const key_event& event));
   MOCK_METHOD(void, free_event,(PlatformEvent* pevent));
   MOCK_METHOD(void, rewrite_event,(PlatformEvent* pevent, KeyCode code));
+
+  MOCK_METHOD(std::unique_ptr<event_dumper>, get_event_dumper,());
+
 };
 
 
