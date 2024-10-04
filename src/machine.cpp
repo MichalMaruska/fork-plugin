@@ -117,6 +117,14 @@ Time queue_time(my_queue<key_event> &queue, platformEnvironment *environment) {
     return environment->time_of(queue.front()->p_event);
 }
 
+template <typename Keycode, typename Time>
+bool
+forkingMachine<Keycode, Time>::queues_non_empty()
+{
+    return (!output_queue.empty() || !input_queue.empty() || !internal_queue.empty());
+}
+
+
 /**
  * The machine is locked here:
  * Push as many as possible from the OUTPUT queue to the next layer
@@ -128,7 +136,8 @@ forkingMachine<Keycode, Time>::flush_to_next()
 {
     // todo: lock in this scope only?
     check_locked();
-    if (!output_queue.empty() || !input_queue.empty() || !internal_queue.empty()) {
+
+    if (queues_non_empty()) {
         log_queues(__func__);
     }
 
@@ -561,7 +570,7 @@ template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::step_in_time_locked(const Time now) // unlocks possibly!
 {
-    if (!output_queue.empty() || !input_queue.empty() || !internal_queue.empty()) {
+    if (queues_non_empty()) {
         mdb("%s: %" TIME_FMT "\n", __func__, now);
     }
     if (mCurrent_time > now)

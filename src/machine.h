@@ -178,6 +178,7 @@ private:
     void log_state(const char* message) const;
     void log_state_and_event(const char* message, const key_event *ev);
     void log_queues(const char* message);
+    bool queues_non_empty();
 
     static void reverse_splice(list_with_tail &pre, list_with_tail &post);
 
