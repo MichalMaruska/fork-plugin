@@ -7,6 +7,14 @@
  * X specific.
  */
 
+extern "C" {
+#include <xorg-server.h>
+#include <xorg/os.h>
+
+#undef max
+#undef min
+}
+
 // #ifndef NDEBUG
 // #define DEBUG 1
 
