@@ -25,6 +25,8 @@ struct key_event {
 class event_dumper {
     public:
     virtual void operator() (const archived_event& event) = 0;
+    // must have virtual
+    virtual ~event_dumper() = 0;
 };
 
 // fixme: template on <Keycode, Time> ?

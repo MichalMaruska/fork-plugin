@@ -63,6 +63,9 @@ public:
         previous_time = event.time;
     };
 
+    virtual ~xorg_event_dumper() {};
+
+
     explicit xorg_event_dumper(const DeviceIntPtr keybd):
         keybd(keybd),
         xkbi(keybd->key->xkbInfo),
