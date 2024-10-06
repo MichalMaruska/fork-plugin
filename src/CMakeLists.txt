@@ -19,8 +19,6 @@ set(CMAKE_DEBUG_TARGET_PROPERTIES
 # not GLOB_RECURSE
 # file(GLOB sources "*.cpp"  "*.c")
 set(sources
-  configure.cpp
-  # debug.cpp
   event_ops.cpp
   fork-plugin.cpp
   machine.cpp
