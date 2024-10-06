@@ -42,7 +42,6 @@ extern "C" {
 #include "debug.h"
 
 #include "xmachine.h"
-#include "history.h"
 #include "memory.h"
 #include <memory>
 #include "xorg.h"

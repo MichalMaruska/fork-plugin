@@ -27,7 +27,6 @@ extern "C" {
 #undef max
 #undef min
 }
-// #include "history.h"
 #include <string>
 
 extern void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* nextPlugin);

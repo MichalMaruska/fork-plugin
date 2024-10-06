@@ -2,7 +2,6 @@
 
 #include "machine.h"
 #include "memory.h"
-#include "history.h"
 // uses:
 #include "debug.h"
 #include "colors.h"

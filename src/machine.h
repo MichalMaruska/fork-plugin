@@ -7,15 +7,16 @@
 #include <functional>
 
 #include "queue.h"
-#include "history.h"
 #include "platform.h"
 #include "colors.h"
+#include <boost/circular_buffer.hpp>
+
 
 #include "fork_configuration.h"
 
 // namespace fork {
 
-
+typedef boost::circular_buffer<archived_event> last_events_type;
 
 /* states of the automaton: */
 
