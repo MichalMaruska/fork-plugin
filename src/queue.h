@@ -13,7 +13,7 @@ using namespace std;
 using namespace __gnu_cxx;
 
 
-/* LIFO
+/* LIFO -- single-linked list
    + slice operation,
 
    Memory/ownerhip:
@@ -26,139 +26,132 @@ template <typename T>
 class my_queue
 {
 private:
-  slist<T*> list;
-  string m_name;     // for debug string const char*
-  typename slist<T*>::iterator last_node;
+    slist<T*> list;
+    const string m_name;     // for debug string const char*
+    typename slist<T*>::iterator last_node;
 
 public:
-  [[nodiscard]] const char* get_name() const {
-    return m_name.c_str();//  ?:"(unknown)"
-  }
 
-#if 0
-  // move!!! take ownership
-  void set_name(string&& name)
-  {
-    m_name = std::move(name);
-  }
-#endif
-
-  [[nodiscard]] int length() const
-  {
-    return list.size();
-  }
-
-  [[nodiscard]] bool empty() const
-  {
-    return (list.empty());
-  }
-
-  const T* front () const
-  {
-    return list.front();
-  }
-
-  T* pop()                    // top_and_pop()
-  {
-#if DEBUG > 1
-    DB("%s\n", __func__);
-#endif
-    // not thread-safe!
-    T* pointer = list.front();
-    list.pop_front();
-    // invalidate iterators
-    if (list.empty())
-      last_node = list.begin();
-    return pointer;
-  }
-
-
-  void push(T* value)
-  {
-#if DEBUG > 1
-    DB(("%s: %s: now %d + 1\n", __FUNCTION__, get_name(), length()));
-#endif
-    if (!empty ()) {
-      last_node = list.insert_after(last_node, value);
-    } else {
-      list.push_front(value);
-      last_node = list.begin();
+    [[nodiscard]] const char* get_name() const {
+        return m_name.c_str();//  ?:"(unknown)"
     }
-  }
 
-  // fixme: move-?
-  void push(const T& value)   // we clone the value!
-  {
-    T* clone = new T(value);
-    push(clone);
-  }
+    [[nodiscard]] int length() const
+        {
+            return list.size();
+        }
 
-  /* move the content of appendix to the END of this queue
-   *      this      appendix    this        appendix
-   *     xxxxxxx   yyyyy   ->   xxxxyyyy       (empty)
-   */
-  void append (my_queue& suffix) // appendix
-  {
-    if (empty()) {
+    [[nodiscard]] bool empty() const
+        {
+            return (list.empty());
+        }
+
+    const T* front () const
+        {
+            return list.front();
+        }
+
+    T* pop()                    // top_and_pop()
+        {
+#if DEBUG > 1
+            DB("%s\n", __func__);
+#endif
+            // not thread-safe!
+            T* pointer = list.front();
+            list.pop_front();
+            // invalidate iterators
+            if (list.empty())
+                last_node = list.begin();
+            return pointer;
+        }
+
+
+    void push(T* value)
+        {
+#if DEBUG > 1
+            DB(("%s: %s: now %d + 1\n", __FUNCTION__, get_name(), length()));
+#endif
+            if (!empty ()) {
+                last_node = list.insert_after(last_node, value);
+            } else {
+                list.push_front(value);
+                last_node = list.begin();
+            }
+        }
+
+    // fixme: move-?
+    void push(const T& value)   // we clone the value!
+        {
+            T* clone = new T(value);
+            push(clone);
+        }
+
+    /* move the content of appendix to the END of this queue
+     *      this      appendix    this        appendix
+     *     xxxxxxx   yyyyy   ->   xxxxyyyy       (empty)
+     */
+    void append (my_queue& suffix) // appendix
+        {
+            if (empty()) {
 #ifdef DEBUG
-      DB("%s: bad state\n", __func__);
+                DB("%s: bad state\n", __func__);
 #endif
-      // fixme:
-      return;
-    }
+                // fixme:
+                return;
+            }
 
 #if DEBUG > 1
-    DB(("%s: %s: appending/moving all from %s:\n", __FUNCTION__, get_name(),
-        suffix.get_name()));
+            DB(("%s: %s: appending/moving all from %s:\n", __FUNCTION__, get_name(),
+                suffix.get_name()));
 #endif
-    if (! suffix.list.empty())
-    {
-      list.splice_after(last_node, suffix.list);
-      last_node=suffix.last_node;
-    }
+            if (! suffix.list.empty())
+            {
+                list.splice_after(last_node, suffix.list);
+                last_node=suffix.last_node;
+            }
 #if DEBUG > 1
-    DB(("%s now has %d\n", get_name(), length()));
-    DB(("%s now has %d\n", suffix.get_name(), suffix.length()));
+            DB(("%s now has %d\n", get_name(), length()));
+            DB(("%s now has %d\n", suffix.get_name(), suffix.length()));
 #endif
-  }
+        }
 
-  ~my_queue()
-  {
+    ~my_queue()
+        {
 #if 0
-    if (m_name)
-    {
-      m_name = NULL;
-    }
+            if (m_name)
+            {
+                m_name = NULL;
+            }
 #endif
-  }
+        }
 
-  // const char* name = NULL
-  explicit my_queue(string&& name) : m_name(std::move(name))
-  {
+    // const char* name = NULL
+    explicit my_queue(string&& name) : m_name(std::move(name))
+        {
 #ifdef DEBUG
-    DB("%s: constructor\n", __func__);
+            DB("%s: constructor\n", __func__);
 #endif
-    last_node = list.end();
-  };
+            last_node = list.end();
+        };
 
-  void swap(my_queue& peer) noexcept {
-    typename slist<T*>::iterator temp;
-    temp = last_node;
+    void swap(my_queue& peer) noexcept {
+        typename slist<T*>::iterator temp;
+        temp = last_node;
 
-    list.swap(peer.list);
+        list.swap(peer.list);
 
-    // iter_swap(last_node,peer.last_node);
-    if (list.empty())
-      last_node = list.begin();
-    else {
-      last_node = peer.last_node;
+        // iter_swap(last_node,peer.last_node);
+        if (list.empty())
+            last_node = list.begin();
+        else {
+            last_node = peer.last_node;
+        }
+
+        if (peer.list.empty())
+            peer.last_node = peer.list.begin();
+        else
+            peer.last_node = temp;
     }
-
-    if (peer.list.empty())
-      peer.last_node = peer.list.begin();
-    else
-      peer.last_node = temp;
-  }
 };
 
 #endif
