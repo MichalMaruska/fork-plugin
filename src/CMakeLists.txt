@@ -22,7 +22,6 @@ set(sources
   event_ops.cpp
   fork-plugin.cpp
   machine.cpp
-  # history.cpp
 
   # header files?
   machine.h
