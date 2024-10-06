@@ -654,15 +654,6 @@ fork_plug(void          *options,
   return &plugin_class;
 }
 
-// my old way of loading modules?
-#if 0
-void __attribute__((constructor)) on_init()
-{
-    ErrorF("%s: %s\n", __func__, VERSION); /* impossible */
-    fork_plug(NULL,NULL,NULL);
-}
-#endif
-
 static void*
 SetupProc(void* module, pointer options, int *errmaj, int *errmin)
 {
