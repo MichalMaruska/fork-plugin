@@ -295,10 +295,12 @@ create_xorg_platform_event(InternalEvent *event, bool owner)
     it's a trampoline for the automaton.
     Should it return some Time?
 */
-static Bool
-ProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
+extern "C" /* static*/ Bool
+ForkProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
+// __attribute__((visibility("default")))
 {
-    // ErrorF("%s: start %d %s\n", __func__, event->any.type, owner?"owner":"not owner");
+    ErrorF("%s: start %d %s\n", __func__, event->any.type, owner?"owner":"not owner");
+
     if ((event->any.type != ET_KeyPress) && (event->any.type != ET_KeyRelease)) {
         // ET_RawKeyPress
 #if DEBUG > 1
@@ -634,7 +636,7 @@ fork_plug(void          *options,
     // slot name,     value
     _B(name, FORK_PLUGIN_NAME),
     _B(instantiate, &make_machine),
-    _B(ProcessEvent, ProcessEvent),
+    _B(ProcessEvent, ForkProcessEvent),
     _B(ProcessTime, step_in_time),
     _B(NotifyThaw, fork_thaw_notify),
     _B(config,    &machine_configure),
