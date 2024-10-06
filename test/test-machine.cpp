@@ -1,5 +1,22 @@
 #include <gtest/gtest.h>
 
+#include <cstdlib>
+#if 0
+#define ErrorF(fmt, ...)     printf(fmt, ##__VA_ARGS__)
+#else
+extern "C"
+{
+#include <cstdarg>
+  void ErrorF(const char* format...)
+  {
+    va_list argptr;
+    va_start(argptr, format);
+    vprintf(format, argptr);
+    va_end(argptr);
+  }
+}
+#endif
+
 #include "../src/machine.h"
 #include "../src/platform.h"
 #include <gmock/gmock.h>
