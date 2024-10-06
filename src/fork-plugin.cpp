@@ -46,8 +46,9 @@ extern "C" {
 #include <memory>
 #include "xorg.h"
 
-extern "C" {
 #include "event_ops.h"
+
+extern "C" {
 #include <xorg/xkbsrv.h>
 #include <xorg/xf86Module.h>
 }
