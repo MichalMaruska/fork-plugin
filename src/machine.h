@@ -22,14 +22,14 @@ typedef boost::circular_buffer<archived_event> last_events_type;
 
 /* `machine': the dynamic `state' */
 
+// history:
+typedef my_queue<key_event*> list_with_tail;
+
 // typename PlatformEvent, typename platformEnvironment,
 template <typename Keycode, typename Time>
 // so key_event
 class forkingMachine
 {
-    // history:
-    typedef my_queue<key_event> list_with_tail;
-
     /* How we decided for the fork */
     enum class fork_reason {
         reason_total,               // key pressed too long

@@ -279,7 +279,7 @@ forkingMachine<Keycode, Time>::log_queues(const char* message)
 
 
 // min_time
-Time queue_time(my_queue<key_event> &queue, platformEnvironment *environment) {
+Time queue_time(list_with_tail &queue, platformEnvironment *environment) {
     return environment->time_of(queue.front()->p_event);
 }
 
