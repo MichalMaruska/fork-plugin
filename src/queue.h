@@ -3,6 +3,7 @@
 #include <ext/slist>
 #include <string>
 
+#include <memory>
 #ifdef DEBUG
 #include "debug.h"
 #endif
@@ -24,55 +25,51 @@ template <typename T>
 class my_queue : public slist<T> {
 private:
     const string m_name;     // for debug string const char*
+    // private type!
+    // typename _Node *last_node;
+    typename  slist<T>::iterator m_last_node;
 public:
 
     [[nodiscard]] const char* get_name() const {
-        return m_name.c_str();//  ?:"(unknown)"
+        return m_name.c_str();
     }
 
-    [[nodiscard]] int length() const {
-        return m_list.size();
-    }
-
-    [[nodiscard]] bool empty() const {
-        return (m_list.empty());
-    }
-
-    const T* front () const {
-        return m_list.front();
+    typename slist<T>::size_type length() const {
+        return this->size();
     }
 
     // override:
-    T* pop() {
+    T pop() {
 #if DEBUG > 1
         DB("%s\n", __func__);
 #endif
         // not thread-safe!
-        T* pointer = m_list.front();
-        m_list.pop_front();
+        T value = slist<T>::front();
+        // I cannot invoke:
+        // there are no arguments to 'pop_front' that depend on a template parameter, so a declaration of 'pop_front' must be available
+        this->pop_front();
         // invalidate iterators
-        if (m_list.empty())
-            last_node = m_list.begin();
-        return pointer;
+        if (this->empty())
+            m_last_node = this->begin();
+        return value;
     }
 
-
-    void push(T* value) {
+    void push(T&& value) {
 #if DEBUG > 1
         DB(("%s: %s: now %d + 1\n", __FUNCTION__, get_name(), length()));
 #endif
-        if (!empty ()) {
-            last_node = m_list.insert_after(last_node, value);
+        if (! this->empty()) {
+            m_last_node = this->insert_after(m_last_node, value); // std::forward()
         } else {
-            m_list.push_front(value);
-            last_node = m_list.begin();
+            this->push_front(std::forward<T>(value));  // forward() didn't work!
+            m_last_node = this->begin();
         }
     }
 
     // fixme: move-?
     void push(const T& value) {   // we clone the value!
-        T* clone = new T(value);
-        push(clone);
+        T clone(value);
+        push(std::move(clone));
     }
 
     /* move the content of appendix to the END of this queue
@@ -81,7 +78,7 @@ public:
      */
     void append (my_queue& suffix) {
         // appendix
-        if (empty()) {
+        if (this->empty()) { // fixme!
 #ifdef DEBUG
             DB("%s: bad state\n", __func__);
 #endif
@@ -90,46 +87,49 @@ public:
         }
 
 #if DEBUG > 1
-        DB(("%s: %s: appending/moving all from %s:\n", __FUNCTION__, get_name(),
+        DB(("%s: %s: appending/moving all from %s:\n",
+            __func__,
+            get_name(),
             suffix.get_name()));
 #endif
-        if (! suffix.m_list.empty()) {
-            m_list.splice_after(last_node, suffix.m_list);
-            last_node=suffix.last_node;
+        if (! suffix.empty()) {
+            this->splice_after(m_last_node, suffix);
+            m_last_node = suffix.m_last_node;
         }
+
 #if DEBUG > 1
-            DB(("%s now has %d\n", get_name(), length()));
-            DB(("%s now has %d\n", suffix.get_name(), suffix.length()));
+        DB(("%s now has %d\n", get_name(), length()));
+        DB(("%s now has %d\n", suffix.get_name(), suffix.length()));
 #endif
-        }
+    }
+
 
     // const char* name = NULL
     explicit my_queue(string&& name) : m_name(std::move(name)) {
 #ifdef DEBUG
         DB("%s: constructor\n", __func__);
 #endif
-        last_node = m_list.end();
+        m_last_node = this->end();
     };
 
 
     void swap(my_queue& peer) noexcept {
-        typename slist<T*>::iterator temp;
-        temp = last_node;
+        slist<T>::swap(peer);
+        // m_list.swap(peer.m_list);
 
-        m_list.swap(peer.m_list);
+        typename slist<T>::iterator temp;
+        temp = m_last_node;
 
         // iter_swap(last_node,peer.last_node);
-        if (m_list.empty())
-            last_node = m_list.begin();
+        if (this->empty())
+            m_last_node = this->begin();
         else {
-            last_node = peer.last_node;
+            m_last_node = peer.m_last_node;
         }
 
-        if (peer.m_list.empty())
-            peer.last_node = peer.m_list.begin();
+        if (peer.empty())
+            peer.m_last_node = peer.begin();
         else
-            peer.last_node = temp;
+            peer.m_last_node = temp;
     }
 };
-
-#endif
