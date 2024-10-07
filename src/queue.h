@@ -26,7 +26,7 @@ template <typename T>
 class my_queue
 {
 private:
-    slist<T*> list;
+    slist<T*> m_list;
     const string m_name;     // for debug string const char*
     typename slist<T*>::iterator last_node;
 
@@ -36,48 +36,43 @@ public:
         return m_name.c_str();//  ?:"(unknown)"
     }
 
-    [[nodiscard]] int length() const
-        {
-            return list.size();
-        }
+    [[nodiscard]] int length() const {
+        return m_list.size();
+    }
 
-    [[nodiscard]] bool empty() const
-        {
-            return (list.empty());
-        }
+    [[nodiscard]] bool empty() const {
+        return (m_list.empty());
+    }
 
-    const T* front () const
-        {
-            return list.front();
-        }
+    const T* front () const {
+        return m_list.front();
+    }
 
-    T* pop()                    // top_and_pop()
-        {
+    T* pop() {
 #if DEBUG > 1
-            DB("%s\n", __func__);
+        DB("%s\n", __func__);
 #endif
-            // not thread-safe!
-            T* pointer = list.front();
-            list.pop_front();
-            // invalidate iterators
-            if (list.empty())
-                last_node = list.begin();
-            return pointer;
-        }
+        // not thread-safe!
+        T* pointer = m_list.front();
+        m_list.pop_front();
+        // invalidate iterators
+        if (m_list.empty())
+            last_node = m_list.begin();
+        return pointer;
+    }
 
 
-    void push(T* value)
-        {
+    void push(T* value) {
 #if DEBUG > 1
-            DB(("%s: %s: now %d + 1\n", __FUNCTION__, get_name(), length()));
+        DB(("%s: %s: now %d + 1\n", __FUNCTION__, get_name(), length()));
 #endif
-            if (!empty ()) {
-                last_node = list.insert_after(last_node, value);
-            } else {
-                list.push_front(value);
-                last_node = list.begin();
-            }
+        if (!empty ()) {
+            last_node = m_list.insert_after(last_node, value);
+        } else {
+            m_list.push_front(value);
+            last_node = m_list.begin();
         }
+    }
 
     // fixme: move-?
     void push(const T& value)   // we clone the value!
@@ -90,65 +85,54 @@ public:
      *      this      appendix    this        appendix
      *     xxxxxxx   yyyyy   ->   xxxxyyyy       (empty)
      */
-    void append (my_queue& suffix) // appendix
-        {
-            if (empty()) {
+    void append (my_queue& suffix) {
+        // appendix
+        if (empty()) {
 #ifdef DEBUG
-                DB("%s: bad state\n", __func__);
+            DB("%s: bad state\n", __func__);
 #endif
-                // fixme:
-                return;
-            }
+            // fixme:
+            return;
+        }
 
 #if DEBUG > 1
-            DB(("%s: %s: appending/moving all from %s:\n", __FUNCTION__, get_name(),
-                suffix.get_name()));
+        DB(("%s: %s: appending/moving all from %s:\n", __FUNCTION__, get_name(),
+            suffix.get_name()));
 #endif
-            if (! suffix.list.empty())
-            {
-                list.splice_after(last_node, suffix.list);
-                last_node=suffix.last_node;
-            }
+        if (! suffix.m_list.empty()) {
+            m_list.splice_after(last_node, suffix.m_list);
+            last_node=suffix.last_node;
+        }
 #if DEBUG > 1
             DB(("%s now has %d\n", get_name(), length()));
             DB(("%s now has %d\n", suffix.get_name(), suffix.length()));
 #endif
         }
 
-    ~my_queue()
-        {
-#if 0
-            if (m_name)
-            {
-                m_name = NULL;
-            }
-#endif
-        }
-
     // const char* name = NULL
-    explicit my_queue(string&& name) : m_name(std::move(name))
-        {
+    explicit my_queue(string&& name) : m_name(std::move(name)) {
 #ifdef DEBUG
-            DB("%s: constructor\n", __func__);
+        DB("%s: constructor\n", __func__);
 #endif
-            last_node = list.end();
-        };
+        last_node = m_list.end();
+    };
+
 
     void swap(my_queue& peer) noexcept {
         typename slist<T*>::iterator temp;
         temp = last_node;
 
-        list.swap(peer.list);
+        m_list.swap(peer.m_list);
 
         // iter_swap(last_node,peer.last_node);
-        if (list.empty())
-            last_node = list.begin();
+        if (m_list.empty())
+            last_node = m_list.begin();
         else {
             last_node = peer.last_node;
         }
 
-        if (peer.list.empty())
-            peer.last_node = peer.list.begin();
+        if (peer.m_list.empty())
+            peer.last_node = peer.m_list.begin();
         else
             peer.last_node = temp;
     }
