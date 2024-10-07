@@ -1,6 +1,4 @@
-#ifndef _QUEUE_H_
-#define	_QUEUE_H_ 1
-
+#pragma once
 
 #include <ext/slist>
 #include <string>
@@ -23,13 +21,9 @@ using namespace __gnu_cxx;
    pop() returns the pointer!
 */
 template <typename T>
-class my_queue
-{
+class my_queue : public slist<T> {
 private:
-    slist<T*> m_list;
     const string m_name;     // for debug string const char*
-    typename slist<T*>::iterator last_node;
-
 public:
 
     [[nodiscard]] const char* get_name() const {
@@ -48,6 +42,7 @@ public:
         return m_list.front();
     }
 
+    // override:
     T* pop() {
 #if DEBUG > 1
         DB("%s\n", __func__);
@@ -75,11 +70,10 @@ public:
     }
 
     // fixme: move-?
-    void push(const T& value)   // we clone the value!
-        {
-            T* clone = new T(value);
-            push(clone);
-        }
+    void push(const T& value) {   // we clone the value!
+        T* clone = new T(value);
+        push(clone);
+    }
 
     /* move the content of appendix to the END of this queue
      *      this      appendix    this        appendix
