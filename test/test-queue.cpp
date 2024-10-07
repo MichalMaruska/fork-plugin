@@ -32,17 +32,18 @@ TEST_F(queueTest, oneElement) {
     q0_.push(elem);
     elem = new_value;
     EXPECT_EQ(q0_.length(), 1);
-    EXPECT_EQ(*q0_.front(), old_value);
+    EXPECT_EQ(q0_.front(), old_value);
 }
 
 TEST_F(queueTest, oneElementPointer) {
 // push by pointer:
     int x = 7;
     int new_value = 8;
-    q0_.push(&x);
-    x= new_value;
+    q0_.push(x);
+    q0_.front() = new_value;
+    // x= new_value;
     EXPECT_EQ(q0_.length(), 1);
-    EXPECT_EQ(*q0_.front(), new_value);
+    EXPECT_EQ(q0_.front(), new_value);
 }
 
 // disable?
