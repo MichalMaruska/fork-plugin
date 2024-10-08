@@ -35,8 +35,8 @@ TEST_F(queueTest, oneElement) {
     EXPECT_EQ(q0_.front(), old_value);
 }
 
+// no, this is  FrontReference
 TEST_F(queueTest, oneElementPointer) {
-// push by pointer:
     int x = 7;
     int new_value = 8;
     q0_.push(x);
@@ -52,21 +52,28 @@ TEST_F(queueTest, slice) {
     // Given:
     auto newQueue = my_queue<int>("tmp");
     newQueue.push(50);
+
     q0_.push(5);
     q0_.append(newQueue);
+
     // CHECK
     EXPECT_EQ(q0_.length(), 2);
 }
 
-// bug:
 TEST_F(queueTest, slice_empty) {
     // Given:
     GTEST_SKIP() << "Skipping single test";
     auto newQueue = my_queue<int>("tmp");
     newQueue.push(50);
+#if 0
+    // bug:
+    // cannot be empty!
+    q0_.push(1);
+#endif
     // Do:   append:
     q0_.append(newQueue);
     // CHECK
+    EXPECT_EQ(newQueue.length(), 0);
     EXPECT_EQ(q0_.length(), 1);
 }
 
