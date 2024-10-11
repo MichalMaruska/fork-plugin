@@ -1,4 +1,3 @@
-#include "debug.h"
 #include "event_ops.h"
 
 bool
