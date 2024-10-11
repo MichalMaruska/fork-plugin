@@ -91,3 +91,30 @@ exactly one unit test by using ctest -R MyTest.TestA.
 EXTERNC void mylibrary_mytype_doit(mylibrary_mytype_t self, int param);
 
 #undef EXTERNC
+
+* why extern?
+
+
+* missing symbols:
+- explicit template instantiation
+- at runtime crash --- still missing symbols?
+
+nm --undefined-only  src/libfork.so  |grep release_p
+
+why does it simply exit?
+
+
+
+
+/usr/lib/xorg/Xorg: symbol lookup error: /usr/lib/xorg/modules/fork.so: undefined symbol: detail_of
+
+objdump -x  src/CMakeFiles/fork.dir/event_ops.cpp.o
+so it's C++
+
+00000000000000a5 g     F .text  0000000000000011 .hidden _Z9detail_ofPK14_InternalEvent
+
+** objdump -t  src/CMakeFiles/fork.dir/event_ops.cpp.o
+
+
+only _X_EXPORT makes visible!
+all other .hidden
