@@ -8,7 +8,7 @@
 #include "debug.h"
 #endif
 
-using namespace __gnu_cxx;
+// using namespace __gnu_cxx;
 
 
 /* LIFO -- single-linked list
@@ -21,19 +21,19 @@ using namespace __gnu_cxx;
    pop() returns the pointer!
 */
 template <typename T>
-class my_queue : public slist<T> {
+class my_queue : public __gnu_cxx::slist<T> {
 private:
     const std::string m_name;     // for debug string const char*
     // private type!
     // typename _Node *last_node;
-    typename  slist<T>::iterator m_last_node;
+    typename  __gnu_cxx::slist<T>::iterator m_last_node;
 public:
 
     [[nodiscard]] const char* get_name() const {
         return m_name.c_str();
     }
 
-    typename slist<T>::size_type length() const {
+    typename __gnu_cxx::slist<T>::size_type length() const {
         return this->size();
     }
 
@@ -43,7 +43,7 @@ public:
         DB("%s\n", __func__);
 #endif
         // not thread-safe!
-        T value = slist<T>::front();
+        T value = this->front(); // __gnu_cxx::slist<T>::
         // I cannot invoke:
         // there are no arguments to 'pop_front' that depend on a template parameter, so a declaration of 'pop_front' must be available
         this->pop_front();
@@ -109,14 +109,13 @@ public:
         DB("%s: constructor\n", __func__);
 #endif
         m_last_node = this->end();
-    };
-
+    }
 
     void swap(my_queue& peer) noexcept {
-        slist<T>::swap(peer);
+        __gnu_cxx::slist<T>::swap(peer);
         // m_list.swap(peer.m_list);
 
-        typename slist<T>::iterator temp;
+        typename __gnu_cxx::slist<T>::slist<T>::iterator temp;
         temp = m_last_node;
 
         // iter_swap(last_node,peer.last_node);
