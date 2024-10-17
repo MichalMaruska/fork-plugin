@@ -8,7 +8,6 @@
 #include "debug.h"
 #endif
 
-using namespace std;
 using namespace __gnu_cxx;
 
 
@@ -24,7 +23,7 @@ using namespace __gnu_cxx;
 template <typename T>
 class my_queue : public slist<T> {
 private:
-    const string m_name;     // for debug string const char*
+    const std::string m_name;     // for debug string const char*
     // private type!
     // typename _Node *last_node;
     typename  slist<T>::iterator m_last_node;
@@ -105,7 +104,7 @@ public:
 
 
     // const char* name = NULL
-    explicit my_queue(string&& name) : m_name(std::move(name)) {
+    explicit my_queue(std::string&& name) : m_name(std::move(name)) {
 #ifdef DEBUG
         DB("%s: constructor\n", __func__);
 #endif
