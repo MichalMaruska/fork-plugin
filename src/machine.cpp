@@ -241,8 +241,8 @@ forkingMachine<Keycode, Time>::dump_last_events_to_client(event_publisher* publi
    // todo:
    // fixme: we need to increase an iterator .. pointer .... to the C array!
    // last_events.
-   for_each(last_events.begin(),
-            last_events.end(),
+   for_each(last_events_log.begin(),
+            last_events_log.end(),
             lambda);
 
    mdb("sending %d events\n", max_requested);
@@ -314,7 +314,7 @@ forkingMachine<Keycode, Time>::flush_to_next()
         // (ORDER) this event must be delivered before any other!
         // so no preemption of this part! fixme!
         // yet, the next plugin could call in here? to do what?
-        last_events.push_back(environment->archive_event(*ev));
+        last_events_log.push_back(environment->archive_event(*ev));
 
         // machine. fixme: it's not true -- it cannot!
         // 2020: it can!
