@@ -21,5 +21,7 @@ add_subdirectory(src)
 
 export(EXPORT fork FILE dump.cmake)
 
+include(./CodeCoverage.cmake)
+# ai cmake-extras
 enable_testing()
 add_subdirectory(test)
