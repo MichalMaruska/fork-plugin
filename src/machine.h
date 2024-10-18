@@ -306,7 +306,33 @@ public:
         else return 0;
     }
 
-    bool create_configs();
+    /** Create 2 configuration sets:
+        0. w/o forking,  no-op.
+        1. user-configurable
+        this is on loading, so should not use Abort allocation policy:
+
+        @return false if allocation  failed.
+    */
+    bool create_configs() {
+        environment->log("%s\n", __func__);
+
+        try {
+            auto config_no_fork = std::unique_ptr<fork_configuration>(new fork_configuration);
+            config_no_fork->debug = 0; // should be settable somehow.
+
+            auto user_configurable = std::unique_ptr<fork_configuration>(new fork_configuration);
+            user_configurable->debug = 1;
+
+            // todo:
+            // user_configurable->next = config_no_fork.release();
+
+            config = user_configurable.release();
+            return true;
+
+        } catch (std::bad_alloc &exc) {
+            return false;
+        }
+    }
 
     void dump_last_events(event_dumper* dumper) const {
 #if 0
