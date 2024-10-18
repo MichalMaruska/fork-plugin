@@ -30,13 +30,7 @@ template <typename Keycode, typename Time>
 // so key_event
 class forkingMachine
 {
-    /* How we decided for the fork */
-    enum class fork_reason {
-        reason_total,               // key pressed too long
-        reason_overlap,             // key press overlaps with another key
-        reason_force                // mouse-button was pressed & triggered fork.
-    };
-
+private:
     enum fork_state_t {  // states of the automaton
         st_normal,
         st_suspect,
@@ -45,8 +39,13 @@ class forkingMachine
         st_activated
     };
 
+    /* How we decided for the fork */
+    enum class fork_reason {
+        reason_total,               // key pressed too long
+        reason_overlap,             // key press overlaps with another key
+        reason_force                // mouse-button was pressed & triggered fork.
+    };
 
-private:
     /* used only for debugging */
     char const * const state_description[5] = {
         "normal",
@@ -111,11 +110,13 @@ public:
        forked keycode for the release event. */
     Keycode          forkActive[MAX_KEYCODE];
 
+private:
     last_events_t last_events_log;
     int max_last = 10; // can be updated!
 
     using fork_configuration = ForkConfiguration<Keycode, Time>;
 
+public:
     fork_configuration *config; // list<fork_configuration>
 
 /* The Static state = configuration.
@@ -129,6 +130,7 @@ public:
  * ....
  */
 
+private:
     int set_last_events_count(const int new_max) // fixme:  lock ??
     {
         mdb("%s: allocating %d events\n", __FUNCTION__, new_max);
@@ -146,7 +148,6 @@ public:
         return 0;
     }
 
-private:
     void check_locked() const {
         assert(mLock);
     }
