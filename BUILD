@@ -3,7 +3,8 @@
 
 mkdir build
 cd build
-cmake -DCMAKE_BUILD_TYPE=debug -G Ninja  ../
+cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja  ../  -DFORCE_COLORED_OUTPUT=1
+
 cmake --build .
 
 # for some IDE:
