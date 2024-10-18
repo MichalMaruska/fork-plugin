@@ -244,7 +244,6 @@ static void
 set_wakeup_time(PluginInstance* plugin)
 {
     machineRec* machine = plugin_machine(plugin);
-    machine->check_locked();
     Time machine_time = machine->next_decision_time();
     plugin->wakeup_time =
         // fixme:  but ZERO has certain meaning!
@@ -321,7 +320,6 @@ ForkProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
     {
         // This is C++ code:
         const auto machine = plugin_machine(plugin);
-        machine->check_unlocked();
         machine->lock();           // fixme: mouse must not interrupt us.
         {
             auto* ev = create_xorg_platform_event(event, owner);
@@ -367,8 +365,6 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
 {
     machineRec* machine = plugin_machine(plugin);
     machine->mdb("%s @ time %u\n", __func__, (int)now);
-    machine->check_unlocked();
-
     machine->lock();
     machine->step_in_time_locked(now); // possibly unlocks
 
