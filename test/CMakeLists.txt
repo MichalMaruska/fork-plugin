@@ -4,11 +4,13 @@
 
 # this should be compatible with ctest(1).
 include(GoogleTest)
+include(../CodeCoverage.cmake)
 
 # this was crucial to use GTest::gtest_main
 find_package(GTest REQUIRED)
 # find_package(GMock REQUIRED)
 # include(GTest/GTestTargets)
+append_coverage_compiler_flags()
 
 add_executable(test-circular test-circular.cpp)
 target_link_libraries(test-circular GTest::gtest_main)

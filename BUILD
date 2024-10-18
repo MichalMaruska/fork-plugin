@@ -7,6 +7,20 @@ cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja  ../  -DFORCE_COLORED_OUTPUT=1
 
 cmake --build .
 
+(cd test/; ctest )
+
+** Get coverage report:
+
+lcov -c -d . -o main_coverage.info
+*** But I don't want to include c++/14/bits/ ....
+lcov --exclude '**/boost/*/*.hpp'  --exclude '/usr/include/**' --exclude  '**/c++/14/**/*.h'  --exclude $(realpath ..)/test/\*   -c -d .   -o main_coverage.info
+
+genhtml main_coverage.info --output-directory out
+
+Overall coverage rate:
+  lines......: 53.6% (1238 of 2310 lines)
+  functions..: 42.4% (722 of 1703 functions)
+
 # for some IDE:
 ln -s build/compile_commands.json .
 
