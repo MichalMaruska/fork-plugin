@@ -16,7 +16,7 @@
 
 // namespace fork {
 
-typedef boost::circular_buffer<archived_event> last_events_type;
+typedef boost::circular_buffer<archived_event> last_events_t;
 
 /* states of the automaton: */
 
@@ -117,7 +117,7 @@ public:
        forked keycode for the release event. */
     Keycode          forkActive[MAX_KEYCODE];
 
-    last_events_type last_events; // history
+    last_events_t last_events_log;
     int max_last = 10; // can be updated!
 
     using fork_configuration = ForkConfiguration<Keycode, Time>;
@@ -145,7 +145,7 @@ public:
         }
         else
         {
-            last_events.set_capacity(new_max);
+            last_events_log.set_capacity(new_max);
         }
 
         max_last = new_max;
@@ -264,8 +264,8 @@ public:
           config(nullptr) {
 
         environment->log("ctor: allocating last_events\n");
-        last_events.set_capacity(max_last);
-        environment->log("ctor: allocated last_events %lu (%lu\n", last_events.size(), max_last);
+        last_events_log.set_capacity(max_last);
+        environment->log("ctor: allocated last_events %lu (%lu\n", last_events_log.size(), max_last);
 
         environment->log("ctor: resetting forkActive\n");
         for (unsigned char &i: forkActive) {
@@ -314,8 +314,8 @@ public:
         std::function<void(const archived_event&)> lambda = [dumper](const archived_event& ev){ dumper->operator()(ev); };
 #endif
 
-        std::for_each(last_events.begin(),
-                      last_events.end() - 1,
+        std::for_each(last_events_log.begin(),
+                      last_events_log.end() - 1,
                       lambda);
     }
 
