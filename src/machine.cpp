@@ -230,7 +230,7 @@ forkingMachine<Keycode, Time>::log_state(const char* message) const
 {
     mdb("%s%s%s state: %s, queue: %d .... %s\n",
         fork_color, __func__, color_reset,
-        describe_machine_state(),
+        describe_machine_state(this->state),
         internal_queue.length(),
         message
         );
@@ -413,7 +413,7 @@ forkingMachine<Keycode, Time>::activate_fork() // possibly unlocks
     mdb("%s the key %d-> forked to: %d. Internal queue has %d events. %s\n", __func__,
         forked_key, forkActive[forked_key],
         internal_queue.length (),
-        describe_machine_state());
+        describe_machine_state(this->state));
 
     rewind_machine();
 }
@@ -659,7 +659,7 @@ forkingMachine<Keycode, Time>::step_by_time(Time current_time)
     [[maybe_unused]] fork_reason reason; // fixme: unused!
     mdb("%s%s%s state: %s, queue: %d, time: %u key: %d\n",
          fork_color, __func__, color_reset,
-         describe_machine_state(),
+         describe_machine_state(this->state),
          internal_queue.length (), (int)current_time,
          suspect);
 
@@ -743,7 +743,7 @@ template <typename Keycode, typename Time>
 
     mdb("%s%s%s state: %s, queue: %d\n", // , event: %d %s%c %s %s
         info_color,message,color_reset,
-        describe_machine_state(),
+        describe_machine_state(this->state),
         internal_queue.length ()
         );
     environment->fmt_event(ev->p_event);

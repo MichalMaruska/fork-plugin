@@ -47,7 +47,9 @@ private:
     };
 
     /* used only for debugging */
+    static constexpr
     char const * const state_description[5] = {
+        // map<fork_state_t, string>
         "normal",
         "suspect",
         "verify",
@@ -163,9 +165,9 @@ private:
 
     static constexpr int BufferLength = 200;
 
-    [[nodiscard]] const char*
-    describe_machine_state() const
-    {
+    [[nodiscard]]
+    static const char*
+    describe_machine_state(fork_state_t state) {
         static char buffer[BufferLength];
 
         snprintf(buffer, BufferLength, "%s[%dm%s%s",
