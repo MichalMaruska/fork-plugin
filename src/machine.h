@@ -56,19 +56,13 @@ private:
         "activated"
     };
 
+    // atomic?
     volatile int mLock;           /* the mouse interrupt handler should ..... err!  `volatile'
                                   *
                                   * useless mmc!  But i want to avoid any caching it.... SMP ??*/
 public:
     platformEnvironment* environment;
 #if USE_LOCKING
-    void check_locked() const {
-        assert(mLock);
-    }
-    void check_unlocked() const {
-        assert(mLock == 0);
-    }
-
     void lock()
     {
         mLock=1;
@@ -153,6 +147,13 @@ public:
     }
 
 private:
+    void check_locked() const {
+        assert(mLock);
+    }
+    void check_unlocked() const {
+        assert(mLock == 0);
+    }
+
     static bool
     forkable_p(const fork_configuration* config, Keycode code)
     {
@@ -296,6 +297,7 @@ public:
 
     // calculated:
     [[nodiscard]] Time next_decision_time() const {
+        check_locked();
         if ((state == st_verify)
             || (state == st_suspect))
         // we are indeed waiting:

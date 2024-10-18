@@ -116,8 +116,6 @@ TEST_F(machineTest, AcceptEvent) {
   EXPECT_CALL(*environment, relay_event(pevent));
 // .WillOnce(ReturnRef(bar1)
 
-
-  fm->check_unlocked();
   fm->lock();           // fixme: mouse must not interrupt us.
   fm->accept_event(pevent);
   // machine->next_decision_time()
