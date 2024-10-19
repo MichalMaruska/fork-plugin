@@ -503,7 +503,6 @@ machine_configure_get(PluginInstance* plugin, int values[5], int return_config[3
            return 0;
         default:
       machine->mdb("%s: invalid option %d\n", __func__, subtype_n_args(type));
-           ;
    }
    return 0;
 }
@@ -542,13 +541,13 @@ machine_configure(PluginInstance* plugin, int values[5])
         default:
             machine->mdb("%s: invalid option %d\n", __func__, subtype_n_args(type));
     }
-    /* return client->noClientException; */
     machine->mdb("%s: done", __func__);
     return 0;
+    /* return client->noClientException; */
 }
 
 
-/*todo: int*/
+/*todo: int */
 void
 machine_command(ClientPtr client, PluginInstance* plugin, int cmd, int data1,
                 int data2, int data3, int data4)
@@ -561,14 +560,12 @@ machine_command(ClientPtr client, PluginInstance* plugin, int cmd, int data1,
       case fork_client_dump_keys:
       {
           auto dumper = env->get_event_publisher(client, plugin);
-
           /* DB("%s %d %.3s\n", __func__, len, data); */
           machine->dump_last_events_to_client(dumper.get(), data1);
           break;
       }
       default:
           DB("%s Unknown command!\n", __func__);
-          // break;
   }
 }
 
@@ -632,7 +629,6 @@ fork_plug(void          *options,
   ErrorF("%s: %s version %d\n", __func__, FORK_PLUGIN_NAME, PLUGIN_VERSION);
 
   static struct _DevicePluginRec plugin_class = {
-    // slot name,     value
     _B(name, FORK_PLUGIN_NAME),
     _B(instantiate, &make_machine),
     _B(ProcessEvent, ForkProcessEvent),
