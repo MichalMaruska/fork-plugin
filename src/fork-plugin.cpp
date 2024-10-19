@@ -304,7 +304,7 @@ extern "C" /* static*/ Bool
 ForkProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
 // __attribute__((visibility("default")))
 {
-    ErrorF("%s: start %d %s\n", __func__, event->any.type, owner?"owner":"not owner");
+    DB("%s: start %d %s\n", __func__, event->any.type, owner?"owner":"not owner");
 
     if ((event->any.type != ET_KeyPress) && (event->any.type != ET_KeyRelease)) {
         // ET_RawKeyPress
