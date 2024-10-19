@@ -247,9 +247,9 @@ first_non_zero(Time a, Time b)
 
 // set plugin->wakeup_time
 static void
-set_wakeup_time(PluginInstance* plugin)
+set_wakeup_time(PluginInstance *plugin)
 {
-    machineRec* machine = plugin_machine(plugin);
+    machineRec *machine = plugin_machine(plugin);
     Time machine_time = machine->next_decision_time();
     plugin->wakeup_time =
         // fixme:  but ZERO has certain meaning!
@@ -352,7 +352,7 @@ ForkProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
 static Bool
 step_in_time(PluginInstance* plugin, Time now)
 {
-    machineRec* machine = plugin_machine(plugin);
+    machineRec *machine = plugin_machine(plugin);
     machine->mdb("%s: %" TIME_FMT "\n", __func__, now);
     machine->lock();
 
@@ -401,7 +401,7 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
     if (event->any.type == ET_Motion)
     {
 
-        machineRec* machine = plugin_machine(plugin);
+        machineRec *machine = plugin_machine(plugin);
 #if 0
         // fixme:
         if (machine->mLock)
@@ -473,7 +473,7 @@ machine_configure_get(PluginInstance* plugin, int values[5], int return_config[3
 {
    assert (strcmp (PLUGIN_NAME(plugin), FORK_PLUGIN_NAME) == 0);
 
-   machineRec* machine = plugin_machine(plugin);
+   machineRec *machine = plugin_machine(plugin);
 
    int type = values[0];
 
@@ -516,7 +516,7 @@ machine_configure(PluginInstance* plugin, int values[5])
 {
     assert (strcmp (PLUGIN_NAME(plugin), FORK_PLUGIN_NAME) == 0);
 
-    machineRec* machine = plugin_machine(plugin);
+    machineRec *machine = plugin_machine(plugin);
 
     int type = values[0];
     machine->mdb("%s: %d operands, command %d: %d %d %d\n",
@@ -554,8 +554,7 @@ machine_command(ClientPtr client, PluginInstance* plugin, int cmd, int data1,
                 int data2, int data3, int data4)
 {
   DB("%s cmd %d, data %d ...\n", __func__, cmd, data1);
-
-  machineRec* machine = plugin_machine(plugin);
+  machineRec *machine = plugin_machine(plugin);
   auto env = dynamic_cast<XOrgEnvironment*>(machine->environment);
 
   switch (cmd) {
@@ -599,7 +598,7 @@ stop_and_exhaust_machine(PluginInstance* plugin)
 static int
 destroy_plugin(PluginInstance* plugin)
 {
-    machineRec* machine = plugin_machine(plugin);
+    machineRec *machine = plugin_machine(plugin);
     // should be locked from the STOP call?
     machine->lock();
 
