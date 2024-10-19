@@ -198,7 +198,9 @@ public:
 
     virtual void push_time(Time now) override {
         PluginInstance* nextPlugin = plugin->next;
+#if DEBUG > 1
         ErrorF("%s: %" TIME_FMT "\n", __func__, now);
+#endif
         PluginClass(nextPlugin)->ProcessTime(nextPlugin, now);
     }
 
