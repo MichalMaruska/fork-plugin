@@ -365,7 +365,9 @@ step_in_time(PluginInstance* plugin, Time now)
 };
 
 
-/* Called from AllowEvents, after all events from the next plugin have been pushed. */
+/**
+ * Called from AllowEvents, or "next plugin" in the chain.
+ */
 static void
 fork_thaw_notify(PluginInstance* plugin, Time now)
 {
@@ -386,7 +388,7 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
         /* step_in_time_locked(plugin); */
     } else {
         machine->mdb("%s -- NOT sending thaw Notify upwards %s!\n", __func__,
-             plugin_frozen(plugin->next)?"next is frozen":"prev has not NotifyThaw");
+                     plugin_frozen(plugin->next)?"next is frozen":"prev has not NotifyThaw");
         machine->unlock();
     }
 }
@@ -398,8 +400,7 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
                 DeviceEventInfoRec* dei)
 {
     InternalEvent *event = dei->event;
-    if (event->any.type == ET_Motion)
-    {
+    if (event->any.type == ET_Motion) {
 
         machineRec *machine = plugin_machine(plugin);
 #if 0
@@ -418,8 +419,10 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
 }
 
 
-/* We have to make a (new) automaton: allocate default config,
- * register hooks to other devices,
+/**
+ * We have to setup this plugin:
+ * - make a (new) automaton: allocate default config,
+ * - register hooks to other devices,
  *
  * returns: erorr of Success. Should attach stuff by side effect ! */
 PluginInstance*
@@ -433,7 +436,7 @@ make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
     plugin->pclass = plugin_class;
     plugin->device = keybd;
     plugin->frozen = FALSE;
-
+    plugin->wakeup_time = 0;
 
     ErrorF("%s: constructing the machine. Version %d (official release: %s)\n",
            __func__, PLUGIN_VERSION, VERSION_STRING);
@@ -441,16 +444,11 @@ make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
     auto* xorg = new XOrgEnvironment(keybd, plugin);
     auto* const forking_machine = new machineRec(xorg);
     forking_machine->create_configs();
-
-    // set_wakeup_time(plugin, 0);
-    plugin->wakeup_time = 0;
-
     forking_machine->unlock();
 
     plugin->data = static_cast<void *>(forking_machine);
-    //
-    ErrorF("%s:keybd: next %p private %p on: %d\n", __func__, keybd->next, keybd->cpublic.devicePrivate, keybd->cpublic.on);
 
+    ErrorF("%s:keybd: next %p private %p on: %d\n", __func__, keybd->next, keybd->cpublic.devicePrivate, keybd->cpublic.on);
     ErrorF("%s:keybd: coreEvents %d, size %zd %zd\n", __func__, keybd->coreEvents, sizeof(Atom), sizeof(CARD32));
     ErrorF("%s:@%s returning %d\n", __func__, keybd->name, Success);
 
