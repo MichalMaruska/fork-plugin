@@ -313,10 +313,16 @@ public:
 #else
         std::function<void(const archived_event&)> lambda = [dumper](const archived_event& ev){ dumper->operator()(ev); };
 #endif
-
-        std::for_each(last_events_log.begin(),
+        if (last_events_log.full()) {
+            std::for_each(last_events_log.begin(),
                       last_events_log.end() - 1,
                       lambda);
+        } else {
+            std::for_each(last_events_log.begin(),
+                          last_events_log.begin() + last_events_log.size(),
+                          lambda);
+        }
+        environment->log("not sure %s\n", __func__);
     }
 
 };
