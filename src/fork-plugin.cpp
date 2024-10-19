@@ -232,10 +232,9 @@ first_non_zero(Time a, Time b)
 
 // set plugin->wakeup_time
 static void
-set_wakeup_time(PluginInstance *plugin)
+set_wakeup_time(PluginInstance *plugin, Time machine_time)
 {
     machineRec *machine = plugin_machine(plugin);
-    Time machine_time = machine->next_decision_time();
     plugin->wakeup_time =
         // fixme:  but ZERO has certain meaning!
         // this is wrong: if machine waits, it cannot pass to the next-plugin!
@@ -319,7 +318,7 @@ ForkProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
             machine->accept_event(ev);
         }
 
-        set_wakeup_time(plugin);
+        set_wakeup_time(plugin, machine->next_decision_time());
         machine->unlock();
     }
     // by now, if owner, we consumed the event.
@@ -342,7 +341,7 @@ step_in_time(PluginInstance* plugin, Time now)
     machine->lock();
     machine->step_in_time_locked(now); // possibly unlocks
     // todo: we could push the time before the first event in internal queue!
-    set_wakeup_time(plugin);
+    set_wakeup_time(plugin, machine->next_decision_time());
     machine->unlock();
 
     return PLUGIN_NON_FROZEN;
@@ -363,7 +362,7 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
     if (!plugin_frozen(plugin->next) && PluginClass(plugin->prev)->NotifyThaw)
     {
         /* thaw the previous! */
-        set_wakeup_time(plugin);
+        set_wakeup_time(plugin, machine->next_decision_time());
         machine->unlock();
         machine->mdb("%s -- sending thaw Notify upwards!\n", __func__);
         /* fixme:  Tail-recursion! */
