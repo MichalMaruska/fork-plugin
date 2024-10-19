@@ -535,7 +535,6 @@ machine_command(ClientPtr client, PluginInstance* plugin, int cmd, int data1,
       case fork_client_dump_keys:
       {
           auto dumper = env->get_event_publisher(client, plugin);
-          /* DB("%s %d %.3s\n", __func__, len, data); */
           machine->dump_last_events_to_client(dumper.get(), data1);
           break;
       }
