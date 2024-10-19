@@ -116,12 +116,15 @@ handle_config_key(const PluginInstance *const plugin, const InternalEvent *event
     static KeyCode key_to_fork = 0;         //  what key we want to configure
     machineRec* machine;
 
-    if (press_p(event))
-        switch (auto keycode = detail_of(event); keycode) {
+    if (press_p(event)) {
+        auto keycode = detail_of(event);
+        ErrorF("%s: servicing %d\n", __func__, keycode);
+        switch (keycode) {
             case keycodes::PAUSE:
                 machine = plugin_machine(plugin);
                 machine->lock();
                 machine->dump_last_events(std::make_unique<xorg_event_dumper>(plugin->device).get());
+                ErrorF("%s: serviced %d\n", __func__, keycode);
                 machine->unlock();
                 break;
             case keycodes::zero:
@@ -160,6 +163,7 @@ handle_config_key(const PluginInstance *const plugin, const InternalEvent *event
                     key_to_fork = 0;
                 }
         };
+    }
     return true;
 }
 
