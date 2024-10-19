@@ -177,9 +177,6 @@ filter_config_key_maybe(const PluginInstance *const plugin, const InternalEvent*
     static Time last_press_time = 0;
 
     if (config_mode) {
-#if DEBUG > 3
-        ErrorF("in config_mode ...\n");
-#endif
         static bool latch = false;
         // [21/10/04]  I noticed, that some (non-plain ps/2) keyboard generate
         // the release event at the same time as press.
@@ -194,9 +191,6 @@ filter_config_key_maybe(const PluginInstance *const plugin, const InternalEvent*
                 latch = true;
                 return true;
             }
-#if DEBUG > 3
-            ErrorF("exiting config_mode\n");
-#endif
             config_mode = false;
             // fixme: key_to_fork = 0;
             ErrorF("dumping (%s) %" TIME_FMT ": %d!\n",
@@ -213,18 +207,11 @@ filter_config_key_maybe(const PluginInstance *const plugin, const InternalEvent*
             };
         }
     }
-    // `Dump'
-#if DEBUG > 3
-    // ErrorF("%s: %p\n", __func__, event);
-    ErrorF("%s: type %s\n", __func__, event_type_brief(event));
-    ErrorF("%s: keycode: %d\n", __func__, detail_of(event));
-    // ErrorF("%s: %d\n", __func__, event->device_event.detail.key);
-#endif
     if ((detail_of(event) == keycodes::PAUSE) && press_p(event))
         /* wait for the next and act ? but start w/ printing the last events: */
     {
         last_press_time = time_of(event);
-#if DEBUG > 3
+#if DEBUG
         ErrorF("entering config_mode & discarding the event: %" TIME_FMT "!\n", last_press_time);
 #endif
         config_mode = true;
@@ -233,9 +220,7 @@ filter_config_key_maybe(const PluginInstance *const plugin, const InternalEvent*
         return true;
     } else
         last_press_time = 0;
-#if DEBUG > 3
-    ErrorF("%s: end\n", __func__);
-#endif
+
     return false;
 }
 
