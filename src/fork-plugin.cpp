@@ -370,7 +370,7 @@ static void
 fork_thaw_notify(PluginInstance* plugin, Time now)
 {
     machineRec* machine = plugin_machine(plugin);
-    machine->mdb("%s @ time %u\n", __func__, (int)now);
+    machine->mdb("%s @ time %" TIME_FMT "\n", __func__, now);
     machine->lock();
     machine->step_in_time_locked(now); // possibly unlocks
 
