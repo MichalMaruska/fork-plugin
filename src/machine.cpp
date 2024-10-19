@@ -1,5 +1,5 @@
-#define USE_LOCKING 1
 
+#include "config.h"
 #include "machine.h"
 #include "memory.h"
 // uses:
