@@ -348,14 +348,13 @@ ForkProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
     return PLUGIN_NON_FROZEN;
 };
 
-// external API
 static Bool
 step_in_time(PluginInstance* plugin, Time now)
 {
     machineRec *machine = plugin_machine(plugin);
     machine->mdb("%s: %" TIME_FMT "\n", __func__, now);
-    machine->lock();
 
+    machine->lock();
     machine->step_in_time_locked(now); // possibly unlocks
     // todo: we could push the time before the first event in internal queue!
     set_wakeup_time(plugin);
@@ -428,7 +427,6 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
 PluginInstance*
 create_plugin(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
 {
-    DB("%s @%p\n", __func__, keybd);
     DB("%s @%p\n", __func__, static_cast<void *>(keybd->name));
 
     assert (strcmp(plugin_class->name, FORK_PLUGIN_NAME) == 0);
