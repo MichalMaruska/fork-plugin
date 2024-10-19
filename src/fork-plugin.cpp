@@ -163,6 +163,9 @@ handle_config_key(PluginInstance* plugin, const InternalEvent *event)
     return true;
 }
 
+// fixme: configurable!
+constexpr int MINIMUM_DURATION_MSEC = 30;
+
 static bool   // return:  true if handled & should be skipped
 filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const event)
 {
@@ -180,10 +183,10 @@ filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const
         // take the `next' event as in `config_mode'   (latch)
 
         if ((detail_of(event) == keycodes::PAUSE) && release_p(event)) { //  fake ?
-            if ( (time_of(event) - last_press_time) < 30) // fixme: configurable!
             {
                 ErrorF("the key seems buggy, tolerating %" TIME_FMT ": %d! .. & latching config mode\n",
                        time_of(event), (int)(time_of(event) - last_press_time));
+            if ( (time_of(event) - last_press_time) < MINIMUM_DURATION_MSEC) {
                 latch = true;
                 return true;
             }
