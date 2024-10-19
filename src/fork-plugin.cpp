@@ -101,7 +101,6 @@ template class forkingMachine<KeyCode, Time>;
 enum keycodes {
     zero = 19,
     one = 10,
-    pc_break = 110,
     PAUSE = 127,
     key_l = 46,
 };
@@ -119,7 +118,7 @@ handle_config_key(PluginInstance* plugin, const InternalEvent *event)
 
     if (press_p(event))
         switch (auto keycode = detail_of(event); keycode) {
-            case keycodes::pc_break:
+            case keycodes::PAUSE:
                 machine = plugin_machine(plugin);
                 machine->lock();
                 machine->dump_last_events(std::make_unique<xorg_event_dumper>(plugin->device).get());
