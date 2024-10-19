@@ -187,10 +187,10 @@ filter_config_key_maybe(const PluginInstance *const plugin, const InternalEvent*
         // take the `next' event as in `config_mode'   (latch)
 
         if ((detail_of(event) == keycodes::PAUSE) && release_p(event)) { //  fake ?
-            {
-                ErrorF("the key seems buggy, tolerating %" TIME_FMT ": %d! .. & latching config mode\n",
-                       time_of(event), (int)(time_of(event) - last_press_time));
             if ( (time_of(event) - last_press_time) < MINIMUM_DURATION_MSEC) {
+                ErrorF("the key seems buggy, tolerating %" TIME_FMT ": duration:%" TIME_FMT ". Latching config mode\n",
+                       time_of(event),
+                       time_of(event) - last_press_time);
                 latch = true;
                 return true;
             }
