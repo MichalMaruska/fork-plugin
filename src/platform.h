@@ -25,8 +25,7 @@ struct key_event {
 class event_dumper {
     public:
     virtual void operator() (const archived_event& event) = 0;
-    // must have virtual
-    virtual ~event_dumper() = 0;
+    virtual ~event_dumper() {};
 };
 
 class event_publisher {
@@ -34,7 +33,7 @@ class event_publisher {
     virtual void prepare(int max_events) = 0;
     virtual int commit() = 0;
     virtual void event(const archived_event& event) = 0;
-    virtual ~event_publisher() = 0;
+    virtual ~event_publisher() {};
 };
 
 
