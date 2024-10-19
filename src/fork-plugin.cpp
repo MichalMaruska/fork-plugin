@@ -110,7 +110,7 @@ enum keycodes {
  * Pause  Pause  -> dump
  */
 static bool // return @true if config-mode continues.
-handle_config_key(PluginInstance* plugin, const InternalEvent *event)
+handle_config_key(const PluginInstance *const plugin, const InternalEvent *event)
 {
     // I could use optional
     static KeyCode key_to_fork = 0;         //  what key we want to configure
@@ -167,7 +167,7 @@ handle_config_key(PluginInstance* plugin, const InternalEvent *event)
 constexpr int MINIMUM_DURATION_MSEC = 30;
 
 static bool   // return:  true if handled & should be skipped
-filter_config_key_maybe(PluginInstance* const plugin, const InternalEvent* const event)
+filter_config_key_maybe(const PluginInstance *const plugin, const InternalEvent* const event)
 {
     static bool config_mode = false; // While the Pause key is down.
     static Time last_press_time = 0;
