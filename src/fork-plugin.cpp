@@ -240,7 +240,6 @@ set_wakeup_time(PluginInstance *plugin, Time machine_time)
         // this is wrong: if machine waits, it cannot pass to the next-plugin!
         first_non_zero(machine_time, plugin->next->wakeup_time);
 
-    // || ( DEBUG > 1 )
     if (plugin->wakeup_time != 0) {
         if (machine_time != 0) {
             machine->mdb("%s %s wakeup_time = %d, next wants: %u, we %" TIME_FMT "\n",
