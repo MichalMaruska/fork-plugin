@@ -600,13 +600,11 @@ destroy_plugin(PluginInstance* plugin)
 {
     machineRec *machine = plugin_machine(plugin);
     // should be locked from the STOP call?
-    machine->lock();
-
-    // delete machine->last_events;
     DeleteCallback(&DeviceEventCallback, (CallbackProcPtr) mouse_call_back,
                    (void*) plugin);
+    // still dangerous? We need to wait for the callback to finish, but it's in this thread!
+    machine->lock();
     delete machine;
-    // machine->mdb("%s: what to do?\n", __func__);
     return 1;
 }
 
