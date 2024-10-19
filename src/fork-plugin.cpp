@@ -426,7 +426,7 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
  *
  * returns: erorr of Success. Should attach stuff by side effect ! */
 PluginInstance*
-make_machine(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
+create_plugin(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
 {
     DB("%s @%p\n", __func__, keybd);
     DB("%s @%p\n", __func__, static_cast<void *>(keybd->name));
@@ -628,7 +628,7 @@ fork_plug(void          *options,
 
   static struct _DevicePluginRec plugin_class = {
     _B(name, FORK_PLUGIN_NAME),
-    _B(instantiate, &make_machine),
+    _B(instantiate, &create_plugin),
     _B(ProcessEvent, ForkProcessEvent),
     _B(ProcessTime, step_in_time),
     _B(NotifyThaw, fork_thaw_notify),
