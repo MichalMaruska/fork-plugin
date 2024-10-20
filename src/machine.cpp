@@ -227,18 +227,18 @@ forkingMachine<Keycode, Time>::dump_last_events_to_client(event_publisher* publi
 
 
 
-/** logging
+/**
+ * Logging
  */
 template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::log_state(const char* message) const
 {
-    mdb("%s%s%s state: %s, queue: %d .... %s\n",
+    mdb("%s%s%s state: %s, queue: %d.  %s\n",
         fork_color, __func__, color_reset,
         describe_machine_state(this->state),
         internal_queue.length(),
-        message
-        );
+        message);
 }
 
 template <typename Keycode, typename Time>
@@ -478,27 +478,21 @@ forkingMachine<Keycode, Time>::try_to_play(bool force_also)
     // notice that instead of recursion, all the calls to `rewind_machine' are
     // followed by return to this cycle!
     while (! environment->output_frozen()) {
-        // environment->log("%s:\n", __func__);
-
         if (! input_queue.empty()) {
-#if DEBUG > 1
-            environment->log("%s: pop!\n", __func__);
-#endif
             std::unique_ptr<key_event> ev(input_queue.pop());
-
             step_by_key(std::move(ev));
         } else {
             if (mCurrent_time && (state != st_normal)) {
                 if (step_by_time(mCurrent_time))
                     // If this time helped to decide -> machine rewound,
-                    // we have to try again.
+                    // we have to try again, maybe the queue is not empty?.
                     continue;
             }
-           // environment->log("%s:2\n", __func__);
+
             if (force_also && (state != st_normal)) {
                 step_by_force();
             } else {
-                return;
+                break;
             }
         }
     }

@@ -103,11 +103,12 @@ private:
     Time mCurrent_time;          // the last time we received from previous plugin/device
 
     list_with_tail internal_queue;
-    /* Still undecided events: these events alone don't decide what event is the 1st on the
-       queue.*/
+    /* Still undecided events: these events alone don't decide
+       how to interpret the first event on the queue.*/
     list_with_tail input_queue;  /* Not yet processed at all. Since we wait for external
                                   * events to resume processing (Grab is active-frozen) */
-    list_with_tail output_queue; /* We have decided, but externals don't accept, so we keep them. */
+    list_with_tail output_queue; /* We have decided, so possibly modified events (forked),
+                                  * Externals don't accept, so we keep them. */
 
 public:
     /* we cannot hold only a Bool, since when we have to reconfigure, we need the original
