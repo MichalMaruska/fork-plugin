@@ -64,7 +64,7 @@ private:
                                   *
                                   * useless mmc!  But i want to avoid any caching it.... SMP ??*/
 public:
-    platformEnvironment* environment;
+    std::unique_ptr<platformEnvironment> environment;
 #if USE_LOCKING
     void lock()
     {

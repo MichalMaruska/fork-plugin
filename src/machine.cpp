@@ -317,11 +317,11 @@ forkingMachine<Keycode, Time>::flush_to_next()
         // we should push the time!
         Time now;
         if (!output_queue.empty()) {
-            now = queue_front_time(output_queue, environment);
+            now = queue_front_time(output_queue, environment.get());
         } else if (!internal_queue.empty()) {
-            now = queue_front_time(internal_queue, environment);
+            now = queue_front_time(internal_queue, environment.get());
         } else if (!input_queue.empty()) {
-            now = queue_front_time(input_queue, environment);
+            now = queue_front_time(input_queue, environment.get());
         } else {
             // fixme: this is accessed & written to directly by fork.cpp: machine->mCurrent_time = now;
             now = mCurrent_time;

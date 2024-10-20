@@ -417,8 +417,8 @@ create_plugin(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
     ErrorF("%s: constructing the machine. Version %d (official release: %s)\n",
            __func__, PLUGIN_VERSION, VERSION_STRING);
 
-    auto* xorg = new XOrgEnvironment(keybd, plugin);
-    auto* const forking_machine = new machineRec(xorg);
+    auto xorg = std::make_unique<XOrgEnvironment>(keybd, plugin);
+    auto* const forking_machine = new machineRec(xorg.release());
     forking_machine->create_configs();
     forking_machine->unlock();
 
@@ -528,7 +528,7 @@ machine_command(ClientPtr client, PluginInstance* plugin, int cmd, int data1,
 {
   DB("%s cmd %d, data %d ...\n", __func__, cmd, data1);
   machineRec *machine = plugin_machine(plugin);
-  auto env = dynamic_cast<XOrgEnvironment*>(machine->environment);
+  auto env = dynamic_cast<XOrgEnvironment*>(machine->environment.get());
 
   switch (cmd) {
       case fork_client_dump_keys:
