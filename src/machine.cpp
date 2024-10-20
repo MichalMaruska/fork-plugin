@@ -424,11 +424,14 @@ forkingMachine<Keycode, Time>::rewind_machine()
     }
 }
 
-/* note: used only in configure.c!
+
+/**
  * Resets the machine, so as to reconsider the events on the
  * `internal' queue.
  * Apparently the criteria/configuration has changed!
  * Reasonably this is in response to a key event. So we are in Final state.
+ *
+ * fixme: why not using rewind_machine()
  */
 template <typename Keycode, typename Time>
 void
@@ -450,8 +453,8 @@ forkingMachine<Keycode, Time>::replay_events(bool force_also)
     try_to_play(force_also);
 }
 
-/*
- * Take from input_queue, + the mCurrent_time + force   -> run the machine.
+/**
+ * Take from `input_queue', + the mCurrent_time + force  -> run the machine.
  */
 template <typename Keycode, typename Time>
 void
@@ -459,14 +462,14 @@ forkingMachine<Keycode, Time>::try_to_play(bool force_also)
 {
     // fixme: maybe All I need is the nextPlugin?
 
-    // log_queues_and_nextplugin(message)
     if (environment->output_frozen() ||
         (!input_queue.empty() || !internal_queue.empty())
-        ){
+        ) {
+        // log_queues_and_nextplugin(message)
         mdb("%s: next %s: internal %d, input: %d\n", __func__,
-             (environment->output_frozen()?"frozen":"NOT frozen"),
-             internal_queue.length (),
-             input_queue.length ());
+            (environment->output_frozen()?"frozen":"NOT frozen"),
+            internal_queue.length(),
+            input_queue.length());
     }
 
     // notice that instead of recursion, all the calls to `rewind_machine' are
