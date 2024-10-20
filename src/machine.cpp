@@ -509,25 +509,24 @@ forkingMachine<Keycode, Time>::try_to_play(bool force_also)
 template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::accept_event(PlatformEvent* pevent) {
-    auto* ev = (key_event*)malloc(sizeof(key_event));
-    if (ev == nullptr) {
-        /* This message should be static string. otherwise it fails as well? */
-        environment->log("%s: out-of-memory, dropping\n", __func__);
-    };
+    // I could really create
+    // key_event ev;
+    // and push(ev)?
 
-    ev->p_event = pevent;
-    ev->forked = 0;
+    // this can only throw
+    auto ev = std::make_unique<key_event>(pevent);
+    ev->forked = no_key; // makes sense?
 
     // fixme:
     mCurrent_time = 0; // time_of(ev->event);
 #if DEBUG > 1
     environment->log("%s: put on input Q\n", __func__);
 #endif
-    input_queue.push(ev);
 
 #if DEBUG > 1
     environment->log("%s: try to play2\n", __func__);
 #endif
+    input_queue.push(ev.release());
     try_to_play(false);
 
 #if DEBUG > 1

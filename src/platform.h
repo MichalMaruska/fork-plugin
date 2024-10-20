@@ -20,6 +20,7 @@ class PlatformEvent {};
 struct key_event {
     PlatformEvent* p_event;
     KeyCode forked; /* if forked to (another keycode), this is the original key */
+    key_event(PlatformEvent* p) : p_event(p){};
     ~key_event() {
         // should be nullptr
         free(p_event);
