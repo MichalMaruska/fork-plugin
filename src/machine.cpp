@@ -5,6 +5,7 @@
 // uses:
 #include "debug.h"
 #include "colors.h"
+#include <memory>
 
 // I need Time:
 extern "C"
@@ -343,11 +344,11 @@ forkingMachine<Keycode, Time>::flush_to_next()
 /* note, that after this EV could point to a deallocated memory! */
 template <typename Keycode, typename Time>
 void
-forkingMachine<Keycode, Time>::output_event(key_event* ev) // unlocks possibly!
+forkingMachine<Keycode, Time>::output_event(std::unique_ptr<key_event> ev) // unlocks possibly!
 {
     assert(ev->p_event != nullptr);
-    mdb("%s: %p %p\n", __func__, ev, ev->p_event);
-    output_queue.push(ev);
+    mdb("%s: %p %p\n", __func__, ev.get(), ev->p_event);
+    output_queue.push(ev.release());
     flush_to_next();
 };
 
@@ -476,9 +477,9 @@ forkingMachine<Keycode, Time>::try_to_play(bool force_also)
 #if DEBUG > 1
             environment->log("%s: pop!\n", __func__);
 #endif
-            key_event *ev = input_queue.pop();
+            std::unique_ptr<key_event> ev(input_queue.pop());
 
-            step_by_key(ev);
+            step_by_key(std::move(ev));
         } else {
             if (mCurrent_time && (state != st_normal)) {
                 if (step_by_time(mCurrent_time))
@@ -559,7 +560,7 @@ forkingMachine<Keycode, Time>::step_by_force()
 // So the event proves, that the current event is not forked.
 template <typename Keycode, typename Time>
 void
-forkingMachine<Keycode, Time>::do_confirm_non_fork_by(key_event *ev) // possibly unlocks
+forkingMachine<Keycode, Time>::do_confirm_non_fork_by(std::unique_ptr<key_event> ev) // possibly unlocks
 {
     assert(state == st_suspect || state == st_verify);
 
@@ -568,26 +569,26 @@ forkingMachine<Keycode, Time>::do_confirm_non_fork_by(key_event *ev) // possibly
     // assert(mDecision_time == 0);
 
     change_state(st_deactivated);
-    internal_queue.push(ev); //  this  will be re-processed!!
+    internal_queue.push(ev.release()); //  this  will be re-processed!!
 
-    key_event* non_forked_event = internal_queue.pop();
+    std::unique_ptr<key_event> non_forked_event(internal_queue.pop());
     // todo: improve this log:
     mdb("this is not a fork! %d\n",
         environment->detail_of(non_forked_event->p_event));
 
     rewind_machine();
-    output_event(non_forked_event);
+    output_event(std::move(non_forked_event));
 }
 
 // so EV confirms fork of the current event.
 template <typename Keycode, typename Time>
 void
-forkingMachine<Keycode, Time>::do_confirm_fork_by(key_event *ev)
+forkingMachine<Keycode, Time>::do_confirm_fork_by(std::unique_ptr<key_event> ev)
 {
     /* fixme: ev is the just-read event. But that is surely not the head
        of queue (which is confirmed to fork) */
     mdb("confirm:\n");
-    internal_queue.push(ev);
+    internal_queue.push(ev.release());
 
     mDecision_time = 0;
     activate_fork();
@@ -759,7 +760,7 @@ template <typename Keycode, typename Time>
 // is mDecision_time always recalculated?
 template <typename Keycode, typename Time>
 void
-forkingMachine<Keycode, Time>::apply_event_to_normal(key_event *ev) // possibly unlocks
+forkingMachine<Keycode, Time>::apply_event_to_normal(std::unique_ptr<key_event> ev) // possibly unlocks
 {
     PlatformEvent* pevent = ev->p_event;
 
@@ -797,13 +798,13 @@ forkingMachine<Keycode, Time>::apply_event_to_normal(key_event *ev) // possibly 
             suspect_time = environment->time_of(pevent);
             mDecision_time = suspect_time +
                 config->verification_interval_of(key, 0);
-            internal_queue.push(ev);
+            internal_queue.push(ev.release());
             return;
         } else {
             // .- trick: (fixme: or self-forked)
             mdb("re-pressed very quickly\n");
             forkActive[key] = key; // fixme: why??
-            output_event(ev);
+            output_event(std::move(ev));
             return;
         };
     } else if (environment->release_p(pevent) && (key_forked(key))) {
@@ -829,14 +830,14 @@ forkingMachine<Keycode, Time>::apply_event_to_normal(key_event *ev) // possibly 
         // this is the state (of the keyboard, not the machine).... better to
         // say of the machine!!!
         forkActive[key] = 0;
-        output_event(ev);
+        output_event(std::move(ev));
     } else {
         if (environment->release_p(pevent)) {
             last_released = environment->detail_of(pevent);
             last_released_time = environment->time_of(pevent);
         };
         // pass along the un-forkable event.
-        output_event(ev);
+        output_event(std::move(ev));
     };
 };
 
@@ -846,7 +847,7 @@ forkingMachine<Keycode, Time>::apply_event_to_normal(key_event *ev) // possibly 
  */
 template <typename Keycode, typename Time>
 void
-forkingMachine<Keycode, Time>::apply_event_to_suspect(key_event *ev)
+forkingMachine<Keycode, Time>::apply_event_to_suspect(std::unique_ptr<key_event> ev)
 {
     const PlatformEvent* pevent = ev->p_event;
     Time simulated_time = environment->time_of(pevent);
@@ -865,7 +866,7 @@ forkingMachine<Keycode, Time>::apply_event_to_suspect(key_event *ev)
     // todo: check the ranges (long vs. int)
     if (0 == (mDecision_time =
               key_pressed_too_long(simulated_time))) {
-        do_confirm_fork_by(ev);
+        do_confirm_fork_by(std::move(ev));
         return;
     };
 
@@ -876,20 +877,20 @@ forkingMachine<Keycode, Time>::apply_event_to_suspect(key_event *ev)
              suspect, (int)(simulated_time - suspect_time));
         if (key == suspect) {
             mDecision_time = 0; // might be useless!
-            do_confirm_non_fork_by(ev);
+            do_confirm_non_fork_by(std::move(ev));
             return;
             /* fixme:  here we confirm, that it was not a user error.....
                bad synchro. i.e. the suspected key was just released  */
         } else {
             /* something released, but not verificating, b/c we are in `suspect',
              * not `confirm'  */
-            internal_queue.push(ev);
+            internal_queue.push(ev.release());
             return;
         };
     } else {
         if (! environment->press_p(pevent)) {
             // RawPress & Device events.
-            internal_queue.push(ev);
+            internal_queue.push(ev.release());
             return;
         }
 
@@ -900,7 +901,7 @@ forkingMachine<Keycode, Time>::apply_event_to_suspect(key_event *ev)
                 mdb("The suspected key is configured to repeat, so ...\n");
                 forkActive[suspect] = suspect;
                 mDecision_time = 0;
-                do_confirm_non_fork_by(ev);
+                do_confirm_non_fork_by(std::move(ev));
                 return;
             } else {
                 // fixme: this keycode is repeating, but we still don't know what to do.
@@ -924,7 +925,7 @@ forkingMachine<Keycode, Time>::apply_event_to_suspect(key_event *ev)
             if (decision_time < mDecision_time)
                 mDecision_time = decision_time;
 
-            internal_queue.push(ev);
+            internal_queue.push(ev.release());
             return;
         };
     }
@@ -945,7 +946,7 @@ forkingMachine<Keycode, Time>::apply_event_to_suspect(key_event *ev)
  * We wait only for time, and for the release of the key */
 template <typename Keycode, typename Time>
 void
-forkingMachine<Keycode, Time>::apply_event_to_verify_state(key_event *ev)
+forkingMachine<Keycode, Time>::apply_event_to_verify_state(std::unique_ptr<key_event> ev)
 {
     const PlatformEvent* pevent = ev->p_event;
     Time simulated_time = environment->time_of(pevent);
@@ -981,7 +982,7 @@ forkingMachine<Keycode, Time>::apply_event_to_verify_state(key_event *ev)
 
     if (0 == (mDecision_time = key_pressed_too_long(simulated_time)))
     {
-        do_confirm_fork_by(ev);
+        do_confirm_fork_by(std::move(ev));
         return;
     }
 
@@ -991,7 +992,7 @@ forkingMachine<Keycode, Time>::apply_event_to_verify_state(key_event *ev)
     // well, this is an abuse ... this should never be 0.
     if (decision_time == 0)
     {
-        do_confirm_fork_by(ev);
+        do_confirm_fork_by(std::move(ev));
         return;
     }
     if (decision_time < mDecision_time)
@@ -1003,7 +1004,7 @@ forkingMachine<Keycode, Time>::apply_event_to_verify_state(key_event *ev)
              config->verification_interval_of(suspect,
                                       verificator_keycode));
         mDecision_time = 0; // useless fixme!
-        do_confirm_non_fork_by(ev);
+        do_confirm_non_fork_by(std::move(ev));
 
     } else if (environment->release_p(pevent) && (verificator_keycode == key)){
         // todo: we might be interested in percentage, Then here we should do the work!
@@ -1011,10 +1012,10 @@ forkingMachine<Keycode, Time>::apply_event_to_verify_state(key_event *ev)
         // we should change state:
         change_state(st_suspect);
         verificator_keycode = 0;   // we _should_ take the next possible verificator
-        internal_queue.push(ev);
+        internal_queue.push(ev.release());
     } else {               // fixme: a (repeated) press of the verificator ?
         // fixme: we pressed another key: but we should tell XKB to repeat it !
-        internal_queue.push(ev);
+        internal_queue.push(ev.release());
     };
 }
 
@@ -1030,7 +1031,7 @@ forkingMachine<Keycode, Time>::apply_event_to_verify_state(key_event *ev)
  */
 template <typename Keycode, typename Time>
 void
-forkingMachine<Keycode, Time>::step_by_key(key_event *ev)
+forkingMachine<Keycode, Time>::step_by_key(std::unique_ptr<key_event> ev)
 {
     mdb("%s:\n", __func__);
 
@@ -1055,9 +1056,6 @@ forkingMachine<Keycode, Time>::step_by_key(key_event *ev)
         mdb("%s: the key is forked, ignoring\n", __func__);
 
         environment->free_event(ev->p_event);
-
-        // mxfree(ev, sizeof(key_event));
-        free(ev);
         return;
     }
 #endif
@@ -1076,16 +1074,16 @@ forkingMachine<Keycode, Time>::step_by_key(key_event *ev)
 
     switch (state) {
         case st_normal:
-            apply_event_to_normal(ev);
+            apply_event_to_normal(std::move(ev));
             return;
         case st_suspect:
         {
-            apply_event_to_suspect(ev);
+            apply_event_to_suspect(std::move(ev));
             return;
         }
         case st_verify:
         {
-            apply_event_to_verify_state(ev);
+            apply_event_to_verify_state(std::move(ev));
             return;
         }
         default:

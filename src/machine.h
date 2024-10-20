@@ -190,7 +190,7 @@ private:
 
     void replay_events(bool force_also);
 
-    void apply_event_to_suspect(key_event *ev);
+    void apply_event_to_suspect(std::unique_ptr<key_event> ev);
 
     void rewind_machine();
     void activate_fork();
@@ -203,8 +203,8 @@ private:
             state_description[new_state], color_reset);
     }
 
-    void do_confirm_fork_by(key_event *ev);
-    void apply_event_to_verify_state(key_event *ev);
+    void do_confirm_fork_by(std::unique_ptr<key_event> ev);
+    void apply_event_to_verify_state(std::unique_ptr<key_event> ev);
 
 
     Time key_pressed_too_long(Time current_time);
@@ -217,11 +217,11 @@ private:
         return (forkActive[code]);
     }
 
-    void do_confirm_non_fork_by(key_event *ev);
-    void apply_event_to_normal(key_event *ev);
+    void do_confirm_non_fork_by(std::unique_ptr<key_event> ev);
+    void apply_event_to_normal(std::unique_ptr<key_event> ev);
 
 
-    void output_event(key_event* ev);
+    void output_event(std::unique_ptr<key_event> ev);
 
 public:
     // prefix with a space.
@@ -289,7 +289,7 @@ public:
 
     void step_by_force();
 
-    void step_by_key(key_event *ev);
+    void step_by_key(std::unique_ptr<key_event> ev);
 
     bool step_by_time(Time current_time);
 
