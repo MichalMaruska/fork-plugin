@@ -416,7 +416,7 @@ forkingMachine<Keycode, Time>::rewind_machine()
         input_queue.length ());
 
     change_state(st_normal);
-    verificator_keycode = 0;
+    verificator_keycode = no_key;
 
     if (!(internal_queue.empty())) {
         reverse_splice(internal_queue, input_queue);

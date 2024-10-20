@@ -32,6 +32,7 @@ template <typename Keycode, typename Time>
 class forkingMachine
 {
 private:
+    constexpr static const Keycode no_key = 0;
     enum fork_state_t {  // states of the automaton
         st_normal,
         st_suspect,
