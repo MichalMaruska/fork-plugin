@@ -243,7 +243,7 @@ forkingMachine<Keycode, Time>::log_state(const char* message) const
 
 template <typename Keycode, typename Time>
 void
-forkingMachine<Keycode, Time>::log_queues(const char* message)
+forkingMachine<Keycode, Time>::log_queues(const char* message) const
 {
     mdb("%s: Queues: output: %d\t internal: %d\t input: %d\n",
         message,
@@ -253,14 +253,14 @@ forkingMachine<Keycode, Time>::log_queues(const char* message)
 }
 
 
-// min_time
-Time queue_time(list_with_tail &queue, platformEnvironment *environment) {
+// min_time queue_initial_time
+Time queue_front_time(list_with_tail &queue, platformEnvironment *environment) {
     return environment->time_of(queue.front()->p_event);
 }
 
 template <typename Keycode, typename Time>
 bool
-forkingMachine<Keycode, Time>::queues_non_empty()
+forkingMachine<Keycode, Time>::queues_non_empty() const
 {
     return (!output_queue.empty() || !input_queue.empty() || !internal_queue.empty());
 }
@@ -317,11 +317,11 @@ forkingMachine<Keycode, Time>::flush_to_next()
         // we should push the time!
         Time now;
         if (!output_queue.empty()) {
-            now = queue_time(output_queue, environment);
+            now = queue_front_time(output_queue, environment);
         } else if (!internal_queue.empty()) {
-            now = queue_time(internal_queue, environment);
+            now = queue_front_time(internal_queue, environment);
         } else if (!input_queue.empty()) {
-            now = queue_time(input_queue, environment);
+            now = queue_front_time(input_queue, environment);
         } else {
             // fixme: this is accessed & written to directly by fork.cpp: machine->mCurrent_time = now;
             now = mCurrent_time;
