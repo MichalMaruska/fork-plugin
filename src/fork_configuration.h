@@ -16,7 +16,7 @@ private:
 
 public:
     KeyCode          fork_keycode[MAX_KEYCODE];
-    Bool          fork_repeatable[MAX_KEYCODE]; /* True -> if repeat, cancel possible fork. */
+    bool          fork_repeatable[MAX_KEYCODE]; /* True -> if repeat, cancel possible fork. */
 
     /* we don't consider an overlap, until this ms.
        fixme: we need better. a ration between `before'/`overlap'/`after' */
@@ -31,7 +31,7 @@ public:
 
     int clear_interval = 0;
     int repeat_max  = 80;
-    Bool consider_forks_for_repeat = true;
+    bool consider_forks_for_repeat = true;
 
     int debug = 1; // todo: boolean?
     const char* name = "default";
@@ -66,7 +66,7 @@ public:
             };
             fork_keycode[i] = 0;
             /*  config->forkCancel[i] = 0; */
-            fork_repeatable[i] = FALSE;
+            fork_repeatable[i] = false;
             /* repetition is supported by default (not ignored)  True False*/
         }
         /* ms: could be XkbDfltRepeatDelay */
