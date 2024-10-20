@@ -29,7 +29,7 @@ extern "C" {
 }
 #include <string>
 
-extern void hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* nextPlugin);
+extern void hand_over_event_to_next_plugin(std::unique_ptr<InternalEvent> event, PluginInstance* nextPlugin);
 static void dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
                        XkbDescPtr xkb, XkbSrvInfoPtr xkbi, Time prev_time);
 
@@ -193,7 +193,7 @@ public:
     virtual void relay_event(PlatformEvent* pevent) override {
         auto event = static_cast<XorgEvent*>(pevent)->event;
         PluginInstance* nextPlugin = plugin->next;
-        hand_over_event_to_next_plugin(event, nextPlugin);
+        hand_over_event_to_next_plugin(std::unique_ptr<InternalEvent>(event), nextPlugin);
     };
 
     virtual void push_time(Time now) override {

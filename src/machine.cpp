@@ -400,13 +400,17 @@ template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::reverse_splice(list_with_tail &pre, list_with_tail &post)
 {
+    // I have 2 queues: (pre) (post) then I have: () (pre post)
     // Splice with a reversed semantic:
     // pre.splice(post) --> ()  (pre post)
     pre.append(post);
     pre.swap(post);
 }
 
-/** one key-event investigation finished, now reset for the next one */
+
+/**
+ * One key-event investigation finished,
+ * now reset for the next one */
 template <typename Keycode, typename Time>
 void
 forkingMachine<Keycode, Time>::rewind_machine()
@@ -521,7 +525,7 @@ forkingMachine<Keycode, Time>::accept_event(PlatformEvent* pevent) noexcept(fals
 /*
  * Called by mouse button press processing.
  * Make all the forkable (pressed)  forked! (i.e. confirm them all)
- *
+ * (could use a bitmask to configure what reacts)
  * If in Suspect or Verify state, force the fork. (todo: should be configurable)
  */
 template <typename Keycode, typename Time>
@@ -529,7 +533,8 @@ void
 forkingMachine<Keycode, Time>::step_by_force()
 {
     if ((state == st_normal) || (internal_queue.empty())) {
-        // doe  this imply  that ^^^ ?
+        // does this imply  that ^^^ ?
+        // then maybe just test (internal_queue.empty()) ?
         return;
     }
 

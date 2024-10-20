@@ -87,11 +87,11 @@ size_t memory_balance = 0;
 
 /* Push the event to the next plugin. Ownership is handed over! */
 void
-hand_over_event_to_next_plugin(InternalEvent *event, PluginInstance* const nextPlugin)
+hand_over_event_to_next_plugin(std::unique_ptr<InternalEvent> event, PluginInstance* const nextPlugin)
 {
     assert (!plugin_frozen(nextPlugin));
     memory_balance -= event->any.length;
-    PluginClass(nextPlugin)->ProcessEvent(nextPlugin, event, TRUE); // we always own the event (up to now)
+    PluginClass(nextPlugin)->ProcessEvent(nextPlugin, event.release(), TRUE); // we always own the event (up to now)
 }
 
 enum keycodes {
