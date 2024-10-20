@@ -18,8 +18,12 @@ extern "C" {
 class PlatformEvent {};
 
 struct key_event {
-  PlatformEvent* p_event;
-  KeyCode forked; /* if forked to (another keycode), this is the original key */
+    PlatformEvent* p_event;
+    KeyCode forked; /* if forked to (another keycode), this is the original key */
+    ~key_event() {
+        // should be nullptr
+        free(p_event);
+    }
 };
 
 class event_dumper {

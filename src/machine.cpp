@@ -300,6 +300,7 @@ forkingMachine<Keycode, Time>::flush_to_next()
             unlock();
             // we must gurantee ORDER
             environment->relay_event(ev->p_event);
+            ev->p_event = nullptr;
             lock();
         };
 
@@ -371,7 +372,9 @@ forkingMachine<Keycode, Time>::activate_fork() // possibly unlocks
     forkActive[forked_key] = config->fork_keycode[forked_key];
 
     environment->rewrite_event(ev->p_event, forkActive[forked_key]);
+
     environment->relay_event(ev->p_event);
+    ev->p_event = nullptr;
 
     change_state(st_activated);
     mdb("%s the key %d-> forked to: %d. Internal queue has %d events. %s\n", __func__,
