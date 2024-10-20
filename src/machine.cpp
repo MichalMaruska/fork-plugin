@@ -13,6 +13,7 @@ extern "C"
 #include <X11/X.h>
 }
 
+#if MULTIPLE_CONFIGURATIONS
 template <typename Keycode, typename Time>
 ForkConfiguration<Keycode, Time>**
 forkingMachine<Keycode, Time>::find_configuration_n(const int n)
@@ -59,13 +60,14 @@ forkingMachine<Keycode, Time>::switch_config(int id)
         environment->log("config remains %d\n", config->id);
     }
 }
+#endif
 
 /** update the configuration */
 template <typename Keycode, typename Time>
 int
 forkingMachine<Keycode, Time>::configure_global(int type, int value, bool set)
 {
-   const auto fork_configuration = this->config;
+   const auto fork_configuration = this->config.get();
 
    switch (type) {
    case fork_configure_overlap_limit:
@@ -129,7 +131,9 @@ forkingMachine<Keycode, Time>::configure_global(int type, int value, bool set)
         assert(set);
 
         mdb("fork_configure_switch: %d\n", value);
+#if MULTIPLE_CONFIGURATIONS
         switch_config(value);
+#endif
         break;
 
    default:
@@ -765,7 +769,7 @@ forkingMachine<Keycode, Time>::apply_event_to_normal(key_event *ev) // possibly 
     assert(internal_queue.empty());
     // environment->log("%s: 2\n", __func__);
     // if this key might start a fork....
-    if (environment->press_p(pevent) && forkable_p(config, key)
+    if (environment->press_p(pevent) && forkable_p(config.get(), key)
         /* fixme: is this w/ 1-event precision? (i.e. is the xkb-> updated synchronously) */
         /* todo:  does it have a mouse-related action? */
         && !environment->ignore_event(pevent)) {
@@ -1091,9 +1095,13 @@ forkingMachine<Keycode, Time>::step_by_key(key_event *ev)
 
 // explicit instantation:
 template void forkingMachine<KeyCode, Time>::accept_event(PlatformEvent* pevent);
+
+#if MULTIPLE_CONFIGURATIONS
 template void forkingMachine<KeyCode, Time>::switch_config(int);
-template void forkingMachine<KeyCode, Time>::step_in_time_locked(const Time);
+#endif
 template bool forkingMachine<KeyCode, Time>::create_configs();
+
+template void forkingMachine<KeyCode, Time>::step_in_time_locked(const Time);
 
 template int forkingMachine<KeyCode, Time>::configure_key(int type, KeyCode key, int value, bool set);
 

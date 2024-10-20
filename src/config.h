@@ -30,7 +30,7 @@
  *
  *  lock is gone!! <- action */
 #define USE_LOCKING 1
-
+#define MULTIPLE_CONFIGURATIONS 0
 
 
 // Inside the X server: #define TIME_FORMAT PRIu32

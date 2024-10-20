@@ -10,6 +10,7 @@
 #include "platform.h"
 #include "colors.h"
 #include <boost/circular_buffer.hpp>
+#include <memory>
 
 
 #include "fork_configuration.h"
@@ -119,7 +120,7 @@ private:
     using fork_configuration = ForkConfiguration<Keycode, Time>;
 
 public:
-    fork_configuration *config; // list<fork_configuration>
+    std::unique_ptr<fork_configuration> config; // list<fork_configuration>
 
 /* The Static state = configuration.
  * This is the matrix with some Time values:
@@ -275,9 +276,9 @@ public:
         };
         environment->log("ctor: end\n");
     };
-
+#if MULTIPLE_CONFIGURATIONS
     void switch_config(int id);
-
+#endif
     int configure_global(int type, int value, bool set);
     int configure_twins(int type, Keycode key, Keycode twin, int value, bool set);
     int configure_key(int type, Keycode key, int value, bool set);
@@ -317,6 +318,7 @@ public:
         environment->log("%s\n", __func__);
 
         try {
+#if MULTIPLE_CONFIGURATIONS
             auto config_no_fork = std::unique_ptr<fork_configuration>(new fork_configuration);
             config_no_fork->debug = 0; // should be settable somehow.
 
@@ -327,6 +329,9 @@ public:
             // user_configurable->next = config_no_fork.release();
 
             config = user_configurable.release();
+#else
+            config = std::make_unique<fork_configuration>();
+#endif
             return true;
 
         } catch (std::bad_alloc &exc) {

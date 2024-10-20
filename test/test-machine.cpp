@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
 #include <cstdlib>
+#include <memory>
+
 #if 0
 #define ErrorF(fmt, ...)     printf(fmt, ##__VA_ARGS__)
 #else
@@ -82,12 +84,12 @@ protected:
                     config (new fork_configuration),
                     fm (new machineRec(environment)) {
       // I could instead call forking_machine->create_configs();
-        fm->config = config;
-        config->debug = 0;
         // q0_ remains empty
         // q1_.push_back(1);
         // q2_.Enqueue(2);
         // q2_.Enqueue(3);
+      config->debug = 0;
+      fm->config.reset(config);
     }
 
     // ~QueueTest() override = default;
@@ -95,9 +97,11 @@ protected:
   // fixme:
   ~machineTest()
   {
+    // machine owns this:
+    // config = nullptr;
     delete fm;
+    // delete config;
     delete environment;
-    delete config;
   }
 
   testEnvironment *environment;
