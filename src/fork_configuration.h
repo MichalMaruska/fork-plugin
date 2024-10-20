@@ -8,14 +8,14 @@ typedef int keycode_parameter_matrix[MAX_KEYCODE][MAX_KEYCODE];
 
 // namespace fork {
 // todo: use a C++ <list> ?
-template <typename KeyCode, typename Time>
+template <typename Keycode, typename Time>
 class ForkConfiguration {
 private:
     // declaration, not definition!
     static int config_counter;
 
 public:
-    KeyCode          fork_keycode[MAX_KEYCODE];
+    Keycode          fork_keycode[MAX_KEYCODE];
     bool          fork_repeatable[MAX_KEYCODE]; /* True -> if repeat, cancel possible fork. */
 
     /* we don't consider an overlap, until this ms.
@@ -43,7 +43,7 @@ public:
 
 private:
     static Time
-    get_value_from_matrix(keycode_parameter_matrix matrix, KeyCode code, KeyCode verificator) {
+    get_value_from_matrix(keycode_parameter_matrix matrix, Keycode code, Keycode verificator) {
         return (matrix[code][verificator]?
                 // code/verificator specific:
                 matrix[code][verificator]:
@@ -78,12 +78,12 @@ public:
 
     // note: depending on verificator is strange. There might be none!
     // fork_configuration* config,
-    Time verification_interval_of(KeyCode code, KeyCode verificator) {
+    Time verification_interval_of(Keycode code, Keycode verificator) {
         return get_value_from_matrix(this->verification_interval, code, verificator);
     }
 
     Time
-    overlap_tolerance_of(KeyCode code, KeyCode verificator) {
+    overlap_tolerance_of(Keycode code, Keycode verificator) {
         return get_value_from_matrix(this->overlap_tolerance, code, verificator);
     }
 };
