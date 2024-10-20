@@ -1,15 +1,15 @@
 #pragma once
 
+// namespace fork {
+
+// these as template non-type parameters?
 #define KEYCODE_UNUSED 0
 #define MAX_KEYCODE 256         /* fixme: inherit from xorg! */
-// using?
-typedef int keycode_parameter_matrix[MAX_KEYCODE][MAX_KEYCODE];
-
-
-// namespace fork {
-// todo: use a C++ <list> ?
 template <typename Keycode, typename Time>
 class ForkConfiguration {
+
+typedef int keycode_parameter_matrix[MAX_KEYCODE][MAX_KEYCODE];
+
 private:
     // declaration, not definition!
     static int config_counter;
@@ -34,7 +34,6 @@ public:
     bool consider_forks_for_repeat = true;
 
     int debug = 1; // todo: boolean?
-    const char* name = "default";
     int id;
 
     // valid?
