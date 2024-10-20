@@ -352,6 +352,37 @@ forkingMachine<Keycode, Time>::output_event(std::unique_ptr<key_event> ev) // un
     flush_to_next();
 };
 
+
+/** we concluded the key is forked. "Output" it and prepare for the next one.
+ * fixme: locking?
+ */
+template <typename Keycode, typename Time>
+void
+forkingMachine<Keycode, Time>::activate_fork() // possibly unlocks
+{
+    assert(!internal_queue.empty());
+
+    std::unique_ptr<key_event> ev(internal_queue.pop());
+
+    Keycode forked_key = environment->detail_of(ev->p_event);
+    // assert(forked_key == suspect);
+    ev->forked = forked_key;
+    /* Change the keycode, but remember the original: */
+    forkActive[forked_key] = config->fork_keycode[forked_key];
+
+    environment->rewrite_event(ev->p_event, forkActive[forked_key]);
+    environment->relay_event(ev->p_event);
+
+    change_state(st_activated);
+    mdb("%s the key %d-> forked to: %d. Internal queue has %d events. %s\n", __func__,
+        forked_key, forkActive[forked_key],
+        internal_queue.length (),
+        describe_machine_state(this->state));
+
+    rewind_machine();
+}
+
+
 /**
  * Operations on the machine
  * fixme: should it include the `self_forked' keys ?
@@ -391,36 +422,6 @@ forkingMachine<Keycode, Time>::rewind_machine()
         reverse_splice(internal_queue, input_queue);
         mdb("now in input_queue: %d\n", input_queue.length ());
     }
-};
-
-
-/* we concluded the key is forked. "output" it and prepare for the next one.
- * fixme: locking?
- */
-template <typename Keycode, typename Time>
-void
-forkingMachine<Keycode, Time>::activate_fork() // possibly unlocks
-{
-    assert(!internal_queue.empty());
-
-    key_event* ev = internal_queue.pop();
-    Keycode forked_key = environment->detail_of(ev->p_event);
-    // assert(forked_key == suspect);
-
-    ev->forked = forked_key;
-
-    /* Change the keycode, but remember the original: */
-    forkActive[forked_key] = config->fork_keycode[forked_key];
-    environment->rewrite_event(ev->p_event, forkActive[forked_key]);
-    environment->relay_event(ev->p_event);
-
-    change_state(st_activated);
-    mdb("%s the key %d-> forked to: %d. Internal queue has %d events. %s\n", __func__,
-        forked_key, forkActive[forked_key],
-        internal_queue.length (),
-        describe_machine_state(this->state));
-
-    rewind_machine();
 }
 
 /* note: used only in configure.c!
