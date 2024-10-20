@@ -42,7 +42,6 @@ extern "C" {
 #include "debug.h"
 
 #include "xmachine.h"
-#include "memory.h"
 #include <memory>
 #include "xorg.h"
 
@@ -82,15 +81,11 @@ const char* event_names[] = {
     "XQuartz"
 };
 
-/* memory problems tracking: (used with mxfree & mmalloc) I observe this value. */
-size_t memory_balance = 0;
-
 /* Push the event to the next plugin. Ownership is handed over! */
 void
 hand_over_event_to_next_plugin(std::unique_ptr<InternalEvent> event, PluginInstance* const nextPlugin)
 {
     assert (!plugin_frozen(nextPlugin));
-    memory_balance -= event->any.length;
     PluginClass(nextPlugin)->ProcessEvent(nextPlugin, event.release(), TRUE); // we always own the event (up to now)
 }
 

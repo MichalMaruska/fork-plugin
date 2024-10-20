@@ -1,7 +1,6 @@
 
 #include "config.h"
 #include "machine.h"
-#include "memory.h"
 // uses:
 #include "debug.h"
 #include "colors.h"
