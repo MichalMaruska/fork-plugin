@@ -500,12 +500,12 @@ forkingMachine<Keycode, Time>::try_to_play(bool force_also)
      *              queue_empty(machine->input_queue)) */
 }
 
+/** we take over pevent and promise to deliver back via
+ *  relay_event -> hand_over_event_to_next_plugin
+ */
 template <typename Keycode, typename Time>
 void
-forkingMachine<Keycode, Time>::accept_event(PlatformEvent* pevent) {
-    // I could really create
-    // key_event ev;
-    // and push(ev)?
+forkingMachine<Keycode, Time>::accept_event(PlatformEvent* pevent) noexcept(false) {
 
     // this can only throw
     auto ev = std::make_unique<key_event>(pevent);
