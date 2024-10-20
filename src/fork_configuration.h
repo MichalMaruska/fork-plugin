@@ -14,21 +14,7 @@ private:
     // declaration, not definition!
     static int config_counter;
 
-private:
-    static Time
-    get_value_from_matrix(keycode_parameter_matrix matrix, KeyCode code, KeyCode verificator) {
-        return (matrix[code][verificator]?
-                // code/verificator specific:
-                matrix[code][verificator]:
-                (matrix[code][0]?
-                 // default for code:
-                 matrix[code][0]:
-                 // global fallback
-                 matrix[0][0]));
-    }
-
 public:
-
     KeyCode          fork_keycode[MAX_KEYCODE];
     Bool          fork_repeatable[MAX_KEYCODE]; /* True -> if repeat, cancel possible fork. */
 
@@ -53,6 +39,20 @@ public:
 
     // valid?
     ForkConfiguration*   next = nullptr;
+
+
+private:
+    static Time
+    get_value_from_matrix(keycode_parameter_matrix matrix, KeyCode code, KeyCode verificator) {
+        return (matrix[code][verificator]?
+                // code/verificator specific:
+                matrix[code][verificator]:
+                (matrix[code][0]?
+                 // default for code:
+                 matrix[code][0]:
+                 // global fallback
+                 matrix[0][0]));
+    }
 
 public:
     ForkConfiguration() : id(config_counter++) {
