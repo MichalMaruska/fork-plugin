@@ -519,19 +519,9 @@ forkingMachine<Keycode, Time>::accept_event(PlatformEvent* pevent) {
 
     // fixme:
     mCurrent_time = 0; // time_of(ev->event);
-#if DEBUG > 1
-    environment->log("%s: put on input Q\n", __func__);
-#endif
 
-#if DEBUG > 1
-    environment->log("%s: try to play2\n", __func__);
-#endif
     input_queue.push(ev.release());
     try_to_play(false);
-
-#if DEBUG > 1
-    environment->log("%s: end\n", __func__);
-#endif
 }
 
 /*
