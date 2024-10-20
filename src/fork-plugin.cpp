@@ -243,10 +243,6 @@ set_wakeup_time(PluginInstance *plugin, Time machine_time)
 static XorgEvent*
 create_xorg_platform_event(InternalEvent *event, bool owner)
 {
-#if DEBUG > 1
-    ErrorF("%s: %s\n", __func__, owner?"owner":"not owner");
-#endif
-
     InternalEvent* qe;
     if (owner)
         qe = event;
@@ -256,14 +252,8 @@ create_xorg_platform_event(InternalEvent *event, bool owner)
             ErrorF("%s: out-of-memory\n", __func__);
             return NULL;
         }
-
         memcpy(qe, event, event->any.length);
     }
-
-#if DEBUG > 1
-    DB("+++ accepted new event: %s\n", event_names[event->any.type - 2 ]);
-#endif
-
     return new XorgEvent(qe);
 }
 
