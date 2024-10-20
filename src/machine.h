@@ -133,16 +133,14 @@ public:
  */
 
 private:
-    int set_last_events_count(const int new_max) // fixme:  lock ??
-    {
-        mdb("%s: allocating %d events\n", __FUNCTION__, new_max);
+    int set_last_events_count(const int new_max) {
+        // fixme:  lock ??
+        mdb("%s: allocating %d events\n", __func__, new_max);
 
-        if (max_last > new_max)
-        {
+        if (max_last > new_max) {
             // shrink. todo! in the circular.h!
-        }
-        else
-        {
+            mdb("%s: unimplemented\n", __func__);
+        } else {
             last_events_log.set_capacity(new_max);
         }
 
