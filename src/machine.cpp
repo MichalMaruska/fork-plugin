@@ -6,6 +6,17 @@
 
 #include "machine.h"
 
+// I need the enum of requests:
+// fork_configure_overlap_limit ....
+extern "C" {
+// todo: archived_event coud be avoided ... it's X specific
+#include "fork_requests.h"
+#undef max
+#undef min
+}
+
+
+
 
 #if MULTIPLE_CONFIGURATIONS
 template <typename Keycode, typename Time, typename archived_event_t>
