@@ -1,6 +1,12 @@
 
 #include "config.h"
 #include "colors.h"
+extern "C" {
+// todo: archived_event coud be avoided ... it's X specific
+#include "fork_requests.h"
+#undef max
+#undef min
+}
 #include <memory>
 
 #include "machine.h"
