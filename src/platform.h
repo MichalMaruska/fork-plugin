@@ -18,17 +18,19 @@ extern "C" {
 
 class PlatformEvent {};
 
+template <typename archived_fork_event>
 class event_dumper {
     public:
-    virtual void operator() (const archived_event& event) = 0;
+    virtual void operator() (const archived_fork_event& event) = 0;
     virtual ~event_dumper() {};
 };
 
+template <typename archived_fork_event>
 class event_publisher {
     public:
     virtual void prepare(int max_events) = 0;
     virtual int commit() = 0;
-    virtual void event(const archived_event& event) = 0;
+    virtual void event(const archived_fork_event& event) = 0;
     virtual ~event_publisher() {};
 };
 
