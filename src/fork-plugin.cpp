@@ -24,8 +24,9 @@ extern "C" {
 #include "config.h"
 #include "debug.h"
 
-#include "xmachine.h"
 #include <memory>
+
+#include "xmachine.h"
 #include "xorg.h"
 
 #include "event_ops.h"
