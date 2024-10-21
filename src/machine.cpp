@@ -218,7 +218,9 @@ forkingMachine<Keycode, Time, archived_event_t>::dump_last_events_to_client(even
 
 // min_time queue_initial_time
 // fixme: move to a real .cpp file!
+#if 0
 Time queue_front_time(list_with_tail &queue, platformEnvironment *environment);
+#endif
 
 template <typename Keycode, typename Time, typename archived_event_t>
 bool
