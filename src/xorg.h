@@ -75,7 +75,7 @@ class xorg_event_publisher : public event_publisher
         memory = nullptr;
         return 0;
     }
-    virtual void event(const archived_event& event) {
+    virtual void event(const archived_event& event) override {
 
     }
 };
