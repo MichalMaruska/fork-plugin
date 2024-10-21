@@ -15,17 +15,8 @@ extern "C" {
 
 #include <string>
 #include <memory>
-class PlatformEvent {};
 
-struct key_event {
-    PlatformEvent* p_event;
-    KeyCode forked; /* if forked to (another keycode), this is the original key */
-    key_event(PlatformEvent* p) : p_event(p){};
-    ~key_event() {
-        // should be nullptr
-        free(p_event);
-    }
-};
+class PlatformEvent {};
 
 class event_dumper {
     public:
@@ -63,7 +54,7 @@ public:
     virtual void vlog(const char* format, va_list argptr) = 0;
     virtual std::string fmt_event(const PlatformEvent *pevent) = 0;
 
-    virtual archived_event archive_event(const key_event& event) = 0;
+    virtual void archive_event(archived_event& ae, const PlatformEvent* event) = 0;
     virtual void free_event(PlatformEvent* pevent) = 0;
     virtual void rewrite_event(PlatformEvent* pevent, KeyCode code) = 0;
 

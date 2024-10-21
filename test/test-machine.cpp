@@ -62,7 +62,7 @@ public:
   };
   MOCK_METHOD(std::string, fmt_event,(const PlatformEvent *event));
 
-  MOCK_METHOD(archived_event, archive_event,(const key_event& event));
+  MOCK_METHOD(void, archive_event,(archived_event& ae, const PlatformEvent* event));
   MOCK_METHOD(void, free_event,(PlatformEvent* pevent));
   MOCK_METHOD(void, rewrite_event,(PlatformEvent* pevent, KeyCode code));
 

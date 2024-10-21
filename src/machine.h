@@ -22,6 +22,17 @@ typedef boost::circular_buffer<archived_event> last_events_t;
 /* states of the automaton: */
 
 /* `machine': the dynamic `state' */
+struct key_event {
+    PlatformEvent* p_event;
+    KeyCode forked; /* if forked to (another keycode), this is the original key */
+    key_event(PlatformEvent* p) : p_event(p){};
+    ~key_event() {
+        // should be nullptr
+        // bug: must call environment -> free_event()
+        free(p_event);
+    }
+};
+
 
 // history:
 typedef my_queue<key_event*> list_with_tail;

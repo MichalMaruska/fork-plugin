@@ -1,20 +1,11 @@
 #include <gtest/gtest.h>
 
 #include "../src/queue.h"
-#include "../src/platform.h"
 
 class queueTest : public testing::Test {
 protected:
-    queueTest():
-    q0_("test"),
-    q1_("events")
-    {
-    };
-
-    my_queue<int> q0_;
-    my_queue<key_event> q1_;
-
-    };
+  my_queue<int> q0_{"test"};
+};
 
 
 TEST_F(queueTest, IsEmptyInitially) {

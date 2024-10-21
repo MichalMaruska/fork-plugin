@@ -145,11 +145,7 @@ public:
 
 
     // so this is orthogonal? platform-independent?
-    archived_event archive_event(const key_event& event) override {
-        PlatformEvent* pevent = event.p_event;
-
-        archived_event archived_event;
-
+    void archive_event(archived_event& archived_event, const PlatformEvent *pevent) override {
 #if DEBUG > 1
         auto xevent = static_cast<XorgEvent*>(pevent)->event;
         // dynamic_cast
@@ -161,9 +157,6 @@ public:
         archived_event.key = detail_of(pevent);
         archived_event.time = time_of(pevent);
         archived_event.press = press_p(pevent);
-        archived_event.forked = event.forked;
-
-        return archived_event;
     };
 
     virtual void rewrite_event(PlatformEvent* pevent, KeyCode code) override {
