@@ -22,6 +22,17 @@ extern "C"
 #include "../src/machine.h"
 #include "../src/platform.h"
 #include <gmock/gmock.h>
+
+// I need archived_event
+typedef struct
+{
+    Time time;
+    KeyCode key;
+    KeyCode forked;
+    Bool press;                  /* client type? */
+} archived_event;
+
+
 // fixme:
 // #include "../src/machine.cpp"
 
@@ -40,7 +51,7 @@ private:
 };
 
 // I want to mock this:
-class testEnvironment final : public platformEnvironment {
+class testEnvironment final : public platformEnvironment1<KeyCode, Time, archived_event> {
 public:
   // virtual
   MOCK_METHOD(bool, press_p,(const PlatformEvent* event));
@@ -66,13 +77,13 @@ public:
   MOCK_METHOD(void, free_event,(PlatformEvent* pevent));
   MOCK_METHOD(void, rewrite_event,(PlatformEvent* pevent, KeyCode code));
 
-  MOCK_METHOD(std::unique_ptr<event_dumper>, get_event_dumper,());
+  MOCK_METHOD(std::unique_ptr<event_dumper<archived_event>>, get_event_dumper,());
 
 };
 
 
-using machineRec = forkingMachine<KeyCode, Time>;
-using fork_configuration = ForkConfiguration<KeyCode, Time>;
+using machineRec = forkingMachine<KeyCode, Time, archived_event>;
+using fork_configuration = ForkConfiguration<KeyCode, Time, 256>;
 
 class machineTest : public testing::Test {
 
