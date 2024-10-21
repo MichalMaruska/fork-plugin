@@ -8,8 +8,6 @@
 #include <string>
 #include <memory>
 
-class PlatformEvent {};
-
 template <typename archived_fork_event>
 class event_dumper {
     public:
@@ -27,16 +25,18 @@ class event_publisher {
 };
 
 
+class PlatformEvent {};
 
-// fixme: template on <Keycode, Time> ?
-class platformEnvironment {
+template <typename Keycode, typename Time, typename archived_fork_event>
+class platformEnvironment1 {
 public:
-    platformEnvironment() = default;
+    platformEnvironment1() = default;
 
     virtual bool press_p(const PlatformEvent* event) = 0;
     virtual bool release_p(const PlatformEvent* event) = 0;
+    // fixme:
     virtual Time time_of(const PlatformEvent* event) = 0;
-    virtual KeyCode detail_of(const PlatformEvent* event) = 0;
+    virtual Keycode detail_of(const PlatformEvent* event) = 0;
 
     virtual bool ignore_event(const PlatformEvent *pevent) = 0;
 
@@ -48,12 +48,12 @@ public:
     virtual void vlog(const char* format, va_list argptr) = 0;
     virtual std::string fmt_event(const PlatformEvent *pevent) = 0;
 
-    virtual void archive_event(archived_event& ae, const PlatformEvent* event) = 0;
+    virtual void archive_event(archived_fork_event& ae, const PlatformEvent* event) = 0;
     virtual void free_event(PlatformEvent* pevent) = 0;
-    virtual void rewrite_event(PlatformEvent* pevent, KeyCode code) = 0;
+    virtual void rewrite_event(PlatformEvent* pevent, Keycode code) = 0;
 
 
-    virtual std::unique_ptr<event_dumper> get_event_dumper() = 0;
+    virtual std::unique_ptr<event_dumper<archived_fork_event>> get_event_dumper() = 0;
 
-    virtual ~platformEnvironment() = default;
+    virtual ~platformEnvironment1() = default;
 };
