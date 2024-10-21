@@ -80,6 +80,9 @@ enum keycodes {
     key_l = 46,
 };
 
+
+#define plugin_machine(plugin) ((machineRec*)(plugin->data))
+
 /*
  * React to some `hot_keys':
  * Pause  Pause  -> dump

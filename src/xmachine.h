@@ -20,6 +20,3 @@ extern "C"
 }
 
 using machineRec = forkingMachine<KeyCode, Time, archived_event>;
-
-// fixme:
-#define plugin_machine(plugin) ((machineRec*)(plugin->data))
