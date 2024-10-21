@@ -24,15 +24,15 @@ constexpr int MAX_KEYCODE=256;
 
 
 // typename PlatformEvent, typename platformEnvironment,
-template <typename Keycode, typename Time, typename archived_event>
+template <typename Keycode, typename Time, typename archived_event_t>
 // so key_event
 class forkingMachine
 {
 
 public:
-    typedef boost::circular_buffer<archived_event> last_events_t;
+    typedef boost::circular_buffer<archived_event_t> last_events_t;
     // history:
-    typedef platformEnvironment1<Keycode, Time, archived_event> platformEnvironment;
+    typedef platformEnvironment1<Keycode, Time, archived_event_t> platformEnvironment;
 
     /* `machine': the dynamic `state' */
     struct key_event {
@@ -314,7 +314,7 @@ public:
     int configure_twins(int type, Keycode key, Keycode twin, int value, bool set);
     int configure_key(int type, Keycode key, int value, bool set);
 
-    int dump_last_events_to_client(event_publisher<archived_event>* publisher, int max_requested);
+    int dump_last_events_to_client(event_publisher<archived_event_t>* publisher, int max_requested);
 
     void step_in_time_locked(Time now);
 
@@ -370,13 +370,13 @@ public:
         }
     }
 
-    void dump_last_events(event_dumper<archived_event>* dumper) const {
+    void dump_last_events(event_dumper<archived_event_t>* dumper) const {
 #if 0
-        std::function<void(const event_dumper&, const archived_event&)> doit0 = &event_dumper::operator();
+        std::function<void(const event_dumper&, const archived_event_t&)> doit0 = &event_dumper::operator();
         // lambda?
-        std::function<void(const archived_event&)> doit = std::bind(&event_dumper::operator(), doit, placeholders::_1);
+        std::function<void(const archived_event_t&)> doit = std::bind(&event_dumper::operator(), doit, placeholders::_1);
 #else
-        std::function<void(const archived_event&)> lambda = [dumper](const archived_event& ev){ dumper->operator()(ev); };
+        std::function<void(const archived_event_t&)> lambda = [dumper](const archived_event_t& ev){ dumper->operator()(ev); };
 #endif
         if (last_events_log.full()) {
             std::for_each(last_events_log.begin(),
