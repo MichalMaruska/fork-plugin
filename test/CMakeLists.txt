@@ -34,7 +34,7 @@ find_package(PkgConfig)
 pkg_search_module(xorg-server REQUIRED xorg-server
   IMPORTED_TARGET GLOBAL)
 
-add_executable(test-machine test-machine.cpp ../src/machine.cpp)
+add_executable(test-machine test-machine.cpp ../src/xmachine.cpp)
 target_include_directories(test-machine SYSTEM PUBLIC
   ${xorg-server_INCLUDE_DIRS}
   "../include/")

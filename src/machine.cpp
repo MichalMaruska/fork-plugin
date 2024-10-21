@@ -1,16 +1,10 @@
 
 #include "config.h"
-#include "machine.h"
-// uses:
 #include "colors.h"
 #include <memory>
 
-// I need Time:
-extern "C"
-{
-#include <xorg-server.h>
-#include <X11/X.h>
-}
+#include "machine.h"
+
 
 #if MULTIPLE_CONFIGURATIONS
 template <typename Keycode, typename Time>
@@ -252,9 +246,8 @@ forkingMachine<Keycode, Time>::log_queues(const char* message) const
 
 
 // min_time queue_initial_time
-Time queue_front_time(list_with_tail &queue, platformEnvironment *environment) {
-    return environment->time_of(queue.front()->p_event);
-}
+// fixme: move to a real .cpp file!
+Time queue_front_time(list_with_tail &queue, platformEnvironment *environment);
 
 template <typename Keycode, typename Time>
 bool
@@ -1084,20 +1077,3 @@ forkingMachine<Keycode, Time>::step_by_key(std::unique_ptr<key_event> ev)
     }
 }
 
-// explicit instantation:
-template void forkingMachine<KeyCode, Time>::accept_event(PlatformEvent* pevent);
-
-#if MULTIPLE_CONFIGURATIONS
-template void forkingMachine<KeyCode, Time>::switch_config(int);
-#endif
-template bool forkingMachine<KeyCode, Time>::create_configs();
-
-template void forkingMachine<KeyCode, Time>::step_in_time_locked(const Time);
-
-template int forkingMachine<KeyCode, Time>::configure_key(int type, KeyCode key, int value, bool set);
-
-template int forkingMachine<KeyCode, Time>::configure_global(int type, int value, bool set);
-
-template int forkingMachine<KeyCode, Time>::configure_twins(int type, KeyCode key, KeyCode twin, int value, bool set);
-
-template int forkingMachine<KeyCode, Time>::dump_last_events_to_client(event_publisher* publisher, int max_requested);

@@ -22,6 +22,7 @@ set(sources
   event_ops.cpp
   fork-plugin.cpp
   machine.cpp
+  xmachine.cpp
 
   # header files?
   machine.h
