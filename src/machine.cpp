@@ -217,12 +217,6 @@ forkingMachine<Keycode, Time, archived_event_t>::dump_last_events_to_client(even
    return publisher->commit();
 }
 
-// min_time queue_initial_time
-// fixme: move to a real .cpp file!
-#if 0
-Time queue_front_time(list_with_tail &queue, platformEnvironment *environment);
-#endif
-
 template <typename Keycode, typename Time, typename archived_event_t>
 bool
 forkingMachine<Keycode, Time, archived_event_t>::queues_non_empty() const
@@ -284,11 +278,11 @@ forkingMachine<Keycode, Time, archived_event_t>::flush_to_next()
         // we should push the time!
         Time now;
         if (!output_queue.empty()) {
-            now = queue_front_time(output_queue, environment.get());
+            now = queue_front_time(output_queue);
         } else if (!internal_queue.empty()) {
-            now = queue_front_time(internal_queue, environment.get());
+            now = queue_front_time(internal_queue);
         } else if (!input_queue.empty()) {
-            now = queue_front_time(input_queue, environment.get());
+            now = queue_front_time(input_queue);
         } else {
             // fixme: this is accessed & written to directly by fork.cpp: machine->mCurrent_time = now;
             now = mCurrent_time;

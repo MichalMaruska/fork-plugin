@@ -214,6 +214,9 @@ private:
     fork_configuration** find_configuration_n(int n);
 
     bool queues_non_empty() const;
+    Time queue_front_time(list_with_tail &queue) const {
+        return environment->time_of(queue.front()->p_event);
+    }
 
     static void reverse_splice(list_with_tail &pre, list_with_tail &post);
 
