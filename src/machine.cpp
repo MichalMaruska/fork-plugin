@@ -185,9 +185,9 @@ forkingMachine<Keycode, Time, archived_event_t>::configure_key(int type, Keycode
 }
 
 
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 int
-forkingMachine<Keycode, Time>::dump_last_events_to_client(event_publisher* publisher, int max_requested)
+forkingMachine<Keycode, Time, archived_event_t>::dump_last_events_to_client(event_publisher<archived_event_t>* publisher, int max_requested)
 {
    // I don't need to count them! last_events_count
    // how many in the store?
@@ -974,9 +974,9 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_verify_state(std
  *   either the ev  is pushed on internal_queue, or to the output-queue
  *   the head of internal_queue may be pushed to the output-queue as well.
  */
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time>::step_by_key(std::unique_ptr<key_event> ev)
+forkingMachine<Keycode, Time, archived_event_t>::step_by_key(std::unique_ptr<key_event> ev)
 {
     mdb("%s:\n", __func__);
 
