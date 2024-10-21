@@ -11,4 +11,3 @@ bool release_p(const InternalEvent* event);
 bool press_p(const InternalEvent* event);
 Time time_of(const InternalEvent* event);
 KeyCode detail_of(const InternalEvent* event);
-const char* event_type_brief(const InternalEvent *event);

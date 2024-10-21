@@ -25,12 +25,3 @@ detail_of(const InternalEvent* event)
 {
    return (event->device_event.detail.key);
 }
-
-
-// (printable) Name of the event
-const char*
-event_type_brief(const InternalEvent *event)
-{
-    return (press_p(event)?"down":
-            (release_p(event)?"up":"??"));
-}
