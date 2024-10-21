@@ -3,7 +3,6 @@
 #include <ext/slist>
 #include <string>
 
-#include <memory>
 #ifdef DEBUG
 #include "debug.h"
 #endif
