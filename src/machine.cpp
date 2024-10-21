@@ -245,13 +245,19 @@ forkingMachine<Keycode, Time>::flush_to_next()
     }
 
     while(! environment->output_frozen() && !output_queue.empty()) {
-        key_event* ev = output_queue.pop();
+        std::unique_ptr<key_event> ev(output_queue.pop());
 
         // now we are the owner. And
         // (ORDER) this event must be delivered before any other!
         // so no preemption of this part! fixme!
         // yet, the next plugin could call in here? to do what?
-        last_events_log.push_back(environment->archive_event(*ev));
+        {
+            archived_event archived_event;
+            environment->archive_event(archived_event, ev->p_event);
+            archived_event.forked = ev->forked;
+
+            last_events_log.push_back(archived_event);
+        }
 
         // machine. fixme: it's not true -- it cannot!
         // 2020: it can!
@@ -265,10 +271,6 @@ forkingMachine<Keycode, Time>::flush_to_next()
             ev->p_event = nullptr;
             lock();
         };
-
-        // mxfree(ev, sizeof(key_event));
-        // bug: environment->free_event(ev->p_event);
-        free(ev);
     }
 
     // interesting: after handing over, the nextPlugin might need to be refreshed.
