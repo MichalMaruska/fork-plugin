@@ -195,9 +195,6 @@ private:
 
     fork_configuration** find_configuration_n(int n);
 
-    void log_state(const char* message) const;
-    void log_state_and_event(const char* message, const key_event *ev);
-    void log_queues(const char* message) const;
     bool queues_non_empty() const;
 
     static void reverse_splice(list_with_tail &pre, list_with_tail &post);
@@ -375,6 +372,31 @@ public:
         environment->log("not sure %s\n", __func__);
     }
 
+private:
+    /**
+     * Logging ... why templated?
+     */
+    void log_state(const char *message) const {
+        mdb("%s%s%s state: %s, queue: %d.  %s\n", fork_color, __func__, color_reset,
+            describe_machine_state(this->state), internal_queue.length(), message);
+    }
+
+    void log_queues(const char *message) const {
+        mdb("%s: Queues: output: %d\t internal: %d\t input: %d\n", message,
+            output_queue.length(), internal_queue.length(), input_queue.length());
+    }
+
+    void log_state_and_event(const char* message, const key_event *ev) {
+
+        mdb("%s%s%s state: %s, queue: %d\n", // , event: %d %s%c %s %s
+            info_color,message,color_reset,
+            describe_machine_state(this->state),
+            internal_queue.length ()
+            );
+        environment->fmt_event(ev->p_event);
+    }
 };
+
+
 
 // extern int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n);

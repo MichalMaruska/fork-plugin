@@ -217,34 +217,6 @@ forkingMachine<Keycode, Time>::dump_last_events_to_client(event_publisher* publi
    return publisher->commit();
 }
 
-
-
-/**
- * Logging
- */
-template <typename Keycode, typename Time>
-void
-forkingMachine<Keycode, Time>::log_state(const char* message) const
-{
-    mdb("%s%s%s state: %s, queue: %d.  %s\n",
-        fork_color, __func__, color_reset,
-        describe_machine_state(this->state),
-        internal_queue.length(),
-        message);
-}
-
-template <typename Keycode, typename Time>
-void
-forkingMachine<Keycode, Time>::log_queues(const char* message) const
-{
-    mdb("%s: Queues: output: %d\t internal: %d\t input: %d\n",
-        message,
-        output_queue.length(),
-        internal_queue.length(),
-        input_queue.length());
-}
-
-
 // min_time queue_initial_time
 // fixme: move to a real .cpp file!
 Time queue_front_time(list_with_tail &queue, platformEnvironment *environment);
@@ -726,20 +698,6 @@ forkingMachine<Keycode, Time>::step_in_time_locked(const Time now) // unlocks po
         lock();
     }
 }
-
-template <typename Keycode, typename Time>
-    void
-    forkingMachine<Keycode, Time>::log_state_and_event(const char* message, const key_event *ev)
-{
-
-    mdb("%s%s%s state: %s, queue: %d\n", // , event: %d %s%c %s %s
-        info_color,message,color_reset,
-        describe_machine_state(this->state),
-        internal_queue.length ()
-        );
-    environment->fmt_event(ev->p_event);
-}
-
 
 /** apply_event_to_{STATE} */
 
