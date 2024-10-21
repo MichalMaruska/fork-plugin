@@ -80,6 +80,20 @@ public:
 
 
 private:
+    /* This is how it works:
+     * We have a `state' and 3 queues:
+     *
+     *  output Q  |   internal Q    | input Q
+     *  waits for |
+     *  thaw         Oxxxxxx        |  yyyyy
+     *               ^ forked?
+     *
+     * We push at the end of input Q.  Then we pop from that Q and push on
+     * Internal where we determine for 1 event, if forked/non-forked.
+     *
+     * Then we push on the output Q. At that moment, we also restart: all
+     * from internal Q is returned/prepended to the input Q.
+     */
     fork_state_t state;
     // only for certain states we keep (updated):
 
