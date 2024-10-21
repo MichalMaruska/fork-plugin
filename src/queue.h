@@ -115,7 +115,7 @@ public:
         __gnu_cxx::slist<T>::swap(peer);
         // m_list.swap(peer.m_list);
 
-        typename __gnu_cxx::slist<T>::slist<T>::iterator temp;
+        typename __gnu_cxx::slist<T>::iterator temp;
         temp = m_last_node;
 
         // iter_swap(last_node,peer.last_node);
