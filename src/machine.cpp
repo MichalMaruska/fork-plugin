@@ -53,7 +53,7 @@ forkingMachine<Keycode, Time>::switch_config(int id)
         environment->log("config remains %d\n", config->id);
     }
 }
-#endif
+#endif // MULTIPLE_CONFIGURATIONS
 
 /** update the configuration */
 template <typename Keycode, typename Time>
@@ -180,7 +180,6 @@ forkingMachine<Keycode, Time>::configure_key(int type, Keycode key, int value, b
            break;
        default:
            mdb("%s: invalid option %d\n", __func__, value);
-           ;
    }
    return 0;
 }
@@ -317,7 +316,8 @@ forkingMachine<Keycode, Time>::output_event(std::unique_ptr<key_event> ev) // un
 };
 
 
-/** we concluded the key is forked. "Output" it and prepare for the next one.
+/**
+ * We concluded the key is forked. "Output" it and prepare for the next one.
  * fixme: locking?
  */
 template <typename Keycode, typename Time>
@@ -415,6 +415,7 @@ forkingMachine<Keycode, Time>::replay_events(bool force_also)
         reverse_splice(internal_queue, input_queue);
     }
     change_state(st_normal);
+
     // todo: what else?
     // last_released & last_released_time no more available.
     last_released = 0; // bug!
@@ -507,7 +508,6 @@ forkingMachine<Keycode, Time>::step_by_force()
     }
 
     /* so, the state is one of: verify, suspect or activated. */
-
     log_state(__func__);
 
     // todo: move it inside?
