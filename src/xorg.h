@@ -85,7 +85,6 @@ class xorg_event_publisher : public event_publisher
 class xorg_event_dumper : public event_dumper
 {
 private:
-    const DeviceIntPtr keybd;
     const XkbSrvInfoPtr xkbi;
     const XkbDescPtr xkb;
     Time previous_time;
@@ -104,7 +103,6 @@ public:
 
 
     explicit xorg_event_dumper(const DeviceIntPtr keybd):
-        keybd(keybd),
         xkbi(keybd->key->xkbInfo),
         xkb(xkbi->desc),
         previous_time(0) {};
