@@ -4,7 +4,9 @@
 mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja  ../  -DFORCE_COLORED_OUTPUT=1
+--debug-trycompile
 
+cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja  ../  -DFORCE_COLORED_OUTPUT=1 -DCMAKE_CXX_COMPILER=clang++
 cmake --build .
 
 (cd test/; ctest )
@@ -23,6 +25,10 @@ Overall coverage rate:
 
 # for some IDE:
 ln -s build/compile_commands.json .
+
+*** clang for the profiling libs
+ai libclang-rt-dev
+
 
 * debug:
 script zapis  -c ninja
