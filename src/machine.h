@@ -17,35 +17,39 @@
 
 // namespace fork {
 
-typedef boost::circular_buffer<archived_event> last_events_t;
-
-/* states of the automaton: */
-
-/* `machine': the dynamic `state' */
-struct key_event {
-    PlatformEvent* p_event;
-    KeyCode forked; /* if forked to (another keycode), this is the original key */
-    key_event(PlatformEvent* p) : p_event(p){};
-    ~key_event() {
-        // should be nullptr
-        // bug: must call environment -> free_event()
-        free(p_event);
-    }
-};
 /* fixme: inherit from xorg! */
 constexpr int MAX_KEYCODE=256;
 
 
 
-// history:
-typedef my_queue<key_event*> list_with_tail;
 
 // typename PlatformEvent, typename platformEnvironment,
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event>
 // so key_event
 class forkingMachine
 {
+
+public:
+    typedef boost::circular_buffer<archived_event> last_events_t;
+    // history:
+    typedef platformEnvironment1<Keycode, Time, archived_event> platformEnvironment;
+
+    /* `machine': the dynamic `state' */
+    struct key_event {
+        PlatformEvent* p_event;
+        Keycode forked; /* if forked to (another keycode), this is the original key */
+        key_event(PlatformEvent* p) : p_event(p){};
+        ~key_event() {
+            // should be nullptr
+            // bug: must call environment -> free_event()
+            free(p_event);
+        }
+    };
+
+    typedef my_queue<key_event*> list_with_tail;
+
 private:
+    /* states of the automaton: */
     constexpr static const Keycode no_key = 0;
     enum fork_state_t {  // states of the automaton
         st_normal,
