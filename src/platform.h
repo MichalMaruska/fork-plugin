@@ -3,10 +3,13 @@
 /**
  * Created by michal on 8/10/24.
  *
+ * The interface to the platforms: fork-machine should use this
+ *
  */
 
 #include <string>
 #include <memory>
+
 
 template <typename archived_fork_event>
 class event_dumper {
@@ -27,10 +30,11 @@ class event_publisher {
 
 class PlatformEvent {};
 
+// fork-machine passes its parameters to this:
 template <typename Keycode, typename Time, typename archived_fork_event>
-class platformEnvironment1 {
+class platformEnvironment {
 public:
-    platformEnvironment1() = default;
+    platformEnvironment() = default;
 
     virtual bool press_p(const PlatformEvent* event) = 0;
     virtual bool release_p(const PlatformEvent* event) = 0;
@@ -55,5 +59,5 @@ public:
 
     virtual std::unique_ptr<event_dumper<archived_fork_event>> get_event_dumper() = 0;
 
-    virtual ~platformEnvironment1() = default;
+    virtual ~platformEnvironment() = default;
 };

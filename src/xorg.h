@@ -111,7 +111,7 @@ public:
 
 
 
-class XOrgEnvironment : public platformEnvironment1<KeyCode, Time, archived_event> {
+class XOrgEnvironment : public platformEnvironment<KeyCode, Time, archived_event> {
 private:
     const DeviceIntPtr keybd; // reference
     PluginInstance* const plugin;

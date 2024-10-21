@@ -51,7 +51,7 @@ private:
 };
 
 // I want to mock this:
-class testEnvironment final : public platformEnvironment1<KeyCode, Time, archived_event> {
+class testEnvironment final : public platformEnvironment<KeyCode, Time, archived_event> {
 public:
   // virtual
   MOCK_METHOD(bool, press_p,(const PlatformEvent* event));

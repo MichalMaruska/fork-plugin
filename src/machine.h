@@ -31,8 +31,7 @@ class forkingMachine
 
 public:
     typedef boost::circular_buffer<archived_event_t> last_events_t;
-    // history:
-    typedef platformEnvironment1<Keycode, Time, archived_event_t> platformEnvironment;
+    typedef platformEnvironment<Keycode, Time, archived_event_t> Environment_t;
 
     /* `machine': the dynamic `state' */
     struct key_event {
@@ -82,7 +81,7 @@ private:
                                   *
                                   * useless mmc!  But i want to avoid any caching it.... SMP ??*/
 public:
-    std::unique_ptr<platformEnvironment> environment;
+    std::unique_ptr<Environment_t> environment;
 #if USE_LOCKING
     void lock()
     {
@@ -288,7 +287,7 @@ public:
 
     ~forkingMachine() {};
 
-    explicit forkingMachine(platformEnvironment* environment)
+    explicit forkingMachine(Environment_t* environment)
         : mLock(0),
           environment(environment),
           state(st_normal), suspect(0), verificator_keycode(0), suspect_time(0),
