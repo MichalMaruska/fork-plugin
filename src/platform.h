@@ -5,14 +5,6 @@
  *
  */
 
-
-extern "C" {
-// todo: archived_event coud be avoided ... it's X specific
-#include "fork_requests.h"
-#undef max
-#undef min
-}
-
 #include <string>
 #include <memory>
 
