@@ -1,5 +1,6 @@
 #pragma once
 
+#include "fork_requests.h"
 #include "platform.h"
 #include "debug.h"
 #include <memory>
@@ -43,7 +44,7 @@ public:
 };
 
 
-class xorg_event_publisher : public event_publisher
+class xorg_event_publisher : public event_publisher<archived_event>
 {
     private:
     char* memory;
@@ -82,7 +83,7 @@ class xorg_event_publisher : public event_publisher
 
 
 // Closure
-class xorg_event_dumper : public event_dumper
+class xorg_event_dumper : public event_dumper<archived_event>
 {
 private:
     const XkbSrvInfoPtr xkbi;
@@ -233,7 +234,7 @@ public:
     };
 
     virtual
-    std::unique_ptr<event_dumper> get_event_dumper() override {
+    std::unique_ptr<event_dumper<archived_event>> get_event_dumper() override {
         return std::make_unique<xorg_event_dumper>(keybd);
     }
 
@@ -246,7 +247,7 @@ public:
 
 
     // specific, not virtual!:
-    std::unique_ptr<event_publisher> get_event_publisher(ClientPtr client, PluginInstance *plugin) {
+    std::unique_ptr<event_publisher<archived_event>> get_event_publisher(ClientPtr client, PluginInstance *plugin) {
         return std::make_unique<xorg_event_publisher>(client, plugin);
     }
 };
