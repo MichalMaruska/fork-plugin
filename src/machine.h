@@ -310,7 +310,7 @@ public:
     int configure_twins(int type, Keycode key, Keycode twin, int value, bool set);
     int configure_key(int type, Keycode key, int value, bool set);
 
-    int dump_last_events_to_client(event_publisher* publisher, int max_requested);
+    int dump_last_events_to_client(event_publisher<archived_event>* publisher, int max_requested);
 
     void step_in_time_locked(Time now);
 
@@ -366,7 +366,7 @@ public:
         }
     }
 
-    void dump_last_events(event_dumper* dumper) const {
+    void dump_last_events(event_dumper<archived_event>* dumper) const {
 #if 0
         std::function<void(const event_dumper&, const archived_event&)> doit0 = &event_dumper::operator();
         // lambda?
