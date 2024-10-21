@@ -12,7 +12,7 @@ typedef int keycode_parameter_matrix[MAX_KEYCODE][MAX_KEYCODE];
 
 private:
     // declaration, not definition!
-    static int config_counter;
+    static inline int config_counter;
 
 public:
     Keycode          fork_keycode[MAX_KEYCODE];

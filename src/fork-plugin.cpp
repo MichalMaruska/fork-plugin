@@ -547,10 +547,6 @@ destroy_plugin(PluginInstance* plugin)
 }
 
 
-template<>
-int ForkConfiguration<KeyCode, Time>::config_counter = 0;
-
-
 // This macro helps with providing
 // initial value of struct- the member name is along the value.
 #if __GNUC__

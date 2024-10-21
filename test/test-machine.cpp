@@ -74,9 +74,6 @@ public:
 using machineRec = forkingMachine<KeyCode, Time>;
 using fork_configuration = ForkConfiguration<KeyCode, Time>;
 
-template<>
-int ForkConfiguration<KeyCode, Time>::config_counter = 0;
-
 class machineTest : public testing::Test {
 
 protected:
