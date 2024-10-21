@@ -7,9 +7,9 @@
 
 
 #if MULTIPLE_CONFIGURATIONS
-template <typename Keycode, typename Time>
-ForkConfiguration<Keycode, Time>**
-forkingMachine<Keycode, Time>::find_configuration_n(const int n)
+template <typename Keycode, typename Time, typename archived_event_t>
+ForkConfiguration<Keycode, Time, 256>**
+forkingMachine<Keycode, Time, archived_event_t>::find_configuration_n(const int n)
 {
     fork_configuration** config_p = &config;
 
@@ -22,9 +22,9 @@ forkingMachine<Keycode, Time>::find_configuration_n(const int n)
 
 // and replay whatever is inside the machine!
 // locked?
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time>::switch_config(int id)
+forkingMachine<Keycode, Time, archived_event_t>::switch_config(int id)
 {
     environment->log("%s %d\n", __func__, id);
     fork_configuration** config_p = find_configuration_n(id);
@@ -56,9 +56,9 @@ forkingMachine<Keycode, Time>::switch_config(int id)
 #endif // MULTIPLE_CONFIGURATIONS
 
 /** update the configuration */
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 int
-forkingMachine<Keycode, Time>::configure_global(int type, int value, bool set)
+forkingMachine<Keycode, Time, archived_event_t>::configure_global(int type, int value, bool set)
 {
    const auto fork_configuration = this->config.get();
 
@@ -138,9 +138,9 @@ forkingMachine<Keycode, Time>::configure_global(int type, int value, bool set)
 /**
  * key and twin have a relationship, given by type.
  */
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 int
-forkingMachine<Keycode, Time>::configure_twins(int type, Keycode key, Keycode twin, int value, bool set)
+forkingMachine<Keycode, Time, archived_event_t>::configure_twins(int type, Keycode key, Keycode twin, int value, bool set)
 {
    switch (type) {
       case fork_configure_total_limit:
@@ -160,9 +160,9 @@ forkingMachine<Keycode, Time>::configure_twins(int type, Keycode key, Keycode tw
    return 0;
 }
 
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 int
-forkingMachine<Keycode, Time>::configure_key(int type, Keycode key, int value, bool set)
+forkingMachine<Keycode, Time, archived_event_t>::configure_key(int type, Keycode key, int value, bool set)
 {
    mdb("%s: keycode %d -> value %d, function %d\n",
        __func__, key, value, type);
@@ -200,8 +200,8 @@ forkingMachine<Keycode, Time>::dump_last_events_to_client(event_publisher* publi
 
    publisher->prepare(max_requested);
 
-   std::function<void(const archived_event&)> lambda =
-       [publisher](const archived_event& ev){ publisher->event(ev); };
+   std::function<void(const archived_event_t&)> lambda =
+       [publisher](const archived_event_t& ev){ publisher->event(ev); };
    // auto f = std::function<void(const archived_event&)>(bind(publisher->event(), publisher,));
 
    // todo:
@@ -220,9 +220,9 @@ forkingMachine<Keycode, Time>::dump_last_events_to_client(event_publisher* publi
 // fixme: move to a real .cpp file!
 Time queue_front_time(list_with_tail &queue, platformEnvironment *environment);
 
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 bool
-forkingMachine<Keycode, Time>::queues_non_empty() const
+forkingMachine<Keycode, Time, archived_event_t>::queues_non_empty() const
 {
     return (!output_queue.empty() || !input_queue.empty() || !internal_queue.empty());
 }
@@ -233,9 +233,9 @@ forkingMachine<Keycode, Time>::queues_non_empty() const
  * Push as many as possible from the OUTPUT queue to the next layer
  * Unlocks!
  **/
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time>::flush_to_next()
+forkingMachine<Keycode, Time, archived_event_t>::flush_to_next()
 {
     // todo: could I lock only in this scope?
     check_locked();
@@ -252,7 +252,7 @@ forkingMachine<Keycode, Time>::flush_to_next()
         // so no preemption of this part! fixme!
         // yet, the next plugin could call in here? to do what?
         {
-            archived_event archived_event;
+            archived_event_t archived_event;
             environment->archive_event(archived_event, ev->p_event);
             archived_event.forked = ev->forked;
 
@@ -302,14 +302,13 @@ forkingMachine<Keycode, Time>::flush_to_next()
         mdb("%s: still %d events to output\n", __func__, output_queue.length ());
 }
 
-// Another event has been determined. So:
-// todo:  possible emit a (notification) event immediately,
-// ... and push the event down the pipeline, when not frozen.
-
-/* note, that after this EV could point to a deallocated memory! */
-template <typename Keycode, typename Time>
+/** Another event has been determined. So:
+ * todo:  possible emit a (notification) event immediately,
+ * ... and push the event down the pipeline, when not frozen.
+ */
+template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time>::output_event(std::unique_ptr<key_event> ev) // unlocks possibly!
+forkingMachine<Keycode, Time, archived_event_t>::output_event(std::unique_ptr<key_event> ev) // unlocks possibly!
 {
     assert(ev->p_event != nullptr);
     mdb("%s: %p %p\n", __func__, ev.get(), ev->p_event);
@@ -322,9 +321,9 @@ forkingMachine<Keycode, Time>::output_event(std::unique_ptr<key_event> ev) // un
  * We concluded the key is forked. "Output" it and prepare for the next one.
  * fixme: locking?
  */
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time>::activate_fork() // possibly unlocks
+forkingMachine<Keycode, Time, archived_event_t>::activate_fork() // possibly unlocks
 {
     assert(!internal_queue.empty());
 
@@ -361,9 +360,9 @@ forkingMachine<Keycode, Time>::activate_fork() // possibly unlocks
 /**
  * Now the operations on the Dynamic state
  */
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time>::reverse_splice(list_with_tail &pre, list_with_tail &post)
+forkingMachine<Keycode, Time, archived_event_t>::reverse_splice(list_with_tail &pre, list_with_tail &post)
 {
     // I have 2 queues: (pre) (post) then I have: () (pre post)
     // Splice with a reversed semantic:
@@ -376,9 +375,9 @@ forkingMachine<Keycode, Time>::reverse_splice(list_with_tail &pre, list_with_tai
 /**
  * One key-event investigation finished,
  * now reset for the next one */
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time>::rewind_machine()
+forkingMachine<Keycode, Time, archived_event_t>::rewind_machine()
 {
     assert ((state == st_deactivated) || (state == st_activated));
 
@@ -405,9 +404,9 @@ forkingMachine<Keycode, Time>::rewind_machine()
  *
  * fixme: why not using rewind_machine()
  */
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time>::replay_events(bool force_also)
+forkingMachine<Keycode, Time, archived_event_t>::replay_events(bool force_also)
 {
     mdb("%s\n", __func__);
     check_locked();
@@ -429,9 +428,9 @@ forkingMachine<Keycode, Time>::replay_events(bool force_also)
 /**
  * Take from `input_queue', + the mCurrent_time + force  -> run the machine.
  */
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time>::try_to_play(bool force_also)
+forkingMachine<Keycode, Time, archived_event_t>::try_to_play(bool force_also)
 {
     // fixme: maybe All I need is the nextPlugin?
 
@@ -473,9 +472,9 @@ forkingMachine<Keycode, Time>::try_to_play(bool force_also)
 /** we take over pevent and promise to deliver back via
  *  relay_event -> hand_over_event_to_next_plugin
  */
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time>::accept_event(PlatformEvent* pevent) noexcept(false) {
+forkingMachine<Keycode, Time, archived_event_t>::accept_event(PlatformEvent* pevent) noexcept(false) {
 
     // this can only throw
     auto ev = std::make_unique<key_event>(pevent);
@@ -494,9 +493,9 @@ forkingMachine<Keycode, Time>::accept_event(PlatformEvent* pevent) noexcept(fals
  * (could use a bitmask to configure what reacts)
  * If in Suspect or Verify state, force the fork. (todo: should be configurable)
  */
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time>::step_by_force()
+forkingMachine<Keycode, Time, archived_event_t>::step_by_force()
 {
     if ((state == st_normal) || (internal_queue.empty())) {
         // does this imply  that ^^^ ?
@@ -518,9 +517,9 @@ forkingMachine<Keycode, Time>::step_by_force()
 }
 
 // So the event proves, that the current event is not forked.
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time>::do_confirm_non_fork_by(std::unique_ptr<key_event> ev) // possibly unlocks
+forkingMachine<Keycode, Time, archived_event_t>::do_confirm_non_fork_by(std::unique_ptr<key_event> ev) // possibly unlocks
 {
     assert(state == st_suspect || state == st_verify);
 
@@ -541,9 +540,9 @@ forkingMachine<Keycode, Time>::do_confirm_non_fork_by(std::unique_ptr<key_event>
 }
 
 // so EV confirms fork of the current event.
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time>::do_confirm_fork_by(std::unique_ptr<key_event> ev)
+forkingMachine<Keycode, Time, archived_event_t>::do_confirm_fork_by(std::unique_ptr<key_event> ev)
 {
     /* fixme: ev is the just-read event. But that is surely not the head
        of queue (which is confirmed to fork) */
@@ -564,9 +563,9 @@ forkingMachine<Keycode, Time>::do_confirm_fork_by(std::unique_ptr<key_event> ev)
 
 // return 0  if the current/first key is pressed enough time to fork.
 // or time when this will happen.
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 Time
-forkingMachine<Keycode, Time>::key_pressed_too_long(Time current_time)
+forkingMachine<Keycode, Time, archived_event_t>::key_pressed_too_long(Time current_time)
 {
     assert(state== st_verify || state == st_suspect);
 
@@ -588,10 +587,10 @@ forkingMachine<Keycode, Time>::key_pressed_too_long(Time current_time)
 
 
 // return 0 if enough, otherwise the time when it will be enough/proving a fork.
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 Time
 // dangerous to name it current_time, like the member variable!
-forkingMachine<Keycode, Time>::key_pressed_in_parallel(Time current_time)
+forkingMachine<Keycode, Time, archived_event_t>::key_pressed_in_parallel(Time current_time)
 {
     // verify overlap
     int overlap_tolerance = config->overlap_tolerance_of(suspect,
@@ -616,9 +615,9 @@ forkingMachine<Keycode, Time>::key_pressed_in_parallel(Time current_time)
 }
 
 
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 bool
-forkingMachine<Keycode, Time>::step_by_time(Time current_time)
+forkingMachine<Keycode, Time, archived_event_t>::step_by_time(Time current_time)
 {
     // confirm fork:
     [[maybe_unused]] fork_reason reason; // fixme: unused!
@@ -667,9 +666,9 @@ forkingMachine<Keycode, Time>::step_by_time(Time current_time)
 }
 
 // This is a public api!
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time>::step_in_time_locked(const Time now) // unlocks possibly!
+forkingMachine<Keycode, Time, archived_event_t>::step_in_time_locked(const Time now) // unlocks possibly!
 {
     if (queues_non_empty()) {
         mdb("%s: %" TIME_FMT "\n", __func__, now);
@@ -704,9 +703,9 @@ forkingMachine<Keycode, Time>::step_in_time_locked(const Time now) // unlocks po
 /** apply_event_to_{STATE} */
 
 // is mDecision_time always recalculated?
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time>::apply_event_to_normal(std::unique_ptr<key_event> ev) // possibly unlocks
+forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_normal(std::unique_ptr<key_event> ev) // possibly unlocks
 {
     PlatformEvent* pevent = ev->p_event;
 
@@ -791,9 +790,9 @@ forkingMachine<Keycode, Time>::apply_event_to_normal(std::unique_ptr<key_event> 
 /*  First (press)
  *  Second    <-- we are here.
  */
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time>::apply_event_to_suspect(std::unique_ptr<key_event> ev)
+forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_suspect(std::unique_ptr<key_event> ev)
 {
     const PlatformEvent* pevent = ev->p_event;
     Time simulated_time = environment->time_of(pevent);
@@ -890,9 +889,9 @@ forkingMachine<Keycode, Time>::apply_event_to_suspect(std::unique_ptr<key_event>
  * So, already 2 keys have been pressed, and still no decision.
  * Now we have the 3rd key.
  * We wait only for time, and for the release of the key */
-template <typename Keycode, typename Time>
+template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time>::apply_event_to_verify_state(std::unique_ptr<key_event> ev)
+forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_verify_state(std::unique_ptr<key_event> ev)
 {
     const PlatformEvent* pevent = ev->p_event;
     Time simulated_time = environment->time_of(pevent);
