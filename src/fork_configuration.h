@@ -4,8 +4,8 @@
 
 // these as template non-type parameters?
 #define KEYCODE_UNUSED 0
-#define MAX_KEYCODE 256         /* fixme: inherit from xorg! */
-template <typename Keycode, typename Time>
+
+template <typename Keycode, typename Time, int MAX_KEYCODE>
 class ForkConfiguration {
 
 typedef int keycode_parameter_matrix[MAX_KEYCODE][MAX_KEYCODE];
