@@ -23,11 +23,8 @@ constexpr int MAX_KEYCODE=256;
 
 
 
-// typename PlatformEvent, typename platformEnvironment,
 template <typename Keycode, typename Time, typename archived_event_t>
-// so key_event
-class forkingMachine
-{
+class forkingMachine {
 
 public:
     typedef boost::circular_buffer<archived_event_t> last_events_t;
@@ -35,13 +32,17 @@ public:
 
     /* `machine': the dynamic `state' */
     struct key_event {
+        // I want a static variable pointing to the Class's Environment.
+        inline static Environment_t *env; // not ownin
+        //
         PlatformEvent* p_event;
         Keycode forked; /* if forked to (another keycode), this is the original key */
         key_event(PlatformEvent* p) : p_event(p){};
         ~key_event() {
             // should be nullptr
             // bug: must call environment -> free_event()
-            free(p_event);
+            // so virtual d-tor?
+            env->free_event(p_event);
         }
     };
 
@@ -299,6 +300,7 @@ public:
           output_queue("output_queue"),
           config(nullptr) {
 
+        key_event::env = environment;
         environment->log("ctor: allocating last_events\n");
         last_events_log.set_capacity(max_last);
         environment->log("ctor: allocated last_events %lu (%lu\n", last_events_log.size(), max_last);
