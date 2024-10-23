@@ -218,6 +218,75 @@ TEST_F(machineTest, EventFreed) {
 }
 
 
+TEST_F(machineTest, ForkBySecond) {
+  // configure
+  KeyCode A = 10;
+  Time a_time = 156;
+  auto A_pevent = std::make_unique<TestEvent>(a_time, A);
+  KeyCode F = 11;
+
+  Time b_time = a_time + 50;
+  KeyCode B = 60;
+  auto B_pevent = std::make_unique<TestEvent>(b_time, B);
+
+  Time b_release_time = b_time + 50;
+  auto B_release_pevent = std::make_unique<TestEvent>(b_release_time, B, false);
+
+  config->debug = 1;
+  fm->configure_key(fork_configure_key_fork, A, F, 1); // 1 means SET
+  // EXPECT_EQ(config->fork_keycode[A], F);
+
+  TestEvent* a = A_pevent.get();
+  TestEvent* b = B_pevent.get();
+  EXPECT_CALL(*environment,ignore_event(A_pevent.get())).WillRepeatedly(Return(false));
+  EXPECT_CALL(*environment,time_of(A_pevent.get())).WillRepeatedly(Return(a_time));
+
+
+  EXPECT_CALL(*environment,time_of(B_pevent.get())).WillRepeatedly(Return(b_time));
+  EXPECT_CALL(*environment,ignore_event(B_pevent.get())).WillRepeatedly(Return(false));
+
+  // return:
+  EXPECT_CALL(*environment, output_frozen).WillRepeatedly(Return(false));
+  // many times:
+  EXPECT_CALL(*environment, detail_of(a)).WillRepeatedly(Return(A));
+  EXPECT_CALL(*environment, press_p(A_pevent.get())).WillRepeatedly(Return(true));
+
+  EXPECT_CALL(*environment, detail_of(b)).WillRepeatedly(Return(B));
+  EXPECT_CALL(*environment, press_p(B_pevent.get())).WillRepeatedly(Return(true));
+
+  EXPECT_CALL(*environment, press_p(B_release_pevent.get())).WillRepeatedly(Return(false));
+  EXPECT_CALL(*environment, release_p(B_release_pevent.get())).WillRepeatedly(Return(true));
+  // archive_event
+  // fmt_event
+  // ON_CALL(*environment,rewrite_event).
+  EXPECT_CALL(*environment,push_time(a_time));
+  EXPECT_CALL(*environment,push_time(b_time));
+
+  EXPECT_CALL(*environment,rewrite_event)
+    .WillOnce([](PlatformEvent* pevent, KeyCode b) {
+      auto event = static_cast<TestEvent*>(pevent)->event;
+      event->key = b;
+    });
+
+  // we lost A_pevent
+  EXPECT_CALL(*environment, relay_event); // todo: check it's F
+  // this drop leaks ^^^
+  EXPECT_CALL(*environment, free_event(a)); // (nullptr)
+
+
+  fm->lock();           // fixme: mouse must not interrupt us.
+  fm->accept_event(std::move(A_pevent));
+  fm->accept_event(std::move(B_pevent));
+  fm->accept_event(std::move(B_release_pevent));
+
+
+  fm->unlock();
+
+  Mock::VerifyAndClearExpectations(environment);
+}
+
+
+
 // Thus your main() function must return the value of RUN_ALL_TESTS().
 // Calling it more than once conflicts with some advanced GoogleTest features (e.g., thread-safe death tests)
 // RUN_ALL_TESTS()
