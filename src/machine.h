@@ -328,7 +328,8 @@ public:
 
     bool step_by_time(Time current_time);
 
-    void accept_event(PlatformEvent* pevent);
+public:
+    void accept_event(std::unique_ptr<PlatformEvent> pevent);
 
     void flush_to_next();
 

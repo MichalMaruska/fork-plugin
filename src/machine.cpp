@@ -471,13 +471,15 @@ forkingMachine<Keycode, Time, archived_event_t>::try_to_play(bool force_also)
 
 /** we take over pevent and promise to deliver back via
  *  relay_event -> hand_over_event_to_next_plugin
+ *
+ *  todo: PlatformEvent is now owned ... it will be destroyed by Environment.
  */
 template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time, archived_event_t>::accept_event(PlatformEvent* pevent) noexcept(false) {
+forkingMachine<Keycode, Time, archived_event_t>::accept_event(std::unique_ptr<PlatformEvent> pevent) noexcept(false) {
 
     // this can only throw
-    auto ev = std::make_unique<key_event>(pevent);
+    auto ev = std::make_unique<key_event>(std::move(pevent));
     ev->forked = no_key; // makes sense?
 
     // fixme:

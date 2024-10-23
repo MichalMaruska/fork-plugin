@@ -123,13 +123,13 @@ protected:
 
 // When using a fixture, use TEST_F(TestFixtureClassName, TestName)
 TEST_F(machineTest, AcceptEvent) {
-  auto pevent = new TestEvent(100L, 56);
+  auto pevent = std::make_unique<TestEvent>( 100L, 56);
 
   EXPECT_CALL(*environment, relay_event(pevent));
 // .WillOnce(ReturnRef(bar1)
 
   fm->lock();           // fixme: mouse must not interrupt us.
-  fm->accept_event(pevent);
+  fm->accept_event(std::move(pevent));
   // machine->next_decision_time()
   fm->unlock();
   // expect call to
