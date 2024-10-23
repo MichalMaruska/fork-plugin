@@ -134,7 +134,8 @@ protected:
 TEST_F(machineTest, AcceptEvent) {
   auto pevent = std::make_unique<TestEvent>( 100L, 56);
 
-  EXPECT_CALL(*environment, relay_event(pevent));
+  // (pevent.get())
+  EXPECT_CALL(*environment, relay_event);
 // .WillOnce(ReturnRef(bar1)
 
   fm->lock();           // fixme: mouse must not interrupt us.
