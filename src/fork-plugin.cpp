@@ -5,10 +5,10 @@
 
 /* How we operate:
  *
- *   ProcessEvent ->                                    /  step_by_key
- *                 invoke the `machine'   -> try_to_play --- step_by_time --\
- *                                                |     \  step_by_force    |
- *   ProcessTime ->                               |                         v
+ *   ProcessEvent ->                          accept_event
+ *                 invoke the `machine'   -> step_in_time_locked
+ *                                            step_by_force    |
+ *   ProcessTime ->                                            v
  *                                       restart              hand_over_event_to_next_plugin
  *   mouse_call_back---
  *
@@ -289,9 +289,10 @@ ForkProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
         set_wakeup_time(plugin, machine->next_decision_time());
         machine->unlock();
     }
+
+
     // by now, if owner, we consumed the event.
     goto exit;
-
   exit_free:
     if (owner)
         free(event);
