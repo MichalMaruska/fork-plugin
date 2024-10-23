@@ -65,10 +65,18 @@ public:
   MOCK_METHOD(void, relay_event,(PlatformEvent* &pevent));
   MOCK_METHOD(void, push_time,(Time now));
 
-  MOCK_METHOD(void, vlog,(const char* format, va_list argptr));
+  // MOCK_METHOD(void, vlog,(const char* format, va_list argptr));
+
+  void vlog(const char* format, va_list argptr) override {
+    vprintf(format, argptr);
+  }
+
   void log(const char* format...) override
   {
-    // ignore
+    va_list argptr;
+    va_start(argptr, format);
+    vprintf(format, argptr);
+    va_end(argptr);
   };
   MOCK_METHOD(std::string, fmt_event,(const PlatformEvent *event));
 
