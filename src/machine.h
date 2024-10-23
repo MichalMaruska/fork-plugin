@@ -324,6 +324,7 @@ public:
 
     void step_by_force();
 
+private:
     void step_by_key(std::unique_ptr<key_event> ev);
 
     bool step_by_time(Time current_time);
