@@ -62,7 +62,7 @@ public:
 
   // MOCK_METHOD(void, hand_over_event_to_next_plugin, (PlatformEvent* event));
   MOCK_METHOD(bool, output_frozen,());
-  MOCK_METHOD(void, relay_event,(PlatformEvent* pevent));
+  MOCK_METHOD(void, relay_event,(PlatformEvent* &pevent));
   MOCK_METHOD(void, push_time,(Time now));
 
   MOCK_METHOD(void, vlog,(const char* format, va_list argptr));
