@@ -2,7 +2,6 @@
 
 #include "fork_requests.h"
 #include "platform.h"
-#include "debug.h"
 #include <memory>
 
 extern "C" {
