@@ -63,7 +63,7 @@ public:
                 overlap_tolerance[i][j] = 0;
                 verification_interval[i][j] = 0;
             };
-            fork_keycode[i] = 0;
+            fork_keycode[i] = KEYCODE_UNUSED;
             /*  config->forkCancel[i] = 0; */
             fork_repeatable[i] = false;
             /* repetition is supported by default (not ignored)  True False*/
