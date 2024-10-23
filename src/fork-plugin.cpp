@@ -15,6 +15,7 @@
  *   NotifyThaw: ---
  */
 
+#include "platform.h"
 extern "C" {
 #include <fork_requests.h>
 #undef max
