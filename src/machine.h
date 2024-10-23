@@ -37,7 +37,7 @@ public:
         //
         PlatformEvent* p_event;
         Keycode forked; /* if forked to (another keycode), this is the original key */
-        key_event(PlatformEvent* p) : p_event(p){};
+        key_event(std::unique_ptr<PlatformEvent> p) : p_event(p.release()){};
         ~key_event() {
             // should be nullptr
             // bug: must call environment -> free_event()
