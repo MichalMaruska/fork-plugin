@@ -227,21 +227,22 @@ set_wakeup_time(PluginInstance *plugin, Time machine_time)
 }
 
 
-static XorgEvent*
-create_xorg_platform_event(InternalEvent *event, bool owner)
+static std::unique_ptr<XorgEvent>
+create_xorg_platform_event(InternalEvent *event, const bool owner)
 {
     InternalEvent* qe;
-    if (owner)
+    if (owner) {
         qe = event;
-    else {
+    } else {
         qe = (InternalEvent*)malloc(event->any.length);
         if (!qe) {
+            // raise exception
             ErrorF("%s: out-of-memory\n", __func__);
             return NULL;
         }
         memcpy(qe, event, event->any.length);
     }
-    return new XorgEvent(qe);
+    return std::make_unique<XorgEvent>(qe);
 }
 
 
@@ -278,10 +279,11 @@ ForkProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
         const auto machine = plugin_machine(plugin);
         machine->lock();           // fixme: mouse must not interrupt us.
         {
-            auto* ev = create_xorg_platform_event(event, owner);
+            std::unique_ptr<PlatformEvent> ev = create_xorg_platform_event(event, owner);
+            // bug:
             if (!ev) // memory problems
                 goto exit_free;
-            machine->accept_event(ev);
+            machine->accept_event(std::move(ev));
         }
 
         set_wakeup_time(plugin, machine->next_decision_time());
