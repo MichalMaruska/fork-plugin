@@ -27,12 +27,13 @@ extern "C"
 // I need archived_event
 typedef struct
 {
-    Time time;
-    KeyCode key;
-    KeyCode forked;
-    Bool press;                  /* client type? */
+  Time time;
+  KeyCode key;
+  KeyCode forked;
+  Bool press;                  /* client type? */
 } archived_event;
 
+// I need Environment which can convert into archived_event
 
 // fixme:
 // #include "../src/machine.cpp"
@@ -41,6 +42,7 @@ typedef struct
 using testing::Mock;
 using testing::Return;
 
+// this is fully under control of our environment:
 class TestEvent : public PlatformEvent {
 public:
   archived_event *event;
@@ -100,13 +102,14 @@ protected:
     machineTest() : environment(new testEnvironment() ),
                     config (new fork_configuration),
                     fm (new machineRec(environment)) {
-      // I could instead call forking_machine->create_configs();
-        // q0_ remains empty
-        // q1_.push_back(1);
-        // q2_.Enqueue(2);
-        // q2_.Enqueue(3);
+      // mmc: I could instead call forking_machine->create_configs();
       config->debug = 0;
       fm->config.reset(config);
+
+      // q0_ remains empty
+      // q1_.push_back(1);
+      // q2_.Enqueue(2);
+      // q2_.Enqueue(3);
     }
 
     // ~QueueTest() override = default;
@@ -147,7 +150,6 @@ TEST_F(machineTest, AcceptEvent) {
   // CALLED
   // q0_.size()
   EXPECT_EQ(0, 0);
-
 
   // so for that EXPECT_CALL: this is necessary? as part of this test:
   Mock::VerifyAndClearExpectations(environment);
