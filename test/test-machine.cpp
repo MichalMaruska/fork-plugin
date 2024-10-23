@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "fork_enums.h"
 #include <cstdlib>
 #include <memory>
 
@@ -152,6 +153,16 @@ TEST_F(machineTest, AcceptEvent) {
   // ::testing::Mock::AllowLeak(environment);
   // ::testing::Mock::VerifyAndClearExpectations(fm);
 }
+
+TEST_F(machineTest, Configure) {
+  KeyCode A = 10;
+  KeyCode B = 11;
+  fm->configure_key(fork_configure_key_fork, A, B, 1);
+  EXPECT_EQ(config->fork_keycode[A], B);
+  // Mock::VerifyAndClearExpectations(environment);
+  // verification_interval_of
+}
+
 
 
 // Thus your main() function must return the value of RUN_ALL_TESTS().
