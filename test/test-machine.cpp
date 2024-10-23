@@ -41,12 +41,11 @@ using testing::Mock;
 
 class TestEvent : public PlatformEvent {
 public:
-    TestEvent(const Time time, const KeyCode keycode, bool press = true, const KeyCode forked = 0) {
-      event = new ::archived_event({time, keycode, forked, press });
-    }
-
-private:
   archived_event *event;
+
+  TestEvent(const Time time, const KeyCode keycode, bool press = true, const KeyCode forked = 0) {
+    event = new ::archived_event({time, keycode, forked, press });
+  }
 
 };
 
