@@ -39,6 +39,7 @@ typedef struct
 
 // using ::testing::Moc;
 using testing::Mock;
+using testing::Return;
 
 class TestEvent : public PlatformEvent {
 public:
@@ -163,6 +164,58 @@ TEST_F(machineTest, Configure) {
   // verification_interval_of
 }
 
+
+
+// create event, non-forkable, pass, and expect it's got back, and freed?
+TEST_F(machineTest, EventFreed) {
+
+  // EXPECT_CALL(*environment, relay_event(pevent));
+  // detail_of()
+
+  // create env
+  KeyCode A = 10;
+  Time a_time = 156;
+  Time next_time = 201;
+  auto A_pevent = std::make_unique<TestEvent>(a_time, A);
+
+  KeyCode B = 11;
+  config->debug = 1;
+  fm->configure_key(fork_configure_key_fork, A, B, 1);
+  // EXPECT_EQ(config->fork_keycode[A], B);
+
+
+  ON_CALL(*environment,ignore_event(A_pevent.get())).WillByDefault(Return(false));
+  EXPECT_CALL(*environment,time_of(A_pevent.get())).WillRepeatedly(Return(a_time));
+  // return:
+  EXPECT_CALL(*environment, output_frozen).WillRepeatedly(Return(false));
+  // many times:
+  TestEvent* a = A_pevent.get();
+  ON_CALL(*environment, detail_of(a)).WillByDefault(Return(A));
+  ON_CALL(*environment, press_p(A_pevent.get())).WillByDefault(Return(true));
+  // archive_event
+  // fmt_event
+  // ON_CALL(*environment,rewrite_event).
+  EXPECT_CALL(*environment,push_time(a_time));
+  EXPECT_CALL(*environment,push_time(a_time + next_time));
+
+  EXPECT_CALL(*environment,rewrite_event)
+    .WillOnce([](PlatformEvent* pevent, KeyCode b) {
+      auto event = static_cast<TestEvent*>(pevent)->event;
+      event->key = b;
+    });
+
+  fm->lock();           // fixme: mouse must not interrupt us.
+  fm->accept_event(std::move(A_pevent));
+  // we lost A_pevent
+  EXPECT_CALL(*environment, relay_event); // (a)
+  // this drop leaks ^^^
+  EXPECT_CALL(*environment, free_event(a)); // (nullptr)
+
+  fm->step_in_time_locked(a_time + next_time);
+  fm->unlock();
+
+  Mock::VerifyAndClearExpectations(environment);
+}
 
 
 // Thus your main() function must return the value of RUN_ALL_TESTS().
