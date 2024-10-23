@@ -45,7 +45,7 @@ public:
     virtual bool ignore_event(const PlatformEvent *pevent) = 0;
 
     virtual bool output_frozen() = 0;
-    virtual void relay_event(PlatformEvent* pevent) = 0;
+    virtual void relay_event(PlatformEvent* &pevent) = 0; // very important to pass-by-ref
     virtual void push_time(Time now) = 0;
 
     virtual void log(const char* format...) = 0;

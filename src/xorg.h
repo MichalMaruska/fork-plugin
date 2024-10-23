@@ -182,10 +182,11 @@ public:
         return event->any.time;
     }
 
-    virtual void relay_event(PlatformEvent* pevent) override {
+    virtual void relay_event(PlatformEvent* &pevent) override {
         auto event = static_cast<XorgEvent*>(pevent)->event;
         PluginInstance* nextPlugin = plugin->next;
         hand_over_event_to_next_plugin(std::unique_ptr<InternalEvent>(event), nextPlugin);
+        pevent = nullptr;
     };
 
     virtual void push_time(Time now) override {
