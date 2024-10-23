@@ -595,8 +595,7 @@ Time
 forkingMachine<Keycode, Time, archived_event_t>::key_pressed_in_parallel(Time current_time)
 {
     // verify overlap
-    int overlap_tolerance = config->overlap_tolerance_of(suspect,
-                                                                  verificator_keycode);
+    int overlap_tolerance = config->overlap_tolerance_of(suspect, verificator_keycode);
     Time decision_time =  verificator_time + overlap_tolerance;
 
     if (decision_time <= current_time) {
@@ -714,8 +713,9 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_normal(std::uniq
     const Keycode key = environment->detail_of(pevent);
     const Time simulated_time = environment->time_of(pevent);
 
+    assert(state == st_normal);
     assert(internal_queue.empty());
-    // environment->log("%s: 2\n", __func__);
+
     // if this key might start a fork....
     if (environment->press_p(pevent) && forkable_p(config.get(), key)
         /* fixme: is this w/ 1-event precision? (i.e. is the xkb-> updated synchronously) */
@@ -789,8 +789,9 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_normal(std::uniq
 };
 
 
-/*  First (press)
- *  Second    <-- we are here.
+/**  First (press)
+ *    v   ^     0   <-- we are here.
+ *        Second
  */
 template <typename Keycode, typename Time, typename archived_event_t>
 void
@@ -800,7 +801,7 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_suspect(std::uni
     Time simulated_time = environment->time_of(pevent);
     Keycode key = environment->detail_of(pevent);
 
-    list_with_tail &queue = internal_queue;
+    auto &queue = internal_queue;
 
     /* Here, we can
      * o refuse .... if suspected/forkable is released quickly,
@@ -971,7 +972,7 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_verify_state(std
  *      sets: `mDecision_time'
  *
  * input:
- *   internal-queue  +      input-queue + ev
+ *   internal-queue  + ev + input-queue
  * output:
  *   either the ev  is pushed on internal_queue, or to the output-queue
  *   the head of internal_queue may be pushed to the output-queue as well.
