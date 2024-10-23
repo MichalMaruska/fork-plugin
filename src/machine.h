@@ -193,7 +193,7 @@ private:
     static bool
     forkable_p(const fork_configuration* config, Keycode code)
     {
-        return (config->fork_keycode[code]);
+        return (config->fork_keycode[code] != no_key);
     }
 
     static constexpr int BufferLength = 200;

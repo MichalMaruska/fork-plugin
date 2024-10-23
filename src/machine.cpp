@@ -419,7 +419,7 @@ forkingMachine<Keycode, Time, archived_event_t>::replay_events(bool force_also)
 
     // todo: what else?
     // last_released & last_released_time no more available.
-    last_released = 0; // bug!
+    last_released = no_key; // bug!
     mDecision_time = 0;     // we are not waiting for anything
 
     try_to_play(force_also);
@@ -762,7 +762,7 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_normal(std::uniq
         } else {
             // imagine mouse-button during the short 1st press. Then
             // the 2nd press ..... should not relate the the 1st one.
-            last_released = 0;
+            last_released = no_key;
             last_released_time = 0;
         }
         /* we finally release a (self-)forked key. Rewrite back the keycode.
