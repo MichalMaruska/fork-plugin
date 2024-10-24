@@ -242,7 +242,7 @@ private:
 
 
     Time key_pressed_too_long(Time current_time);
-    Time key_pressed_in_parallel(Time current_time);
+    Time verifier_decision_time(Time current_time);
 
    /* Return the keycode into which CODE has forked _last_ time.
    Returns code itself, if not forked. */

@@ -590,7 +590,7 @@ forkingMachine<Keycode, Time, archived_event_t>::key_pressed_too_long(Time curre
 template <typename Keycode, typename Time, typename archived_event_t>
 Time
 // dangerous to name it current_time, like the member variable!
-forkingMachine<Keycode, Time, archived_event_t>::key_pressed_in_parallel(Time current_time)
+forkingMachine<Keycode, Time, archived_event_t>::verifier_decision_time(Time current_time)
 {
     // verify overlap
     int overlap_tolerance = config->overlap_tolerance_of(suspect, verificator_keycode);
@@ -642,7 +642,7 @@ forkingMachine<Keycode, Time, archived_event_t>::step_by_time(Time current_time)
     /* To test 2 keys overlap, we need the 2nd key: a verificator! */
     if (state == st_verify) {
         // verify overlap
-        Time decision_time = key_pressed_in_parallel(current_time);
+        Time decision_time = verifier_decision_time(current_time);
 
         if (decision_time == 0) {
             reason = fork_reason::reason_overlap;
@@ -860,7 +860,7 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_suspect(std::uni
             verificator_keycode = key; /* if already we had one -> we are not in this state!
                                            if the verificator becomes a modifier ?? fixme:*/
             // verify overlap
-            Time decision_time = key_pressed_in_parallel(simulated_time);
+            Time decision_time = verifier_decision_time(simulated_time);
 
             // well, this is an abuse ... this should never be 0.
             if (decision_time == 0) {
@@ -931,11 +931,8 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_verify_state(std
     }
 
     /* now, check the overlap of the 2 first keys */
-    Time decision_time = key_pressed_in_parallel(simulated_time);
-
-    // well, this is an abuse ... this should never be 0.
-    if (decision_time == 0)
-    {
+    Time decision_time = verifier_decision_time(simulated_time);
+    if (decision_time == 0) {
         do_confirm_fork_by(std::move(ev));
         return;
     }
