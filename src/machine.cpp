@@ -525,9 +525,7 @@ forkingMachine<Keycode, Time, archived_event_t>::do_confirm_non_fork_by(std::uni
 {
     assert(state == st_suspect || state == st_verify);
 
-    if (mDecision_time != 0)
-        mdb("BUG/assert %u\n", mDecision_time);
-    // assert(mDecision_time == 0);
+    mDecision_time = 0;
 
     change_state(st_deactivated);
     internal_queue.push(ev.release()); //  this  will be re-processed!!
@@ -824,7 +822,6 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_suspect(std::uni
         mdb("suspect/release: suspected = %d, time diff: %d\n",
              suspect, (int)(simulated_time - suspect_time));
         if (key == suspect) {
-            mDecision_time = 0; // might be useless!
             do_confirm_non_fork_by(std::move(ev));
             return;
             /* fixme:  here we confirm, that it was not a user error.....
@@ -848,7 +845,6 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_suspect(std::uni
             if (config->fork_repeatable[key]) {
                 mdb("The suspected key is configured to repeat, so ...\n");
                 forkActive[suspect] = suspect;
-                mDecision_time = 0;
                 do_confirm_non_fork_by(std::move(ev));
                 return;
             } else {
@@ -951,7 +947,6 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_verify_state(std
              (int)(simulated_time -  suspect_time),
              config->verification_interval_of(suspect,
                                       verificator_keycode));
-        mDecision_time = 0; // useless fixme!
         do_confirm_non_fork_by(std::move(ev));
 
     } else if (environment->release_p(pevent) && (verificator_keycode == key)){
