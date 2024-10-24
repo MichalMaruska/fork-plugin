@@ -4,7 +4,7 @@
 
 class queueTest : public testing::Test {
 protected:
-  my_queue<int> q0_{"test"};
+  forkNS::my_queue<int> q0_{"test"};
 };
 
 
@@ -41,7 +41,7 @@ TEST_F(queueTest, oneElementPointer) {
 // slice:
 TEST_F(queueTest, slice) {
     // Given:
-    auto newQueue = my_queue<int>("tmp");
+    auto newQueue = forkNS::my_queue<int>("tmp");
     newQueue.push(50);
 
     q0_.push(5);
@@ -54,7 +54,7 @@ TEST_F(queueTest, slice) {
 TEST_F(queueTest, slice_empty) {
     // Given:
     GTEST_SKIP() << "Skipping single test";
-    auto newQueue = my_queue<int>("tmp");
+    auto newQueue = forkNS::my_queue<int>("tmp");
     newQueue.push(50);
 #if 0
     // bug:
@@ -71,7 +71,7 @@ TEST_F(queueTest, slice_empty) {
 // swap
 TEST_F(queueTest, push_backWorks) {
 //given
-    auto newQueue = my_queue<int>("tmp");
+    auto newQueue = forkNS::my_queue<int>("tmp");
     newQueue.push(50);
     // do
     q0_.swap(newQueue);

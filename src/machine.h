@@ -46,8 +46,7 @@ public:
         }
     };
 
-    typedef my_queue<key_event*> list_with_tail;
-
+    typedef forkNS::my_queue<key_event*> list_with_tail;
 private:
     /* states of the automaton: */
     constexpr static const Keycode no_key = 0;

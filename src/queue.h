@@ -9,7 +9,7 @@
 
 // using namespace __gnu_cxx;
 
-
+namespace forkNS {
 /* LIFO -- single-linked list
    + slice operation,
 
@@ -130,3 +130,4 @@ public:
             peer.m_last_node = temp;
     }
 };
+}
