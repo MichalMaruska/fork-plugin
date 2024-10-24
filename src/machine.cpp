@@ -594,9 +594,9 @@ forkingMachine<Keycode, Time, archived_event_t>::verifier_decision_time(Time cur
 {
     // verify overlap
     int overlap_tolerance = config->overlap_tolerance_of(suspect, verificator_keycode);
-    Time decision_time =  verificator_time + overlap_tolerance;
+    Time decision_point_time =  verificator_time + overlap_tolerance;
 
-    if (decision_time <= current_time) {
+    if (decision_point_time <= current_time) {
         // already "parallel"
         return 0;
     } else {
@@ -607,9 +607,9 @@ forkingMachine<Keycode, Time, archived_event_t>::verifier_decision_time(Time cur
         mdb("suspected = %d, verificator_keycode %d. Times: overlap %" TIME_FMT ", "
              "still needed: %" TIME_FMT " (ms)\n", suspect, verificator_keycode,
              current_time - verificator_time,
-             decision_time - current_time);
+             decision_point_time - current_time);
 
-        return decision_time;
+        return decision_point_time;
     }
 }
 
