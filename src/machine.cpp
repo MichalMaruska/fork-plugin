@@ -267,7 +267,7 @@ forkingMachine<Keycode, Time, archived_event_t>::flush_to_next()
         // so ... this is front_lock?
         {
             // fixme: was here a bigger message?
-            environment->fmt_event(ev->p_event);
+            // bug: environment->fmt_event(ev->p_event);
             unlock();
             // we must gurantee ORDER
             environment->relay_event(ev->p_event);
