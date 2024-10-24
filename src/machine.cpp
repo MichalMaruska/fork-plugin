@@ -438,8 +438,8 @@ forkingMachine<Keycode, Time, archived_event_t>::try_to_play(bool force_also)
         (!input_queue.empty() || !internal_queue.empty())
         ) {
         // log_queues_and_nextplugin(message)
-        mdb("%s: next %s: internal %d, input: %d\n", __func__,
-            (environment->output_frozen()?"frozen":"NOT frozen"),
+        mdb("%s: next %sfrozen: internal %d, input: %d\n", __func__,
+            (environment->output_frozen()?"":"NOT "),
             internal_queue.length(),
             input_queue.length());
     }
