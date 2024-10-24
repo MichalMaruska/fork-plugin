@@ -41,6 +41,7 @@ typedef struct
 // using ::testing::Moc;
 using testing::Mock;
 using testing::Return;
+using testing::AnyNumber;
 
 // this is fully under control of our environment:
 class TestEvent : public PlatformEvent {
@@ -193,7 +194,7 @@ TEST_F(machineTest, EventFreed) {
   EXPECT_CALL(*environment, output_frozen).WillRepeatedly(Return(false));
   // many times:
   TestEvent* a = A_pevent.get();
-  ON_CALL(*environment, detail_of(a)).WillByDefault(Return(A));
+  EXPECT_CALL(*environment, detail_of(a)).Times(AnyNumber()).WillRepeatedly(Return(A));
   ON_CALL(*environment, press_p(A_pevent.get())).WillByDefault(Return(true));
   // archive_event
   // fmt_event
@@ -241,22 +242,23 @@ TEST_F(machineTest, ForkBySecond) {
 
   TestEvent* a = A_pevent.get();
   TestEvent* b = B_pevent.get();
-  EXPECT_CALL(*environment,ignore_event(A_pevent.get())).WillRepeatedly(Return(false));
-  EXPECT_CALL(*environment,time_of(A_pevent.get())).WillRepeatedly(Return(a_time));
 
-
-  EXPECT_CALL(*environment,time_of(B_pevent.get())).WillRepeatedly(Return(b_time));
-  EXPECT_CALL(*environment,ignore_event(B_pevent.get())).WillRepeatedly(Return(false));
 
   // return:
   EXPECT_CALL(*environment, output_frozen).WillRepeatedly(Return(false));
   // many times:
+  EXPECT_CALL(*environment, ignore_event(A_pevent.get())).WillRepeatedly(Return(false));
+  EXPECT_CALL(*environment, time_of(A_pevent.get())).WillRepeatedly(Return(a_time));
   EXPECT_CALL(*environment, detail_of(a)).WillRepeatedly(Return(A));
   EXPECT_CALL(*environment, press_p(A_pevent.get())).WillRepeatedly(Return(true));
 
+  EXPECT_CALL(*environment, time_of(B_pevent.get())).WillRepeatedly(Return(b_time));
+  EXPECT_CALL(*environment, ignore_event(B_pevent.get())).WillRepeatedly(Return(false));
   EXPECT_CALL(*environment, detail_of(b)).WillRepeatedly(Return(B));
   EXPECT_CALL(*environment, press_p(B_pevent.get())).WillRepeatedly(Return(true));
 
+  EXPECT_CALL(*environment, detail_of(B_release_pevent.get())).WillRepeatedly(Return(B));
+  EXPECT_CALL(*environment, time_of(B_release_pevent.get())).WillRepeatedly(Return(b_release_time));
   EXPECT_CALL(*environment, press_p(B_release_pevent.get())).WillRepeatedly(Return(false));
   EXPECT_CALL(*environment, release_p(B_release_pevent.get())).WillRepeatedly(Return(true));
   // archive_event
