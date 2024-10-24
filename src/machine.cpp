@@ -940,9 +940,9 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_verify_state(std
     if (decision_time < mDecision_time)
         mDecision_time = decision_time;
 
-    if (environment->release_p(pevent) && (key == suspect)){ // fixme: is release_p(event) useless?
-        mdb("fork-key released on time: %dms is a tolerated error (< %lu)\n",
-             (int)(simulated_time -  suspect_time),
+    if ((key == suspect) && environment->release_p(pevent)){ // fixme: is release_p(event) useless?
+        mdb("fork-key released on time: %" TIME_FMT "ms is a tolerated error (< %lu)\n",
+             (simulated_time -  suspect_time),
              config->verification_interval_of(suspect,
                                       verificator_keycode));
         do_confirm_non_fork_by(std::move(ev));
