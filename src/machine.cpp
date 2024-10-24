@@ -800,6 +800,7 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_suspect(std::uni
     Keycode key = environment->detail_of(pevent);
 
     auto &queue = internal_queue;
+    assert(!queue.empty() && state == st_suspect);
 
     /* Here, we can
      * o refuse .... if suspected/forkable is released quickly,
@@ -807,11 +808,9 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_suspect(std::uni
      * o start verifying, or wait, or confirm (timeout)
      * todo: I should repeat a bi-depressed forkable.
      */
-    assert(!queue.empty() && state == st_suspect);
 
-    // todo: check the ranges (long vs. int)
-    if (0 == (mDecision_time =
-              key_pressed_too_long(simulated_time))) {
+    // first we look at the time:
+    if (0 == (mDecision_time = key_pressed_too_long(simulated_time))) {
         do_confirm_fork_by(std::move(ev));
         return;
     };
@@ -833,12 +832,15 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_suspect(std::uni
             return;
         };
     } else {
-        if (! environment->press_p(pevent)) {
+        if (! environment->press_p(pevent)) { // why not release_p() ?
             // RawPress & Device events.
+            if (!environment->release_p(pevent)) {
+                mdb("a bizzare event scanned\n");
+            }
             internal_queue.push(ev.release());
             return;
         }
-
+        // press-event here:
         if (key == suspect) {
             /* How could this happen? Auto-repeat on the lower/hw level?
              * And that AR interval is shorter than the fork-verification */
@@ -896,7 +898,7 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_verify_state(std
     Time simulated_time = environment->time_of(pevent);
     Keycode key = environment->detail_of(pevent);
 
-    /* We pressed a forkable key, and another one (which could possibly
+    /* We pressed a forkable key I, and another one E (which could possibly
        use the modifier). Now, either the forkable key was intended
        to be `released' before the press of the other key (and we have an
        error due to mis-synchronization), or in fact, the forkable
@@ -924,8 +926,7 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_verify_state(std
        are slow to release, when we press a specific one afterwards. So in this case fork slower!
     */
 
-    if (0 == (mDecision_time = key_pressed_too_long(simulated_time)))
-    {
+    if (0 == (mDecision_time = key_pressed_too_long(simulated_time))) {
         do_confirm_fork_by(std::move(ev));
         return;
     }
@@ -946,14 +947,16 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_verify_state(std
                                       verificator_keycode));
         do_confirm_non_fork_by(std::move(ev));
 
-    } else if (environment->release_p(pevent) && (verificator_keycode == key)){
-        // todo: we might be interested in percentage, Then here we should do the work!
+    } else if ((verificator_keycode == key) && environment->release_p(pevent)) {
+        // todo: maybe this is too weak.
 
-        // we should change state:
+        // todo: we might be interested in percentage, then here we should do the work!
+
         change_state(st_suspect);
         verificator_keycode = 0;   // we _should_ take the next possible verificator
         internal_queue.push(ev.release());
-    } else {               // fixme: a (repeated) press of the verificator ?
+    } else {
+        // fixme: a (repeated) press of the verificator ?
         // fixme: we pressed another key: but we should tell XKB to repeat it !
         internal_queue.push(ev.release());
     };
