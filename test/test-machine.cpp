@@ -3,6 +3,7 @@
 #include "fork_enums.h"
 #include <cstdlib>
 #include <memory>
+#include <ostream>
 
 #if 0
 #define ErrorF(fmt, ...)     printf(fmt, ##__VA_ARGS__)
@@ -243,6 +244,7 @@ TEST_F(machineTest, ForkBySecond) {
   TestEvent* a = A_pevent.get();
   TestEvent* b = B_pevent.get();
 
+  std::cout << "A: " << a << " b:" << b << " br:" << B_release_pevent.get() << std::endl;
 
   // return:
   EXPECT_CALL(*environment, output_frozen).WillRepeatedly(Return(false));
