@@ -2,6 +2,7 @@
 
 #include "fork_requests.h"
 #include "platform.h"
+#include "colors.h"
 #include <memory>
 
 extern "C" {
@@ -138,14 +139,15 @@ public:
             return false;
         }
 
-        XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
-        XkbDescPtr xkb = xkbi->desc;
+        const XkbSrvInfoPtr xkbi= keybd->key->xkbInfo;
+        const XkbDescPtr xkb = xkbi->desc;
         return (xkb->ctrls->enabled_ctrls & XkbMouseKeysMask);
     }
 
 
     // so this is orthogonal? platform-independent?
     void archive_event(archived_event& archived_event, const PlatformEvent *pevent) override {
+
 #if DEBUG > 1
         auto xevent = static_cast<XorgEvent*>(pevent)->event;
         // dynamic_cast
@@ -207,21 +209,20 @@ public:
         VErrorF(format, argptr);
     }
 
+    // the idea was to return a string. but who will deallocate it?
     virtual std::string fmt_event(const PlatformEvent *pevent) override {
-        // const auto event = (static_cast<const XorgEvent *>(pevent))->event;
-#if 0
+#if 1
         const KeyCode key = detail_of(pevent);
-        bool press = press_p(pevent);
-        bool release = release_p(pevent);
+        const bool press = press_p(pevent);
+        const bool release = release_p(pevent);
 
-        //event->device_event.detail.key;
-        // KeyCode key = detail_of(event);
 #if DEBUG > 1
         log("%s: trying to resolve to keysym %d through %p\n", __func__, key, keybd);
 #endif
         if (keybd->key) {
-            XkbSrvInfoPtr xkbi = keybd->key->xkbInfo;
-            KeySym *sym = XkbKeySymsPtr(xkbi->desc, key);
+            const XkbSrvInfoPtr xkbi = keybd->key->xkbInfo;
+            const KeySym *sym = XkbKeySymsPtr(xkbi->desc, key);
+
             if ((!sym) || (!isalpha(*(unsigned char *) sym)))
                 sym = (KeySym *) " ";
 
@@ -257,7 +258,7 @@ public:
 // prints into the Xorg.*.log
 static void
 dump_event(KeyCode key, KeyCode fork, bool press, Time event_time,
-           XkbDescPtr xkb, XkbSrvInfoPtr xkbi, Time prev_time)
+           const XkbDescPtr xkb, const XkbSrvInfoPtr xkbi, Time prev_time)
 {
     if (key == 0)
         return;
