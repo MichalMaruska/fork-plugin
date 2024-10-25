@@ -5,10 +5,11 @@
 // these as template non-type parameters?
 #define KEYCODE_UNUSED 0
 
+// Keycode must be integral/numeric,  MAX_KEYCODE is limiti.
 template <typename Keycode, typename Time, int MAX_KEYCODE>
 class ForkConfiguration {
 
-typedef int keycode_parameter_matrix[MAX_KEYCODE][MAX_KEYCODE];
+typedef Time keycode_parameter_matrix[MAX_KEYCODE][MAX_KEYCODE];
 
 private:
     // declaration, not definition!
@@ -43,12 +44,10 @@ public:
 private:
     static Time
     get_value_from_matrix(keycode_parameter_matrix matrix, Keycode code, Keycode verificator) {
-        return (matrix[code][verificator]?
-                // code/verificator specific:
-                matrix[code][verificator]:
-                (matrix[code][0]?
+        // code/verificator specific:
+        return (matrix[code][verificator]?:
                  // default for code:
-                 matrix[code][0]:
+                (matrix[code][0]?: // 0 is no_key
                  // global fallback
                  matrix[0][0]));
     }
