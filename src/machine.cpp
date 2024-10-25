@@ -156,7 +156,9 @@ enum twin_parameter {
 
 template <typename Keycode, typename Time, typename archived_event_t>
 int
-forkingMachine<Keycode, Time, archived_event_t>::configure_twins(int type, Keycode key, Keycode twin, int value, bool set) {
+forkingMachine<Keycode, Time, archived_event_t>::configure_twins(
+    int type, Keycode key, Keycode twin, int value, bool set)
+{
     switch (type) {
         case fork_configure_total_limit:
             if (set)
