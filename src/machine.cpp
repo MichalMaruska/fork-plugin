@@ -666,11 +666,6 @@ forkingMachine<Keycode, Time, archived_event_t>::step_in_time_locked(const Time 
 
 /** apply_event_to_{STATE} */
 
-template <typename Time>
-bool time_difference_more(Time now, Time past, Time limit_difference) {
-    return ( (now - past) > limit_difference);
-}
-
 // is mDecision_time always recalculated?
 template <typename Keycode, typename Time, typename archived_event_t>
 void
