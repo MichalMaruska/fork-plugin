@@ -224,7 +224,24 @@ private:
 
     void try_to_play(bool force);
 
-    void replay_events(bool force_also);
+    /**
+     * Resets the machine, so as to reconsider the events on the
+     * `internal' queue from scratch.
+     * Apparently the criteria/configuration has changed!
+     * Reasonably this is in response to a key event. So we are in Final state.
+     */
+    void replay_events(bool force_also) {
+        mdb("%s\n", __func__);
+
+        rewind_machine(st_normal);
+
+        // todo: what else?
+        // last_released & last_released_time no more available.
+        last_released = no_key; // bug!
+
+        try_to_play(force_also);
+    }
+
 
     void apply_event_to_suspect(std::unique_ptr<key_event> ev);
 
