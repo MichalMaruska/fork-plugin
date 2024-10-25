@@ -201,7 +201,7 @@ private:
         return 0;
     }
 
-    void save_event_log(key_event *event) {
+    void save_event_log(const key_event *event) {
         // could I emplace it?
         // reference = last_events_log.emplace_back()
         // reference.forked = ev->forked;
