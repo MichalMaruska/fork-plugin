@@ -681,8 +681,7 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_normal(std::uniq
     const Keycode key = environment->detail_of(pevent);
     const Time simulated_time = environment->time_of(pevent);
 
-    assert(state == st_normal);
-    assert(internal_queue.empty());
+    assert(state == st_normal && internal_queue.empty());
 
     // if this key might start a fork....
     if (environment->press_p(pevent) && forkable_p(config.get(), key)
