@@ -194,34 +194,10 @@ forkingMachine<Keycode, Time, archived_event_t>::configure_key(int type, Keycode
 
 template <typename Keycode, typename Time, typename archived_event_t>
 int
-forkingMachine<Keycode, Time, archived_event_t>::dump_last_events_to_client(event_publisher<archived_event_t>* publisher, int max_requested)
+forkingMachine<Keycode, Time, archived_event_t>::dump_last_events_to_client(
+    event_publisher<archived_event_t>* publisher, int max_requested)
 {
-   // I don't need to count them! last_events_count
-   // how many in the store?
-   // upper bound
-   // trim/clamp?
-   int queue_count = max_last;
-   if (max_requested > queue_count) {
-       max_requested = queue_count;
-   };
-
-   publisher->prepare(max_requested);
-
-   std::function<void(const archived_event_t&)> lambda =
-       [publisher](const archived_event_t& ev){ publisher->event(ev); };
-   // auto f = std::function<void(const archived_event&)>(bind(publisher->event(), publisher,));
-
-   // todo:
-   // fixme: we need to increase an iterator .. pointer .... to the C array!
-   // last_events.
-   for_each(last_events_log.begin(),
-            last_events_log.end(),
-            lambda);
-
-   mdb("sending %d events\n", max_requested);
-
-   return publisher->commit();
-}
+    // I don't need to count them! last_events_count
 
 template <typename Keycode, typename Time, typename archived_event_t>
 bool
@@ -229,7 +205,27 @@ forkingMachine<Keycode, Time, archived_event_t>::queues_non_empty() const
 {
     return (!output_queue.empty() || !input_queue.empty() || !internal_queue.empty());
 }
+    if (max_requested > queue_count) {
+        max_requested = queue_count;
+    };
 
+    publisher->prepare(max_requested);
+
+    std::function<void(const archived_event_t&)> lambda =
+        [publisher](const archived_event_t& ev){ publisher->event(ev); };
+    // auto f = std::function<void(const archived_event&)>(bind(publisher->event(), publisher,));
+
+    // todo:
+    // fixme: we need to increase an iterator .. pointer .... to the C array!
+    // last_events.
+    for_each(last_events_log.begin(),
+             last_events_log.end(),
+             lambda);
+
+    mdb("sending %d events\n", max_requested);
+
+    return publisher->commit();
+}
 
 /**
  * The machine is locked here:
