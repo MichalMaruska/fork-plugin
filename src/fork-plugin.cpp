@@ -329,8 +329,7 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
     machine->lock();
     machine->step_in_time_locked(now); // possibly unlocks
 
-    if (!plugin_frozen(plugin->next) && PluginClass(plugin->prev)->NotifyThaw)
-    {
+    if (!plugin_frozen(plugin->next) && PluginClass(plugin->prev)->NotifyThaw) {
         /* thaw the previous! */
         set_wakeup_time(plugin, machine->next_decision_time());
         machine->unlock();
@@ -347,7 +346,7 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
 }
 
 
-/* For now this is called to many times, for different events.! */
+/* For now this is called too many times, for different events.! */
 static void
 mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
                 DeviceEventInfoRec* dei)
