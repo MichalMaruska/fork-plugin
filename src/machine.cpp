@@ -64,8 +64,7 @@ forkingMachine<Keycode, Time, archived_event_t>::switch_config(int id)
 /** update the configuration */
 template <typename Keycode, typename Time, typename archived_event_t>
 int
-forkingMachine<Keycode, Time, archived_event_t>::configure_global(int type, int value, bool set)
-{
+forkingMachine<Keycode, Time, archived_event_t>::configure_global(int type, int value, bool set) {
    const auto fork_configuration = this->config.get();
 
    switch (type) {
@@ -157,8 +156,7 @@ enum twin_parameter {
 
 template <typename Keycode, typename Time, typename archived_event_t>
 int
-forkingMachine<Keycode, Time, archived_event_t>::configure_twins(int type, Keycode key, Keycode twin, int value, bool set)
-{
+forkingMachine<Keycode, Time, archived_event_t>::configure_twins(int type, Keycode key, Keycode twin, int value, bool set) {
     switch (type) {
         case fork_configure_total_limit:
             if (set)
@@ -185,8 +183,7 @@ enum key_parameters {
 
 template <typename Keycode, typename Time, typename archived_event_t>
 int
-forkingMachine<Keycode, Time, archived_event_t>::configure_key(int type, Keycode key, int value, bool set)
-{
+forkingMachine<Keycode, Time, archived_event_t>::configure_key(int type, Keycode key, int value, bool set) {
    mdb("%s: keycode %d -> value %d, function %d\n",
        __func__, key, value, type);
 
@@ -211,8 +208,7 @@ forkingMachine<Keycode, Time, archived_event_t>::configure_key(int type, Keycode
 template <typename Keycode, typename Time, typename archived_event_t>
 int
 forkingMachine<Keycode, Time, archived_event_t>::dump_last_events_to_client(
-    event_publisher<archived_event_t>* publisher, int max_requested)
-{
+    event_publisher<archived_event_t>* publisher, int max_requested) {
     // I don't need to count them! last_events_count
     // should be locked
     int queue_count = last_events_log.size();
@@ -303,8 +299,7 @@ forkingMachine<Keycode, Time, archived_event_t>::flush_to_next() {
  */
 template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time, archived_event_t>::activate_fork() // possibly unlocks
-{
+forkingMachine<Keycode, Time, archived_event_t>::activate_fork() {
     assert(!internal_queue.empty());
 
     std::unique_ptr<key_event> ev(internal_queue.pop());
