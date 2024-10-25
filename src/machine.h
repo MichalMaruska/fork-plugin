@@ -78,8 +78,8 @@ private:
     };
 
     /* How we decided for the fork */
-    enum class fork_reason {
-        reason_total,               // key pressed too long
+    enum class fork_reason_t {
+        reason_long,               // key pressed too long
         reason_overlap,             // key press overlaps with another key
         reason_force                // mouse-button was pressed & triggered fork.
     };
@@ -293,7 +293,7 @@ private:
     }
 
 
-    void activate_fork();
+    void activate_fork(fork_reason_t fork_reason);
 
     void
     change_state(fork_state_t new_state)
@@ -304,15 +304,13 @@ private:
     }
 
     // so EVENT confirms fork of the current event, and also enters queue,
-    // which will be immediately relocated to the input queue.
-    void do_confirm_fork_by(std::unique_ptr<key_event> event) {
+    // which will be `immediately' relocated to the input queue.
+    void confirm_fork_and_enqueue(std::unique_ptr<key_event> event, fork_reason_t fork_reason) {
         /* fixme: event is the just-read event. But that is surely not the head
            of queue (which is confirmed to fork) */
         mdb("confirm:\n");
         internal_queue.push(event.release());
-
-        mDecision_time = 0; // why?
-        activate_fork();
+        activate_fork(fork_reason);
     }
 
     // So the event proves, that the current event is not forked.
@@ -462,7 +460,7 @@ public:
       log_state(__func__);
 
       // bug: it might activate multiple forks!
-      activate_fork();
+      activate_fork(fork_reason_t::reason_force);
     }
 
     /** public api

@@ -269,7 +269,7 @@ forkingMachine<Keycode, Time, archived_event_t>::flush_to_next() {
  */
 template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time, archived_event_t>::activate_fork() {
+forkingMachine<Keycode, Time, archived_event_t>::activate_fork(fork_reason_t fork_reason) {
     assert(!internal_queue.empty());
 
     std::unique_ptr<key_event> event(internal_queue.pop());
@@ -436,7 +436,6 @@ bool
 forkingMachine<Keycode, Time, archived_event_t>::step_by_time(Time current_time)
 {
     // confirm fork:
-    [[maybe_unused]] fork_reason reason; // fixme: unused!
     mdb("%s%s%s state: %s, queue: %d, time: %u key: %d\n",
          fork_color, __func__, color_reset,
          describe_machine_state(this->state),
@@ -450,9 +449,8 @@ forkingMachine<Keycode, Time, archived_event_t>::step_by_time(Time current_time)
     // notice, how mDecision_time is rewritten here:
     if (0 == (mDecision_time =
               key_pressed_too_long(current_time))) {
-        reason = fork_reason::reason_total;
 
-        activate_fork();
+        activate_fork(fork_reason_t::reason_long);
         return true;
     };
 
@@ -462,8 +460,7 @@ forkingMachine<Keycode, Time, archived_event_t>::step_by_time(Time current_time)
         Time decision_time = verifier_decision_time(current_time);
 
         if (decision_time == 0) {
-            reason = fork_reason::reason_overlap;
-            activate_fork();
+            activate_fork(fork_reason_t::reason_overlap);
             return true;
         }
 
@@ -617,7 +614,7 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_suspect(std::uni
 
     // first we look at the time:
     if (0 == (mDecision_time = key_pressed_too_long(simulated_time))) {
-        do_confirm_fork_by(std::move(ev));
+        confirm_fork_and_enqueue(std::move(ev), fork_reason_t::reason_long);
         return;
     };
 
@@ -733,14 +730,14 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_verify_state(std
     */
 
     if (0 == (mDecision_time = key_pressed_too_long(simulated_time))) {
-        do_confirm_fork_by(std::move(ev));
+        confirm_fork_and_enqueue(std::move(ev), fork_reason_t::reason_long);
         return;
     }
 
     /* now, check the overlap of the 2 first keys */
     Time decision_time = verifier_decision_time(simulated_time);
     if (decision_time == 0) {
-        do_confirm_fork_by(std::move(ev));
+        confirm_fork_and_enqueue(std::move(ev), fork_reason_t::reason_overlap);
         return;
     }
     if (decision_time < mDecision_time)
