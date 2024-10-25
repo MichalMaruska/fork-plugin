@@ -1,0 +1,32 @@
+#!/usr/bin/bash
+
+gitdir=$(git rev-parse --show-toplevel)
+
+build_run_tests()
+{
+    ninja -v
+    find -name \*.gcda -exec rm -r {}
+    cd tests; ctest
+}
+
+
+
+(
+mkdir ${dir:=build.gcc}
+pushd $dir
+cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja  ../  -DFORCE_COLORED_OUTPUT=1 -DCMAKE_CXX_COMPILER=clang++
+
+build_run_tests
+popd
+) || :
+
+
+(
+mkdir ${dir:=build.clang}
+cd $dir
+cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja  ../  -DFORCE_COLORED_OUTPUT=1 -DCMAKE_CXX_COMPILER=clang++
+
+build_run_tests
+
+rm -f **/*gcda
+) || :
