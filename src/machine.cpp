@@ -669,9 +669,9 @@ forkingMachine<Keycode, Time, archived_event_t>::step_in_time_locked(const Time 
 // is mDecision_time always recalculated?
 template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_normal(std::unique_ptr<key_event> ev) // possibly unlocks
+forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_normal(std::unique_ptr<key_event> event) // possibly unlocks
 {
-    PlatformEvent* pevent = ev->p_event;
+    const PlatformEvent *pevent = event->p_event;
 
     const Keycode key = environment->detail_of(pevent);
     const Time simulated_time = environment->time_of(pevent);
@@ -708,13 +708,13 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_normal(std::uniq
             suspect_time = environment->time_of(pevent);
             mDecision_time = suspect_time +
                 config->verification_interval_of(key, 0);
-            internal_queue.push(ev.release());
+            internal_queue.push(event.release());
             return;
         } else {
             // .- trick: (fixme: or self-forked)
             mdb("re-pressed very quickly\n");
-            forkActive[key] = key; // fixme: why??
-            output_event(std::move(ev));
+            forkActive[key] = key; // fixme: why not 0 ?
+            output_event(std::move(event));
             return;
         };
     } else if (environment->release_p(pevent) && (key_forked(key))) {
@@ -734,20 +734,17 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_normal(std::uniq
          *
          * fixme: do i do this in other machine states?
          */
-        environment->rewrite_event(pevent,forkActive[key]);
-
-
-        // this is the state (of the keyboard, not the machine).... better to
-        // say of the machine!!!
+        environment->rewrite_event(const_cast<PlatformEvent*>(pevent), forkActive[key]);
         forkActive[key] = 0;
-        output_event(std::move(ev));
+
+        output_event(std::move(event));
     } else {
         if (environment->release_p(pevent)) {
             last_released = environment->detail_of(pevent);
             last_released_time = environment->time_of(pevent);
         };
         // pass along the un-forkable event.
-        output_event(std::move(ev));
+        output_event(std::move(event));
     };
 };
 
