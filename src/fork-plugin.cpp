@@ -361,12 +361,8 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
             ErrorF("%s running, while the machine is locked!\n", __func__);
 #endif
         /* else */
-        machine->lock();
-        /* bug: if we were frozen, then we have a sequence of keys, which
-         * might be already released, so the head is not to be forked!
-         */
-        machine->step_by_force();
-        machine->unlock();
+
+        machine->step_by_force(); // oh,
     }
 }
 

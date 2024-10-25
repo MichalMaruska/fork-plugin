@@ -411,7 +411,42 @@ public:
 
     void step_in_time_locked(Time now);
 
-    void step_by_force();
+    /**
+     * low-level machine step.
+     */
+    void step_by_force_internal() {
+      if (state == st_normal) {
+        // so (internal_queue.empty())
+        return;
+      }
+
+      if (state == st_deactivated) {
+        environment->log("%s: BUG.\n", __func__);
+        return;
+      }
+
+      /* so, the state is one of: verify, suspect or activated. */
+      log_state(__func__);
+
+      // bug: it might activate multiple forks!
+      activate_fork();
+    }
+
+    /** public api
+     * Called by mouse button press processing.
+     * Make all the forkable (pressed)  forked! (i.e. confirm them all)
+     * (could use a bitmask to configure what reacts)
+     * If in Suspect or Verify state, force the fork. (todo: should be
+     * configurable)
+     */
+    void step_by_force() {
+        lock();
+        /* bug: if we were frozen, then we have a sequence of keys, which
+         * might be already released, so the head is not to be forked!
+         */
+        step_by_force_internal();
+        unlock();
+    }
 
 private:
     void step_automaton_by_key(std::unique_ptr<key_event> ev);

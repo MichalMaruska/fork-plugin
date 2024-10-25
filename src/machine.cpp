@@ -399,35 +399,6 @@ forkingMachine<Keycode, Time, archived_event_t>::accept_event(std::unique_ptr<Pl
 }
 
 /*
- * Called by mouse button press processing.
- * Make all the forkable (pressed)  forked! (i.e. confirm them all)
- * (could use a bitmask to configure what reacts)
- * If in Suspect or Verify state, force the fork. (todo: should be configurable)
- */
-template <typename Keycode, typename Time, typename archived_event_t>
-void
-forkingMachine<Keycode, Time, archived_event_t>::step_by_force()
-{
-    if ((state == st_normal) || (internal_queue.empty())) {
-        // does this imply  that ^^^ ?
-        // then maybe just test (internal_queue.empty()) ?
-        return;
-    }
-
-    if (state == st_deactivated) {
-        environment->log("%s: BUG.\n", __func__);
-        return;
-    }
-
-    /* so, the state is one of: verify, suspect or activated. */
-    log_state(__func__);
-
-    // todo: move it inside?
-    mDecision_time = 0;
-    activate_fork();
-}
-
-/*
   returns:
   state  (in the `machine')
   relay_event   possibly, othewise 0
