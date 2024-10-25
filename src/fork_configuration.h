@@ -84,5 +84,43 @@ public:
     overlap_tolerance_of(Keycode code, Keycode verificator) {
         return get_value_from_matrix(this->overlap_tolerance, code, verificator);
     }
+
+
+    /** return 0 if enough, otherwise the time when it will be enough/proving a fork.
+     * dangerous to name it current_time, like the member variable!
+     */
+    Time
+    verifier_decision_time(Time current_time,
+                           Keycode suspect, Time suspect_time,
+                           Keycode verificator_keycode, Time verificator_time) {
+        // Given the 2 keys (pressed), and `current_time'
+        // todo:
+        Time verification_interval = verification_interval_of(suspect, verificator_keycode);
+        if (suspect_time + verification_interval <= current_time) {
+            return 0;
+        }
+
+        // verify overlap
+        int overlap_tolerance = overlap_tolerance_of(suspect, verificator_keycode);
+        Time decision_point_time =  verificator_time + overlap_tolerance;
+
+        if (decision_point_time <= current_time) {
+            // already "parallel"
+            return 0;
+        } else {
+#if 0
+            mdb("time: overlay interval = %dms elapsed so far =%dms\n",
+                overlap_tolerance,
+                (int) (current_time - verificator_time));
+
+            mdb("suspected = %d, verificator_keycode %d. Times: overlap %" TIME_FMT ", "
+                "still needed: %" TIME_FMT " (ms)\n", suspect, verificator_keycode,
+                current_time - verificator_time,
+                decision_point_time - current_time);
+#endif
+            return decision_point_time;
+        }
+    }
+
 };
 

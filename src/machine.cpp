@@ -402,35 +402,6 @@ forkingMachine<Keycode, Time, archived_event_t>::key_pressed_too_long(Time curre
         return decision_time;
 }
 
-
-// return 0 if enough, otherwise the time when it will be enough/proving a fork.
-template <typename Keycode, typename Time, typename archived_event_t>
-Time
-// dangerous to name it current_time, like the member variable!
-forkingMachine<Keycode, Time, archived_event_t>::verifier_decision_time(Time current_time)
-{
-    // verify overlap
-    int overlap_tolerance = config->overlap_tolerance_of(suspect, verificator_keycode);
-    Time decision_point_time =  verificator_time + overlap_tolerance;
-
-    if (decision_point_time <= current_time) {
-        // already "parallel"
-        return 0;
-    } else {
-        mdb("time: overlay interval = %dms elapsed so far =%dms\n",
-             overlap_tolerance,
-             (int) (current_time - verificator_time));
-
-        mdb("suspected = %d, verificator_keycode %d. Times: overlap %" TIME_FMT ", "
-             "still needed: %" TIME_FMT " (ms)\n", suspect, verificator_keycode,
-             current_time - verificator_time,
-             decision_point_time - current_time);
-
-        return decision_point_time;
-    }
-}
-
-
 template <typename Keycode, typename Time, typename archived_event_t>
 bool
 forkingMachine<Keycode, Time, archived_event_t>::step_by_time(Time current_time)
@@ -457,7 +428,9 @@ forkingMachine<Keycode, Time, archived_event_t>::step_by_time(Time current_time)
     /* To test 2 keys overlap, we need the 2nd key: a verificator! */
     if (state == st_verify) {
         // verify overlap
-        Time decision_time = verifier_decision_time(current_time);
+        Time decision_time = config->verifier_decision_time(current_time,
+                                                            suspect, suspect_time,
+                                                            verificator_keycode, verificator_time);
 
         if (decision_time == 0) {
             activate_fork(fork_reason_t::reason_overlap);
@@ -665,7 +638,9 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_suspect(std::uni
             verificator_keycode = key; /* if already we had one -> we are not in this state!
                                            if the verificator becomes a modifier ?? fixme:*/
             // verify overlap
-            Time decision_time = verifier_decision_time(simulated_time);
+            Time decision_time = config->verifier_decision_time(simulated_time,
+                                                               suspect, suspect_time,
+                                                               verificator_keycode, verificator_time);
 
             // well, this is an abuse ... this should never be 0.
             if (decision_time == 0) {
@@ -735,11 +710,15 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_verify_state(std
     }
 
     /* now, check the overlap of the 2 first keys */
-    Time decision_time = verifier_decision_time(simulated_time);
+    Time decision_time = config->verifier_decision_time(simulated_time,
+                                                        suspect, suspect_time,
+                                                        verificator_keycode, verificator_time);
     if (decision_time == 0) {
         confirm_fork_and_enqueue(std::move(ev), fork_reason_t::reason_overlap);
         return;
     }
+
+    // how is this possible?
     if (decision_time < mDecision_time)
         mDecision_time = decision_time;
 
