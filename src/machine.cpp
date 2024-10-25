@@ -302,21 +302,22 @@ void
 forkingMachine<Keycode, Time, archived_event_t>::activate_fork() {
     assert(!internal_queue.empty());
 
-    std::unique_ptr<key_event> ev(internal_queue.pop());
-
-    Keycode forked_key = environment->detail_of(ev->p_event);
+    std::unique_ptr<key_event> event(internal_queue.pop());
+    Keycode forked_key = environment->detail_of(event->p_event);
     // assert(forked_key == suspect);
-    ev->forked = forked_key;
+    event->forked = forked_key;
+
     /* Change the keycode, but remember the original: */
     forkActive[forked_key] = config->fork_keycode[forked_key];
-
-    environment->rewrite_event(ev->p_event, forkActive[forked_key]);
-    environment->relay_event(ev->p_event);
-
-    mdb("%s the key %d-> forked to: %d. Internal queue has %d events. %s\n", __func__,
+    // todo: use std::format(), not hard-coded %d
+    mdb("%s the key %d-> forked to: %d. Internal queue has %d events. %s\n",
+        __func__,
         forked_key, forkActive[forked_key],
         internal_queue.length (),
         describe_machine_state(this->state));
+
+    environment->rewrite_event(event->p_event, forkActive[forked_key]);
+    environment->relay_event(event->p_event);
 
     rewind_machine(st_activated);
 }
