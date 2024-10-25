@@ -201,6 +201,17 @@ private:
         return 0;
     }
 
+    void save_event_log(key_event *event) {
+        // could I emplace it?
+        // reference = last_events_log.emplace_back()
+        // reference.forked = ev->forked;
+        archived_event_t archived_event;
+        environment->archive_event(archived_event, event->p_event);
+        archived_event.forked = event->forked;
+
+        last_events_log.push_back(archived_event);
+    }
+
     void check_locked() const {
         assert(mLock);
     }

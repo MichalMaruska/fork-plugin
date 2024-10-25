@@ -257,19 +257,11 @@ forkingMachine<Keycode, Time, archived_event_t>::flush_to_next() {
         // now we are the owner.
         std::unique_ptr<key_event> event(output_queue.pop());
 
+        save_event_log(event.get());
+
         // (ORDER) this event must be delivered before any other!
         // so no preemption of this part!  Are we re-entrant?
         // yet, the next plugin could call in here? to do what?
-        {
-            // could I emplace it?
-            // reference = last_events_log.emplace_back()
-            // reference.forked = ev->forked;
-            archived_event_t archived_event;
-            environment->archive_event(archived_event, event->p_event);
-            archived_event.forked = event->forked;
-
-            last_events_log.push_back(archived_event);
-        }
 
         // machine. fixme: it's not true -- it cannot!
         // 2020: it can!
