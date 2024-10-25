@@ -199,12 +199,6 @@ forkingMachine<Keycode, Time, archived_event_t>::dump_last_events_to_client(
 {
     // I don't need to count them! last_events_count
 
-template <typename Keycode, typename Time, typename archived_event_t>
-bool
-forkingMachine<Keycode, Time, archived_event_t>::queues_non_empty() const
-{
-    return (!output_queue.empty() || !input_queue.empty() || !internal_queue.empty());
-}
     if (max_requested > queue_count) {
         max_requested = queue_count;
     };
