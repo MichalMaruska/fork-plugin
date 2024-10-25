@@ -386,15 +386,15 @@ forkingMachine<Keycode, Time, archived_event_t>::key_pressed_too_long(Time curre
 {
     assert(state== st_verify || state == st_suspect);
 
-    int verification_interval =
-        config->verification_interval_of(suspect,
-                                         // note: this can be 0 (& should be, unless)
-                                         verificator_keycode);
+    // verificator_keycode
+    Time verification_interval = config->verification_interval_of(suspect,no_key);
+    // note: this can be 0 (& should be, unless)
+
     Time decision_time = suspect_time + verification_interval;
 
     mdb("time: verification_interval = %dms elapsed so far =%dms\n",
-         verification_interval,
-         (int)(current_time - suspect_time));
+        verification_interval,
+        (int)(current_time - suspect_time));
 
     if (decision_time <= current_time)
         return 0;
