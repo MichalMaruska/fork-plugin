@@ -340,13 +340,12 @@ forkingMachine<Keycode, Time, archived_event_t>::activate_fork() // possibly unl
     environment->rewrite_event(ev->p_event, forkActive[forked_key]);
     environment->relay_event(ev->p_event);
 
-    change_state(st_activated);
     mdb("%s the key %d-> forked to: %d. Internal queue has %d events. %s\n", __func__,
         forked_key, forkActive[forked_key],
         internal_queue.length (),
         describe_machine_state(this->state));
 
-    rewind_machine();
+    rewind_machine(st_activated);
 }
 
 
@@ -366,10 +365,10 @@ forkingMachine<Keycode, Time, archived_event_t>::activate_fork() // possibly unl
  * now reset for the next one */
 template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time, archived_event_t>::rewind_machine()
+forkingMachine<Keycode, Time, archived_event_t>::rewind_machine(fork_state_t new_state)
 {
+    change_state(new_state);
     assert ((state == st_deactivated) || (state == st_activated));
-
     /* reset the machine */
     mdb("== Resetting the fork machine (internal %d, input %d)\n",
         internal_queue.length (),
@@ -514,17 +513,15 @@ forkingMachine<Keycode, Time, archived_event_t>::do_confirm_non_fork_by(std::uni
 {
     assert(state == st_suspect || state == st_verify);
 
-    mDecision_time = 0;
-
-    change_state(st_deactivated);
-    internal_queue.push(ev.release()); //  this  will be re-processed!!
+    internal_queue.push(ev.release());
 
     std::unique_ptr<key_event> non_forked_event(internal_queue.pop());
-    // todo: improve this log:
-    mdb("this is not a fork! %d\n",
-        environment->detail_of(non_forked_event->p_event));
+    // reset: todo: why not do it in the rewind_machine ?
+    mDecision_time = 0;
 
-    rewind_machine();
+    mdb("this is not a fork! %d\n", environment->detail_of(non_forked_event->p_event));
+
+    rewind_machine(st_deactivated); // short-lived state. is it worth it?
     output_event(std::move(non_forked_event));
 }
 

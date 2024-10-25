@@ -223,7 +223,7 @@ private:
 
     void apply_event_to_suspect(std::unique_ptr<key_event> ev);
 
-    void rewind_machine();
+    void rewind_machine(fork_state_t new_state);
     void activate_fork();
 
     void
