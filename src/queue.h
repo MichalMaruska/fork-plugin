@@ -130,4 +130,13 @@ public:
             peer.m_last_node = temp;
     }
 };
+
+template <typename T>
+void reverse_splice(my_queue<T> & pre, my_queue<T> &post) {
+    // (pre) (post) -> () (pre post)
+    if (!(pre.empty())) {
+        pre.append(post);
+        pre.swap(post);
+    };
+}
 }

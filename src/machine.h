@@ -217,8 +217,6 @@ private:
         return environment->time_of(queue.front()->p_event);
     }
 
-    static void reverse_splice(list_with_tail &pre, list_with_tail &post);
-
     void try_to_play(bool force);
 
     void replay_events(bool force_also);

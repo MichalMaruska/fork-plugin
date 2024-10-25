@@ -360,17 +360,6 @@ forkingMachine<Keycode, Time, archived_event_t>::activate_fork() // possibly unl
 /**
  * Now the operations on the Dynamic state
  */
-template <typename Keycode, typename Time, typename archived_event_t>
-void
-forkingMachine<Keycode, Time, archived_event_t>::reverse_splice(list_with_tail &pre, list_with_tail &post)
-{
-    // I have 2 queues: (pre) (post) then I have: () (pre post)
-    // Splice with a reversed semantic:
-    // pre.splice(post) --> ()  (pre post)
-    pre.append(post);
-    pre.swap(post);
-}
-
 
 /**
  * One key-event investigation finished,
@@ -390,7 +379,7 @@ forkingMachine<Keycode, Time, archived_event_t>::rewind_machine()
     verificator_keycode = no_key;
 
     if (!(internal_queue.empty())) {
-        reverse_splice(internal_queue, input_queue);
+        forkNS::reverse_splice(internal_queue, input_queue);
         mdb("now in input_queue: %d\n", input_queue.length ());
     }
 }
@@ -413,7 +402,7 @@ forkingMachine<Keycode, Time, archived_event_t>::replay_events(bool force_also)
 
     if (!internal_queue.empty()) {
         // fixme: worth it?
-        reverse_splice(internal_queue, input_queue);
+        forkNS::reverse_splice(internal_queue, input_queue);
     }
     change_state(st_normal);
 
