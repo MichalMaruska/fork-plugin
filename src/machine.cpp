@@ -84,7 +84,7 @@ forkingMachine<Keycode, Time>::switch_config(int id)
         config = new_current; //     -> n
 
         DB("switched configs %d -> %d\n", config->id, id);
-        replay_events(FALSE);
+        replay_events(false);
     } else {
         environment->log("config remains %d\n", config->id);
     }
