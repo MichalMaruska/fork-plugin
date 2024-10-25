@@ -966,19 +966,9 @@ forkingMachine<Keycode, Time, archived_event_t>::step_automaton_by_key(std::uniq
         return;
     }
 #endif
-
+    // `limitation':
     // A currently forked keycode cannot be (suddenly) pressed 2nd time.
     // assert(release_p(event) || (key < MAX_KEYCODE && forkActive[key] == 0));
-#if DEBUG > 1
-    environment->log("%s: %d\n", __func__, __LINE__);
-#endif
-
-#if DEBUG
-    if (environment->press_p(pevent) || environment->release_p(pevent)) {
-        log_state_and_event(__func__, ev);
-    }
-#endif
-
     switch (state) {
         case st_normal:
             apply_event_to_normal(std::move(ev));
