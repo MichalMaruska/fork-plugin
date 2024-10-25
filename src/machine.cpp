@@ -389,13 +389,12 @@ void
 forkingMachine<Keycode, Time, archived_event_t>::accept_event(std::unique_ptr<PlatformEvent> pevent) noexcept(false) {
 
     // this can only throw
-    auto ev = std::make_unique<key_event>(std::move(pevent));
-    ev->forked = no_key; // makes sense?
+    auto event = std::make_unique<key_event>(std::move(pevent));
+    event->forked = no_key; // makes sense?
+    input_queue.push(event.release());
 
     // fixme:
     mCurrent_time = 0; // time_of(ev->event);
-
-    input_queue.push(ev.release());
     try_to_play(false);
 }
 
