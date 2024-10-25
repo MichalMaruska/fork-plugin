@@ -10,8 +10,7 @@
 // fork_configure_overlap_limit ....
 #include "fork_enums.h"
 
-
-
+namespace forkNS {
 
 #if MULTIPLE_CONFIGURATIONS
 template <typename Keycode, typename Time, typename archived_event_t>
@@ -976,5 +975,7 @@ forkingMachine<Keycode, Time, archived_event_t>::step_automaton_by_key(std::uniq
         default:
             mdb("----------unexpected state---------\n");
     }
+}
+
 }
 

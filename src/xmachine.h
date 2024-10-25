@@ -19,4 +19,4 @@ extern "C"
 #undef min
 }
 
-using machineRec = forkingMachine<KeyCode, Time, archived_event>;
+using machineRec = forkNS::forkingMachine<KeyCode, Time, archived_event>;

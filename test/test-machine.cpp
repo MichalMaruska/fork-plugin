@@ -95,7 +95,7 @@ public:
 };
 
 
-using machineRec = forkingMachine<KeyCode, Time, archived_event>;
+using machineRec = forkNS::forkingMachine<KeyCode, Time, archived_event>;
 using fork_configuration = ForkConfiguration<KeyCode, Time, 256>;
 
 class machineTest : public testing::Test {

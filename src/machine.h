@@ -15,8 +15,7 @@
 
 #include "fork_configuration.h"
 
-// namespace fork {
-
+namespace forkNS {
 
 template <typename Time>
 bool time_difference_more(Time now, Time past, Time limit_difference) {
@@ -457,6 +456,7 @@ private:
     }
 };
 
+}
 
 
 // extern int dump_last_events_to_client(PluginInstance* plugin, ClientPtr client, int n);
