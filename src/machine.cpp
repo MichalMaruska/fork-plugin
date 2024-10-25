@@ -427,25 +427,6 @@ forkingMachine<Keycode, Time, archived_event_t>::step_by_force()
     activate_fork();
 }
 
-// So the event proves, that the current event is not forked.
-template <typename Keycode, typename Time, typename archived_event_t>
-void
-forkingMachine<Keycode, Time, archived_event_t>::do_confirm_non_fork_by(std::unique_ptr<key_event> ev) // possibly unlocks
-{
-    assert(state == st_suspect || state == st_verify);
-
-    internal_queue.push(ev.release());
-
-    std::unique_ptr<key_event> non_forked_event(internal_queue.pop());
-    // reset: todo: why not do it in the rewind_machine ?
-    mDecision_time = 0;
-
-    mdb("this is not a fork! %d\n", environment->detail_of(non_forked_event->p_event));
-
-    rewind_machine(st_deactivated); // short-lived state. is it worth it?
-    output_event(std::move(non_forked_event));
-}
-
 /*
   returns:
   state  (in the `machine')

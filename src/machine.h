@@ -286,6 +286,21 @@ private:
         activate_fork();
     }
 
+    // So the event proves, that the current event is not forked.
+    // /----internal--queue--/ event /----input event----/
+    //  ^ suspect                ^ confirmation.
+    void do_confirm_non_fork_by(std::unique_ptr<key_event> ev) {
+        check_locked();
+        assert(state == st_suspect || state == st_verify);
+
+        std::unique_ptr<key_event> non_forked_event(internal_queue.pop());
+        mdb("this is not a fork! %d\n",
+            environment->detail_of(non_forked_event->p_event));
+        internal_queue.push(ev.release());
+        rewind_machine(st_deactivated); // short-lived state. is it worth it?
+        // possibly unlocks
+        output_event(std::move(non_forked_event));
+    }
 
     void apply_event_to_verify_state(std::unique_ptr<key_event> ev);
 
@@ -300,7 +315,6 @@ private:
         return (forkActive[code]);
     }
 
-    void do_confirm_non_fork_by(std::unique_ptr<key_event> ev);
     void apply_event_to_normal(std::unique_ptr<key_event> ev);
 
     /** Another event has been determined. So:
