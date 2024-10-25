@@ -228,7 +228,25 @@ private:
 
     void apply_event_to_suspect(std::unique_ptr<key_event> ev);
 
-    void rewind_machine(fork_state_t new_state);
+    /**
+     * One key-event investigation finished,
+     * now reset for the next one */
+    void rewind_machine(const fork_state_t new_state) {
+#if 0
+        assert ((new_state == st_deactivated) || (new_state == st_activated));
+        change_state(new_state);
+#endif
+        /* reset the machine */
+        mdb("== Resetting the fork machine (internal %d, input %d)\n",
+            internal_queue.length (),
+            input_queue.length ());
+
+        change_state(st_normal);
+        verificator_keycode = no_key;
+        reverse_splice(internal_queue, input_queue);
+    }
+
+
     void activate_fork();
 
     void

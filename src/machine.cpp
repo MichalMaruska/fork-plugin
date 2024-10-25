@@ -333,29 +333,6 @@ forkingMachine<Keycode, Time, archived_event_t>::activate_fork() {
  * Now the operations on the Dynamic state
  */
 
-/**
- * One key-event investigation finished,
- * now reset for the next one */
-template <typename Keycode, typename Time, typename archived_event_t>
-void
-forkingMachine<Keycode, Time, archived_event_t>::rewind_machine(fork_state_t new_state)
-{
-    change_state(new_state);
-    assert ((state == st_deactivated) || (state == st_activated));
-    /* reset the machine */
-    mdb("== Resetting the fork machine (internal %d, input %d)\n",
-        internal_queue.length (),
-        input_queue.length ());
-
-    change_state(st_normal);
-    verificator_keycode = no_key;
-
-    if (!(internal_queue.empty())) {
-        forkNS::reverse_splice(internal_queue, input_queue);
-        mdb("now in input_queue: %d\n", input_queue.length ());
-    }
-}
-
 
 /**
  * Resets the machine, so as to reconsider the events on the
