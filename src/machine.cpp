@@ -361,12 +361,11 @@ forkingMachine<Keycode, Time, archived_event_t>::accept_event(std::unique_ptr<Pl
     // this can only throw
     auto event = std::make_unique<key_event>(std::move(pevent));
     event->original_keycode = no_key; // makes sense?. could be environment->detail_of(pevent);
-    input_queue.push(event.release());
-
     // fixme:
     if (mCurrent_time > environment->time_of(event->p_event))
         mdb("bug: time moved backwards!");
 
+    input_queue.push(event.release());
     try_to_play(false);
 }
 
