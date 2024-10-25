@@ -684,14 +684,10 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_normal(std::uniq
     assert(state == st_normal && internal_queue.empty());
 
     // if this key might start a fork....
-    if (environment->press_p(pevent) && forkable_p(config.get(), key)
-        /* fixme: is this w/ 1-event precision? (i.e. is the xkb-> updated synchronously) */
-        /* todo:  does it have a mouse-related action? */
+    if (environment->press_p(pevent)
+        && forkable_p(config.get(), key)
         && !environment->ignore_event(pevent)) {
-        /* Either suspect, or detect .- trick to suppress fork */
-
-        /* .- trick: by depressing/re-pressing the key rapidly, fork is disabled,
-         * and AR is invoked */
+        /* ".-" AR-trick: by depressing/re-pressing the key rapidly, AR is invoked, not fork */
 #if DEBUG
         if ( !key_forked(key) && (last_released == key )) {
             mdb("can we invoke autorepeat? %d  upper bound %d ms\n",
