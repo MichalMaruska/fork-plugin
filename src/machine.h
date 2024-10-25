@@ -251,8 +251,16 @@ private:
     void do_confirm_non_fork_by(std::unique_ptr<key_event> ev);
     void apply_event_to_normal(std::unique_ptr<key_event> ev);
 
-
-    void output_event(std::unique_ptr<key_event> ev);
+    /** Another event has been determined. So:
+     * todo:  possible emit a (notification) event immediately,
+     * ... and push the event down the pipeline, when not frozen.
+     */
+    void output_event(std::unique_ptr<key_event> ev) {
+        assert(ev->p_event != nullptr);
+        mdb("%s: %p %p\n", __func__, ev.get(), ev->p_event);
+        output_queue.push(ev.release());
+        flush_to_next(); // unlocks possibly!
+    }
 
 public:
     // prefix with a space.

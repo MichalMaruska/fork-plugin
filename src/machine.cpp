@@ -304,21 +304,6 @@ forkingMachine<Keycode, Time, archived_event_t>::flush_to_next()
         mdb("%s: still %d events to output\n", __func__, output_queue.length ());
 }
 
-/** Another event has been determined. So:
- * todo:  possible emit a (notification) event immediately,
- * ... and push the event down the pipeline, when not frozen.
- */
-template <typename Keycode, typename Time, typename archived_event_t>
-void
-forkingMachine<Keycode, Time, archived_event_t>::output_event(std::unique_ptr<key_event> ev) // unlocks possibly!
-{
-    assert(ev->p_event != nullptr);
-    mdb("%s: %p %p\n", __func__, ev.get(), ev->p_event);
-    output_queue.push(ev.release());
-    flush_to_next();
-};
-
-
 /**
  * We concluded the key is forked. "Output" it and prepare for the next one.
  * fixme: locking?
