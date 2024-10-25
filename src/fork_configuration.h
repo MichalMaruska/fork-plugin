@@ -30,7 +30,7 @@ public:
     keycode_parameter_matrix verification_interval;
 
     int clear_interval = 0;
-    int repeat_max  = 80;
+    Time repeat_max  = 80;
     bool consider_forks_for_repeat = true;
 
     int debug = 1; // todo: boolean?

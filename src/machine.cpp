@@ -666,6 +666,11 @@ forkingMachine<Keycode, Time, archived_event_t>::step_in_time_locked(const Time 
 
 /** apply_event_to_{STATE} */
 
+template <typename Time>
+bool time_difference_more(Time now, Time past, Time limit_difference) {
+    return ( (now - past) > limit_difference);
+}
+
 // is mDecision_time always recalculated?
 template <typename Keycode, typename Time, typename archived_event_t>
 void
@@ -697,12 +702,9 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_normal(std::uniq
 #endif
         /* So, unless we see the .- trick, we do suspect: */
         if (!key_forked(key) &&
-            ((last_released != key ) ||
-             /*todo: time_difference_more(last_released_time,simulated_time,
-              * config->repeat_max) */
-             (simulated_time - last_released_time) >
-             (Time) config->repeat_max))
-        {
+            ((last_released != key )
+             || time_difference_more(simulated_time, last_released_time, config->repeat_max))) {
+
             change_state(st_suspect);
             suspect = key;
             suspect_time = environment->time_of(pevent);

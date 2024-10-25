@@ -127,7 +127,7 @@ private:
      *
      * This means I cannot do this trick w/ 2 keys, only 1 is the last/considered! */
     Keycode last_released; // .- trick
-    int last_released_time;
+    Time last_released_time;
 
     // calculated:
     Time mDecision_time;         /* Time to wait... so that the HEAD event in queue could decide more*/
