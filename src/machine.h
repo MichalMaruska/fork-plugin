@@ -26,6 +26,22 @@ bool time_difference_more(Time now, Time past, Time limit_difference) {
 /* fixme: inherit from xorg! */
 constexpr int MAX_KEYCODE=256;
 
+/**
+ * machine keeps log of `archived_event_t'
+ *
+ * It is invoked and itself invokes `platformEnvironment'
+ * it receives `PlatformEvent' abstract class
+ * platformEnvironment extracts ... Keycode and Time
+ *
+ * and we update some state and sometimes rewrite the event
+ * and output.
+ * we also keep our own `key_event'.
+ *
+ *
+ * Concepts:
+ * archived_event_t ... contains platformEvent and "forked"
+ *
+ */
 template <typename Keycode, typename Time, typename archived_event_t>
 class forkingMachine {
 
