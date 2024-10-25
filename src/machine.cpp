@@ -2,7 +2,6 @@
 #include "config.h"
 #include "machine.h"
 // uses:
-#include "debug.h"
 #include "colors.h"
 #include <memory>
 
@@ -42,7 +41,7 @@ forkingMachine<Keycode, Time>::switch_config(int id)
         // useless:
         && (*config_p)
         && (*config_p != config)) {
-        DB("switching configs %d -> %d\n", config->id, id);
+        mdb("switching configs %d -> %d\n", config->id, id);
 
         fork_configuration* new_current = *config_p;
         //fixme: this sequence works at the beginning too!!!
@@ -54,7 +53,7 @@ forkingMachine<Keycode, Time>::switch_config(int id)
         new_current->next = config; //    n -> 1
         config = new_current; //     -> n
 
-        DB("switched configs %d -> %d\n", config->id, id);
+        mdb("switched configs %d -> %d\n", config->id, id);
         replay_events(false);
     } else {
         environment->log("config remains %d\n", config->id);
