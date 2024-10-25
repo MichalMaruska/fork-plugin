@@ -160,22 +160,22 @@ template <typename Keycode, typename Time, typename archived_event_t>
 int
 forkingMachine<Keycode, Time, archived_event_t>::configure_twins(int type, Keycode key, Keycode twin, int value, bool set)
 {
-   switch (type) {
-      case fork_configure_total_limit:
-         if (set)
-            config->verification_interval[key][twin] = value;
-         else
-            return config->verification_interval[key][twin];
-         break;
-      case fork_configure_overlap_limit:
-         if (set)
-            config->overlap_tolerance[key][twin] = value;
-         else return config->overlap_tolerance[key][twin];
-         break;
-      default:
-         mdb("%s: invalid type %d\n", __func__, type);;
-   }
-   return 0;
+    switch (type) {
+        case fork_configure_total_limit:
+            if (set)
+                config->verification_interval[key][twin] = value;
+            else
+                return config->verification_interval[key][twin];
+            break;
+        case fork_configure_overlap_limit:
+            if (set)
+                config->overlap_tolerance[key][twin] = value;
+            else return config->overlap_tolerance[key][twin];
+            break;
+        default:
+            mdb("%s: invalid type %d\n", __func__, type);;
+    }
+    return 0;
 }
 
 
