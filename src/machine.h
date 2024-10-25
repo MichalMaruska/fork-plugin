@@ -55,7 +55,7 @@ public:
         inline static Environment_t *env; // not ownin
         //
         PlatformEvent* p_event;
-        Keycode forked; /* if forked to (another keycode), this is the original key */
+        Keycode original_keycode; /* if forked to (another keycode), this is the original key */
         key_event(std::unique_ptr<PlatformEvent> p) : p_event(p.release()){};
         ~key_event() {
             // should be nullptr
@@ -207,7 +207,7 @@ private:
         // reference.forked = ev->forked;
         archived_event_t archived_event;
         environment->archive_event(archived_event, event->p_event);
-        archived_event.forked = event->forked;
+        archived_event.forked = event->original_keycode; // todo: rename original_keycode
 
         last_events_log.push_back(archived_event);
     }

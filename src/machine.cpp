@@ -275,7 +275,7 @@ forkingMachine<Keycode, Time, archived_event_t>::activate_fork() {
     std::unique_ptr<key_event> event(internal_queue.pop());
     Keycode forked_key = environment->detail_of(event->p_event);
     // assert(forked_key == suspect);
-    event->forked = forked_key;
+    event->original_keycode = forked_key;
 
     /* Change the keycode, but remember the original: */
     forkActive[forked_key] = config->fork_keycode[forked_key];
@@ -360,7 +360,7 @@ forkingMachine<Keycode, Time, archived_event_t>::accept_event(std::unique_ptr<Pl
 
     // this can only throw
     auto event = std::make_unique<key_event>(std::move(pevent));
-    event->forked = no_key; // makes sense?
+    event->original_keycode = no_key; // makes sense?. could be environment->detail_of(pevent);
     input_queue.push(event.release());
 
     // fixme:
