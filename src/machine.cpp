@@ -394,7 +394,9 @@ forkingMachine<Keycode, Time, archived_event_t>::accept_event(std::unique_ptr<Pl
     input_queue.push(event.release());
 
     // fixme:
-    mCurrent_time = 0; // time_of(ev->event);
+    if (mCurrent_time > environment->time_of(event->p_event))
+        mdb("bug: time moved backwards!");
+
     try_to_play(false);
 }
 
