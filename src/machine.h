@@ -341,6 +341,31 @@ public:
 
     void flush_to_next();
 
+    void push_time_to_next() {
+        // send out time:
+
+        // interesting: after handing over, the nextPlugin might need to be refreshed.
+        // if that plugin is gone. todo!
+
+        Time now;
+        if (!output_queue.empty()) {
+            now = queue_front_time(output_queue);
+        } else if (!internal_queue.empty()) {
+            now = queue_front_time(internal_queue);
+        } else if (!input_queue.empty()) {
+            now = queue_front_time(input_queue);
+        } else {
+            now = mCurrent_time;
+            // in this case we might:
+            mCurrent_time = 0;
+        }
+
+        if (now) {
+            // this can thaw, freeze,?
+            environment->push_time(now);
+        }
+    }
+
     // calculated:
     [[nodiscard]] Time next_decision_time() const {
         check_locked();

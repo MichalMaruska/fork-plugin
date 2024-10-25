@@ -228,8 +228,7 @@ forkingMachine<Keycode, Time, archived_event_t>::dump_last_events_to_client(
  **/
 template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time, archived_event_t>::flush_to_next()
-{
+forkingMachine<Keycode, Time, archived_event_t>::flush_to_next() {
     // todo: could I lock only in this scope?
     check_locked();
 
@@ -237,17 +236,21 @@ forkingMachine<Keycode, Time, archived_event_t>::flush_to_next()
         log_queues(__func__);
     }
 
+    // send out events
     while(! environment->output_frozen() && !output_queue.empty()) {
-        std::unique_ptr<key_event> ev(output_queue.pop());
+        // now we are the owner.
+        std::unique_ptr<key_event> event(output_queue.pop());
 
-        // now we are the owner. And
         // (ORDER) this event must be delivered before any other!
-        // so no preemption of this part! fixme!
+        // so no preemption of this part!  Are we re-entrant?
         // yet, the next plugin could call in here? to do what?
         {
+            // could I emplace it?
+            // reference = last_events_log.emplace_back()
+            // reference.forked = ev->forked;
             archived_event_t archived_event;
-            environment->archive_event(archived_event, ev->p_event);
-            archived_event.forked = ev->forked;
+            environment->archive_event(archived_event, event->p_event);
+            archived_event.forked = event->forked;
 
             last_events_log.push_back(archived_event);
         }
@@ -256,39 +259,21 @@ forkingMachine<Keycode, Time, archived_event_t>::flush_to_next()
         // 2020: it can!
         // so ... this is front_lock?
         {
+            // why unlock during this? maybe also during the push_time_to_next then?
+            // because it can call into back to us? NotifyThaw()
+
             // fixme: was here a bigger message?
             // bug: environment->fmt_event(ev->p_event);
             unlock();
             // we must gurantee ORDER
-            environment->relay_event(ev->p_event);
+            environment->relay_event(event->p_event);
             lock();
         };
     }
-
-    // interesting: after handing over, the nextPlugin might need to be refreshed.
-    // if that plugin is gone. todo!
-
-    // now we still have time:
     if (! environment->output_frozen()) {
+        // now we still have time:
         // we should push the time!
-        Time now;
-        if (!output_queue.empty()) {
-            now = queue_front_time(output_queue);
-        } else if (!internal_queue.empty()) {
-            now = queue_front_time(internal_queue);
-        } else if (!input_queue.empty()) {
-            now = queue_front_time(input_queue);
-        } else {
-            // fixme: this is accessed & written to directly by fork.cpp: machine->mCurrent_time = now;
-            now = mCurrent_time;
-            // in this case we might:
-            mCurrent_time = 0;
-        }
-
-        if (now) {
-            // this can thaw, freeze,?
-            environment->push_time(now);
-        }
+        push_time_to_next();
     }
     if (!output_queue.empty ())
         mdb("%s: still %d events to output\n", __func__, output_queue.length ());
