@@ -558,7 +558,7 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_normal(std::uniq
             // .- trick: (fixme: or self-forked)
             mdb("re-pressed very quickly\n");
             forkActive[key] = key; // fixme: why not 0 ?
-            output_event(std::move(event));
+            issue_event(std::move(event));
             return;
         };
     } else if (environment->release_p(pevent) && (key_forked(key))) {
@@ -581,14 +581,14 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_normal(std::uniq
         environment->rewrite_event(const_cast<PlatformEvent*>(pevent), forkActive[key]);
         forkActive[key] = 0;
 
-        output_event(std::move(event));
+        issue_event(std::move(event));
     } else {
         if (environment->release_p(pevent)) {
             last_released = environment->detail_of(pevent);
             last_released_time = environment->time_of(pevent);
         };
         // pass along the un-forkable event.
-        output_event(std::move(event));
+        issue_event(std::move(event));
     };
 };
 

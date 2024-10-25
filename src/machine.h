@@ -328,7 +328,7 @@ private:
         internal_queue.push(ev.release());
         rewind_machine(st_deactivated); // short-lived state. is it worth it?
         // possibly unlocks
-        output_event(std::move(non_forked_event));
+        issue_event(std::move(non_forked_event));
     }
 
     void apply_event_to_verify_state(std::unique_ptr<key_event> ev);
@@ -350,7 +350,7 @@ private:
      * todo:  possible emit a (notification) event immediately,
      * ... and push the event down the pipeline, when not frozen.
      */
-    void output_event(std::unique_ptr<key_event> ev) {
+    void issue_event(std::unique_ptr<key_event> ev) {
         assert(ev->p_event != nullptr);
         mdb("%s: %p %p\n", __func__, ev.get(), ev->p_event);
         output_queue.push(ev.release());
