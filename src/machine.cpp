@@ -475,20 +475,6 @@ forkingMachine<Keycode, Time, archived_event_t>::do_confirm_non_fork_by(std::uni
     output_event(std::move(non_forked_event));
 }
 
-// so EV confirms fork of the current event.
-template <typename Keycode, typename Time, typename archived_event_t>
-void
-forkingMachine<Keycode, Time, archived_event_t>::do_confirm_fork_by(std::unique_ptr<key_event> ev)
-{
-    /* fixme: ev is the just-read event. But that is surely not the head
-       of queue (which is confirmed to fork) */
-    mdb("confirm:\n");
-    internal_queue.push(ev.release());
-
-    mDecision_time = 0;
-    activate_fork();
-}
-
 /*
   returns:
   state  (in the `machine')

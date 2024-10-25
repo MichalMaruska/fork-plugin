@@ -257,7 +257,19 @@ private:
             state_description[new_state], color_reset);
     }
 
-    void do_confirm_fork_by(std::unique_ptr<key_event> ev);
+    // so EVENT confirms fork of the current event, and also enters queue,
+    // which will be immediately relocated to the input queue.
+    void do_confirm_fork_by(std::unique_ptr<key_event> event) {
+        /* fixme: event is the just-read event. But that is surely not the head
+           of queue (which is confirmed to fork) */
+        mdb("confirm:\n");
+        internal_queue.push(event.release());
+
+        mDecision_time = 0; // why?
+        activate_fork();
+    }
+
+
     void apply_event_to_verify_state(std::unique_ptr<key_event> ev);
 
 
