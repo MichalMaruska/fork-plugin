@@ -144,7 +144,18 @@ forkingMachine<Keycode, Time, archived_event_t>::configure_global(int type, int 
 
 /**
  * key and twin have a relationship, given by type.
+ * |--------------|========\-----------\
+ * A key pressed  B pressed B released  A released
+ *
+ * |----------- |========\------------\
+ * A pressed    B pressed A released  B released
  */
+enum twin_parameter {
+    verification_time = 1, // A--B-- t  -> A is forked.
+    overlap_limit = 2,     // A B--t  -> A is forked.
+                           // notice t is measured from A and B
+};
+
 template <typename Keycode, typename Time, typename archived_event_t>
 int
 forkingMachine<Keycode, Time, archived_event_t>::configure_twins(int type, Keycode key, Keycode twin, int value, bool set)
@@ -166,6 +177,12 @@ forkingMachine<Keycode, Time, archived_event_t>::configure_twins(int type, Keyco
    }
    return 0;
 }
+
+
+enum key_parameters {
+    key_fork,                   // Keycode
+    key_repeat,                 // true/false
+};
 
 template <typename Keycode, typename Time, typename archived_event_t>
 int
