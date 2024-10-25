@@ -357,6 +357,28 @@ private:
         flush_to_next(); // unlocks possibly!
     }
 
+    // can modify the event!
+    void relay_event(key_event *event) {
+        // (ORDER) this event must be delivered before any other!
+        // so no preemption of this part!  Are we re-entrant?
+        // yet, the next plugin could call in here? to do what?
+
+        // machine. fixme: it's not true -- it cannot!
+        // 2020: it can!
+        // so ... this is front_lock?
+
+        // why unlock during this? maybe also during the push_time_to_next then?
+        // because it can call into back to us? NotifyThaw()
+
+        // fixme: was here a bigger message?
+        // bug: environment->fmt_event(ev->p_event);
+        unlock();
+        // we must gurantee ORDER
+        environment->relay_event(event->p_event);
+        lock();
+    };
+
+
 public:
     // prefix with a space.
     void mdb(const char* format...) const
