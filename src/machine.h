@@ -259,6 +259,8 @@ private:
             input_queue.length ());
 
         change_state(st_normal);
+        mDecision_time = 0; // nothing to decide
+        suspect = no_key;
         verificator_keycode = no_key;
         reverse_splice(internal_queue, input_queue);
     }
