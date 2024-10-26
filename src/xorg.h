@@ -170,7 +170,7 @@ public:
         event->device_event.detail.key = code;
     }
 
-    virtual void free_event(PlatformEvent* pevent) override {
+    virtual void free_event(PlatformEvent* pevent) const override {
         if (pevent == nullptr) {
             ErrorF("BUG %s: %p\n", __func__, pevent);
             return;
@@ -206,14 +206,14 @@ public:
         PluginClass(nextPlugin)->ProcessTime(nextPlugin, now);
     }
 
-    virtual void log(const char* format ...) override {
+    virtual void log(const char* format ...) const override {
         va_list argptr;
         va_start(argptr, format);
         VErrorF(format, argptr);
         va_end(argptr);
     }
 
-    virtual void vlog(const char* format, va_list argptr) override {
+    virtual void vlog(const char* format, va_list argptr) const override {
         VErrorF(format, argptr);
     }
 

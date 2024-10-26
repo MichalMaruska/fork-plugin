@@ -73,11 +73,11 @@ public:
 
   // MOCK_METHOD(void, vlog,(const char* format, va_list argptr));
 
-  void vlog(const char* format, va_list argptr) override {
+  void vlog(const char* format, va_list argptr) const override {
     vprintf(format, argptr);
   }
 
-  void log(const char* format...) override
+  void log(const char* format...) const override
   {
     va_list argptr;
     va_start(argptr, format);
@@ -87,7 +87,7 @@ public:
   MOCK_METHOD(std::string, fmt_event,(const PlatformEvent *event));
 
   MOCK_METHOD(void, archive_event,(archived_event& ae, const PlatformEvent* event));
-  MOCK_METHOD(void, free_event,(PlatformEvent* pevent));
+  MOCK_METHOD(void, free_event,(PlatformEvent* pevent), (const));
   MOCK_METHOD(void, rewrite_event,(PlatformEvent* pevent, KeyCode code));
 
   MOCK_METHOD(std::unique_ptr<event_dumper<archived_event>>, get_event_dumper,());
