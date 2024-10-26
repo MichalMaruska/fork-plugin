@@ -411,6 +411,7 @@ template <typename Keycode, typename Time, typename archived_event_t>
 bool
 forkingMachine<Keycode, Time, archived_event_t>::transition_by_time(Time current_time)
 {
+    check_locked();
     // confirm fork:
     mdb("%s%s%s state: %s, queue: %d, time: %u key: %d\n",
          fork_color, __func__, color_reset,
@@ -761,7 +762,7 @@ void
 forkingMachine<Keycode, Time, archived_event_t>::transition_by_key(std::unique_ptr<key_event> ev)
 {
     mdb("%s:\n", __func__);
-
+    check_locked();
     assert(ev);
     const PlatformEvent* pevent = ev->p_event;
     const Keycode key = environment->detail_of(pevent);
