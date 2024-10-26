@@ -249,7 +249,7 @@ private:
         return environment->time_of(queue.front()->p_event);
     }
 
-    void try_to_play(bool force);
+    void run_automaton(bool force);
 
     /**
      * Resets the machine, so as to reconsider the events on the
@@ -266,7 +266,7 @@ private:
         // last_released & last_released_time no more available.
         last_released = no_key; // bug!
 
-        try_to_play(force_also);
+        run_automaton(force_also);
     }
 
 

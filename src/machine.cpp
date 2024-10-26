@@ -310,7 +310,7 @@ forkingMachine<Keycode, Time, archived_event_t>::activate_fork(fork_reason_t for
  */
 template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time, archived_event_t>::try_to_play(bool force_also)
+forkingMachine<Keycode, Time, archived_event_t>::run_automaton(bool force_also)
 {
     // fixme: maybe All I need is the nextPlugin?
 
@@ -366,7 +366,7 @@ forkingMachine<Keycode, Time, archived_event_t>::accept_event(std::unique_ptr<Pl
         mdb("bug: time moved backwards!");
 
     input_queue.push(event.release());
-    try_to_play(false);
+    run_automaton(false);
 }
 
 /*
@@ -466,7 +466,7 @@ forkingMachine<Keycode, Time, archived_event_t>::step_in_time_locked(const Time 
     flush_to_next();
 
     /* push the time ! */
-    try_to_play(false);
+    run_automaton(false);
 
     /* I should take the minimum of time and the time of the 1st event in the
        (output) internal queue */
