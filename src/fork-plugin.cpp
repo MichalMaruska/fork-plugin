@@ -304,11 +304,9 @@ step_in_time(PluginInstance* plugin, Time now)
     machineRec *machine = plugin_machine(plugin);
     machine->mdb("%s: %" TIME_FMT "\n", __func__, now);
 
-    machine->lock();
-    machine->accept_time(now); // possibly unlocks
+    machine->accept_time(now);
     // todo: we could push the time before the first event in internal queue!
     set_wakeup_time(plugin, machine->next_decision_time());
-    machine->unlock();
 
     return PLUGIN_NON_FROZEN;
 };
@@ -322,13 +320,17 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
 {
     machineRec* machine = plugin_machine(plugin);
     machine->mdb("%s @ time %" TIME_FMT "\n", __func__, now);
-    machine->lock();
+
+    // re-entrancy:
+    // if locked .... put order on shared data .... then retry to lock ... if lock -> process the
+    // order. if not, we know someone will process it. ....but a memory barrier is needed.
+
     machine->accept_time(now); // possibly unlocks
 
     if (!plugin_frozen(plugin->next) && PluginClass(plugin->prev)->NotifyThaw) {
         /* thaw the previous! */
         set_wakeup_time(plugin, machine->next_decision_time());
-        machine->unlock();
+
         machine->mdb("%s -- sending thaw Notify upwards!\n", __func__);
         /* fixme:  Tail-recursion! */
         PluginClass(plugin->prev)->NotifyThaw(plugin->prev, now);
@@ -337,7 +339,6 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
     } else {
         machine->mdb("%s -- NOT sending thaw Notify upwards %s!\n", __func__,
                      plugin_frozen(plugin->next)?"next is frozen":"prev has not NotifyThaw");
-        machine->unlock();
     }
 }
 
