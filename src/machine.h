@@ -45,17 +45,27 @@ constexpr int MAX_KEYCODE=256;
 template <typename Keycode, typename Time, typename archived_event_t>
 class forkingMachine {
 
+    constexpr static const Keycode no_key = 0;
+
 public:
     typedef boost::circular_buffer<archived_event_t> last_events_t;
+
+
+    /* Environment_t must be able to convert from
+     * platformEvent to archived_event_t
+     */
     typedef platformEnvironment<Keycode, Time, archived_event_t> Environment_t;
 
     /* `machine': the dynamic `state' */
     struct key_event {
         // I want a static variable pointing to the Class's Environment.
-        inline static Environment_t *env; // not ownin
-        //
+        inline static const Environment_t *env;
+
         PlatformEvent* p_event;
-        Keycode original_keycode; /* if forked to (another keycode), this is the original key */
+        /* if forked to (another keycode), this is the original key */
+        // makes sense?. could be environment->detail_of(pevent);
+        Keycode original_keycode = no_key;
+
         key_event(std::unique_ptr<PlatformEvent> p) : p_event(p.release()){};
         ~key_event() {
             // should be nullptr
@@ -72,7 +82,6 @@ public:
 private:
 
     /* states of the automaton: */
-    constexpr static const Keycode no_key = 0;
     enum fork_state_t {  // states of the automaton
         st_normal,
         st_suspect,
