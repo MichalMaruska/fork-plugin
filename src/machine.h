@@ -60,13 +60,17 @@ public:
         ~key_event() {
             // should be nullptr
             // bug: must call environment -> free_event()
+            // notice that currently we nullify this pointer.
             // so virtual d-tor?
-            env->free_event(p_event);
+            env->log("%s: %p %p\n", __func__, this, p_event);
+            if (p_event != nullptr)
+                env->free_event(p_event);
         }
     };
 
     typedef forkNS::my_queue<key_event*> list_with_tail;
 private:
+
     /* states of the automaton: */
     constexpr static const Keycode no_key = 0;
     enum fork_state_t {  // states of the automaton
