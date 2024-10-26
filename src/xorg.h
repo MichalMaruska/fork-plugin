@@ -103,10 +103,14 @@ public:
     virtual ~xorg_event_dumper() {};
 
 
-    explicit xorg_event_dumper(const DeviceIntPtr keybd):
+    explicit xorg_event_dumper(const DeviceIntPtr keybd) :
         xkbi(keybd->key->xkbInfo),
         xkb(xkbi->desc),
-        previous_time(0) {};
+        previous_time(0) {
+#if DEBUG > 1
+        ErrorF("%s: creating dumper for %s\n", __func__, keybd->name);
+#endif
+    };
 };
 
 
@@ -167,7 +171,11 @@ public:
     }
 
     virtual void free_event(PlatformEvent* pevent) override {
-        auto event = static_cast<XorgEvent*>(pevent)->event;
+        if (pevent == nullptr) {
+            ErrorF("BUG %s: %p\n", __func__, pevent);
+            return;
+        }
+        InternalEvent* event = static_cast<XorgEvent*>(pevent)->event;
         free(event);
     }
     virtual bool press_p(const PlatformEvent* pevent) override {
