@@ -9,6 +9,7 @@ cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja  ../  -DFORCE_COLORED_OUTPUT=1
 cmake -DCMAKE_BUILD_TYPE=Debug -G Ninja  ../  -DFORCE_COLORED_OUTPUT=1 -DCMAKE_CXX_COMPILER=clang++
 cmake --build .
 
+
 (cd test/; ctest )
 
 ** Get coverage report:

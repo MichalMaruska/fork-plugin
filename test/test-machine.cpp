@@ -248,6 +248,7 @@ TEST_F(machineTest, ForkBySecond) {
 
   // return:
   EXPECT_CALL(*environment, output_frozen).WillRepeatedly(Return(false));
+
   // many times:
   EXPECT_CALL(*environment, ignore_event(A_pevent.get())).WillRepeatedly(Return(false));
   EXPECT_CALL(*environment, time_of(A_pevent.get())).WillRepeatedly(Return(a_time));
