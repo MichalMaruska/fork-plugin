@@ -270,9 +270,14 @@ forkingMachine<Keycode, Time, archived_event_t>::flush_to_next() {
 template <typename Keycode, typename Time, typename archived_event_t>
 void
 forkingMachine<Keycode, Time, archived_event_t>::activate_fork(fork_reason_t fork_reason) {
+    check_locked();
     assert(!internal_queue.empty());
 
     std::unique_ptr<key_event> event(internal_queue.pop());
+
+    // here or at the end?:
+    rewind_machine(st_activated);
+
     Keycode forked_key = environment->detail_of(event->p_event);
     // assert(forked_key == suspect);
     event->original_keycode = forked_key;
@@ -287,9 +292,7 @@ forkingMachine<Keycode, Time, archived_event_t>::activate_fork(fork_reason_t for
         describe_machine_state(this->state));
 
     environment->rewrite_event(event->p_event, forkActive[forked_key]);
-    environment->relay_event(event->p_event);
-
-    rewind_machine(st_activated);
+    issue_event(std::move(event));
 }
 
 
