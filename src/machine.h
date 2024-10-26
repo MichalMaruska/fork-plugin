@@ -578,7 +578,6 @@ public:
                           last_events_log.begin() + last_events_log.size(),
                           lambda);
         }
-        environment->log("not sure %s\n", __func__);
     }
 
 private:
