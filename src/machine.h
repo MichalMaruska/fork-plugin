@@ -502,7 +502,27 @@ private:
 
     bool transition_by_time(Time current_time);
 
-    void flush_to_next();
+    /**
+     * Push as many as possible from the OUTPUT queue to the next layer.
+     * Also the time.
+     * The machine is locked here.  It also does not change state. Only the 1
+     *queue. Unlocks to be re-entrant!
+     **/
+    void flush_to_next() {
+        while (!environment->output_frozen() && !output_queue.empty()) {
+            lock();
+            std::unique_ptr<key_event> event(output_queue.pop());
+
+            save_event_log(event.get());
+            unlock();
+            relay_event(event.get());
+        }
+        if (!environment->output_frozen()) {
+            push_time_to_next();
+        }
+        if (!output_queue.empty())
+            mdb("%s: still %d events to output\n", __func__, output_queue.length());
+    }
 
     void push_time_to_next() {
         // send out time:

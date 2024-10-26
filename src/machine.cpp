@@ -238,32 +238,6 @@ forkingMachine<Keycode, Time, archived_event_t>::dump_last_events_to_client(
 }
 
 /**
- * Push as many as possible from the OUTPUT queue to the next layer.
- * Also the time.
- * The machine is locked here.  It also does not change state. Only the 1 queue.
- * Unlocks to be re-entrant!
- **/
-template <typename Keycode, typename Time, typename archived_event_t>
-void
-forkingMachine<Keycode, Time, archived_event_t>::flush_to_next() {
-    // todo: could I lock only in this scope?
-    check_locked();
-
-    while(! environment->output_frozen() && !output_queue.empty()) {
-        std::unique_ptr<key_event> event(output_queue.pop());
-
-        save_event_log(event.get());
-        relay_event(event.get());
-    }
-
-    if (! environment->output_frozen()) {
-        push_time_to_next();
-    }
-    if (!output_queue.empty ())
-        mdb("%s: still %d events to output\n", __func__, output_queue.length ());
-}
-
-/**
  * We concluded the key is forked. "Output" it and prepare for the next one.
  * fixme: locking?
  */
