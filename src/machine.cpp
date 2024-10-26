@@ -461,9 +461,6 @@ template <typename Keycode, typename Time, typename archived_event_t>
 void
 forkingMachine<Keycode, Time, archived_event_t>::accept_time(const Time now) // unlocks possibly!
 {
-    if (queues_non_empty()) {
-        mdb("%s: %" TIME_FMT "\n", __func__, now);
-    }
     if (mCurrent_time > now)
         mdb("bug: time moved backwards!");
     mCurrent_time = now;
@@ -506,8 +503,8 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_normal(std::uniq
     assert(state == st_normal && internal_queue.empty());
 
     // if this key might start a fork....
-    if (environment->press_p(pevent)
-        && forkable_p(config.get(), key)
+    if (forkable_p(config.get(), key)
+        && environment->press_p(pevent)
         && !environment->ignore_event(pevent)) {
         /* ".-" AR-trick: by depressing/re-pressing the key rapidly, AR is invoked, not fork */
 #if DEBUG
