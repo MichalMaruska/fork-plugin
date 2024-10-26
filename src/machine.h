@@ -445,7 +445,20 @@ public:
 
     int dump_last_events_to_client(event_publisher<archived_event_t>* publisher, int max_requested);
 
-    void accept_time(Time now);
+    // This is a public api!
+    void accept_event(std::unique_ptr<PlatformEvent> pevent);
+    void accept_time(const Time now) {
+        lock();
+        /* push the time ! */
+        if (mCurrent_time > now)
+            mdb("bug: time moved backwards!");
+        else
+            mCurrent_time = now;
+        unlock();
+
+        run_automaton(false);
+        flush_to_next();
+    }
 
     /**
      * low-level machine step.
@@ -489,9 +502,6 @@ private:
 
     bool transition_by_time(Time current_time);
 
-public:
-    void accept_event(std::unique_ptr<PlatformEvent> pevent);
-
     void flush_to_next();
 
     void push_time_to_next() {
@@ -518,7 +528,7 @@ public:
             environment->push_time(now);
         }
     }
-
+public:
     // calculated:
     [[nodiscard]] Time next_decision_time() const {
         if ((state == st_verify)

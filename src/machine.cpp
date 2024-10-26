@@ -457,38 +457,6 @@ forkingMachine<Keycode, Time, archived_event_t>::transition_by_time(Time current
     return false;
 }
 
-// This is a public api!
-template <typename Keycode, typename Time, typename archived_event_t>
-void
-forkingMachine<Keycode, Time, archived_event_t>::accept_time(const Time now) // unlocks possibly!
-{
-    if (mCurrent_time > now)
-        mdb("bug: time moved backwards!");
-    mCurrent_time = now;
-
-    /* this is run also when thawn, so this is the right moment to retry: */
-    flush_to_next();
-
-    /* push the time ! */
-    run_automaton(false);
-
-    /* I should take the minimum of time and the time of the 1st event in the
-       (output) internal queue */
-
-    // todo: should be method of machine! machine.empty()
-    if (!environment->output_frozen()
-        // this is guaranteed!
-        // && input_queue.empty()
-        && internal_queue.empty() // i.e. state == st_normal (or st_deactivated?)
-        )
-    {
-        unlock();
-        /* might this be invoked several times?  */
-        environment->push_time(mCurrent_time);
-        lock();
-    }
-}
-
 /** apply_event_to_{STATE} */
 
 // is mDecision_time always recalculated?
