@@ -280,6 +280,7 @@ private:
      * One key-event investigation finished,
      * now reset for the next one */
     void rewind_machine(const fork_state_t new_state) {
+        check_locked();
 #if 0
         assert ((new_state == st_deactivated) || (new_state == st_activated));
         change_state(new_state);
