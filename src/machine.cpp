@@ -357,6 +357,7 @@ forkingMachine<Keycode, Time, archived_event_t>::run_automaton(bool force_also)
 template <typename Keycode, typename Time, typename archived_event_t>
 void
 forkingMachine<Keycode, Time, archived_event_t>::accept_event(std::unique_ptr<PlatformEvent> pevent) noexcept(false) {
+    lock();           // fixme: mouse must not interrupt us.
 
     // this can only throw
     auto event = std::make_unique<key_event>(std::move(pevent));
@@ -366,6 +367,8 @@ forkingMachine<Keycode, Time, archived_event_t>::accept_event(std::unique_ptr<Pl
         mdb("bug: time moved backwards!");
 
     input_queue.push(event.release());
+    unlock();
+
     run_automaton(false);
 }
 

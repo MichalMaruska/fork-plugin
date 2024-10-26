@@ -276,19 +276,15 @@ ForkProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
     };
 
     {
-        // This is C++ code:
         const auto machine = plugin_machine(plugin);
-        machine->lock();           // fixme: mouse must not interrupt us.
-        {
-            std::unique_ptr<PlatformEvent> ev = create_xorg_platform_event(event, owner);
-            // bug:
-            if (!ev) // memory problems
-                goto exit_free;
-            machine->accept_event(std::move(ev));
-        }
-
+        // This is C++ code:
+        std::unique_ptr<PlatformEvent> ev = create_xorg_platform_event(event, owner);
+        // bug:
+        if (!ev) // memory problems
+            goto exit_free;
+        machine->accept_event(std::move(ev));
+        // unlocked here now!
         set_wakeup_time(plugin, machine->next_decision_time());
-        machine->unlock();
     }
 
 
