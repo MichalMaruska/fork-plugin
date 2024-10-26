@@ -6,7 +6,7 @@
 /* How we operate:
  *
  *   ProcessEvent ->                          accept_event
- *                 invoke the `machine'   -> step_in_time_locked
+ *                 invoke the `machine'   -> accept_time
  *                                            step_by_force    |
  *   ProcessTime ->                                            v
  *                                       restart              hand_over_event_to_next_plugin
@@ -305,7 +305,7 @@ step_in_time(PluginInstance* plugin, Time now)
     machine->mdb("%s: %" TIME_FMT "\n", __func__, now);
 
     machine->lock();
-    machine->step_in_time_locked(now); // possibly unlocks
+    machine->accept_time(now); // possibly unlocks
     // todo: we could push the time before the first event in internal queue!
     set_wakeup_time(plugin, machine->next_decision_time());
     machine->unlock();
@@ -323,7 +323,7 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
     machineRec* machine = plugin_machine(plugin);
     machine->mdb("%s @ time %" TIME_FMT "\n", __func__, now);
     machine->lock();
-    machine->step_in_time_locked(now); // possibly unlocks
+    machine->accept_time(now); // possibly unlocks
 
     if (!plugin_frozen(plugin->next) && PluginClass(plugin->prev)->NotifyThaw) {
         /* thaw the previous! */
@@ -333,7 +333,7 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
         /* fixme:  Tail-recursion! */
         PluginClass(plugin->prev)->NotifyThaw(plugin->prev, now);
         /* I could move now to the time of our event. */
-        /* step_in_time_locked(plugin); */
+        /* accept_time(plugin); */
     } else {
         machine->mdb("%s -- NOT sending thaw Notify upwards %s!\n", __func__,
                      plugin_frozen(plugin->next)?"next is frozen":"prev has not NotifyThaw");

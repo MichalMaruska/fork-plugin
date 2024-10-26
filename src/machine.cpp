@@ -459,7 +459,7 @@ forkingMachine<Keycode, Time, archived_event_t>::step_by_time(Time current_time)
 // This is a public api!
 template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time, archived_event_t>::step_in_time_locked(const Time now) // unlocks possibly!
+forkingMachine<Keycode, Time, archived_event_t>::accept_time(const Time now) // unlocks possibly!
 {
     if (queues_non_empty()) {
         mdb("%s: %" TIME_FMT "\n", __func__, now);

@@ -18,14 +18,16 @@ namespace forkNS {
 template void forkNS::reverse_splice(my_queue<Time> & pre, my_queue<Time> &post);
 
 // explicit instantation:
+
+// public api:
 template void forkingMachine<KeyCode, Time, archived_event>::accept_event(std::unique_ptr<PlatformEvent> pevent);
+template void forkingMachine<KeyCode, Time, archived_event>::accept_time(const Time);
 
 #if MULTIPLE_CONFIGURATIONS
 template void forkingMachine<KeyCode, Time, archived_event>::switch_config(int);
 #endif
 template bool forkingMachine<KeyCode, Time, archived_event>::create_configs();
 
-template void forkingMachine<KeyCode, Time, archived_event>::step_in_time_locked(const Time);
 
 template int forkingMachine<KeyCode, Time, archived_event>::configure_key(int type, KeyCode key, int value, bool set);
 

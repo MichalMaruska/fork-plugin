@@ -445,7 +445,7 @@ public:
 
     int dump_last_events_to_client(event_publisher<archived_event_t>* publisher, int max_requested);
 
-    void step_in_time_locked(Time now);
+    void accept_time(Time now);
 
     /**
      * low-level machine step.

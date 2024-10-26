@@ -216,7 +216,7 @@ TEST_F(machineTest, EventFreed) {
   // this drop leaks ^^^
   EXPECT_CALL(*environment, free_event(a)); // (nullptr)
 
-  fm->step_in_time_locked(a_time + next_time);
+  fm->accept_time(a_time + next_time);
   fm->unlock();
 
   Mock::VerifyAndClearExpectations(environment);
