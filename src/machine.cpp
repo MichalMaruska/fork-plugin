@@ -332,10 +332,10 @@ forkingMachine<Keycode, Time, archived_event_t>::run_automaton(bool force_also)
     while (! environment->output_frozen()) {
         if (! input_queue.empty()) {
             std::unique_ptr<key_event> ev(input_queue.pop());
-            step_automaton_by_key(std::move(ev));
+            transition_by_key(std::move(ev));
         } else {
             if (mCurrent_time && (state != st_normal)) {
-                if (step_by_time(mCurrent_time))
+                if (transition_by_time(mCurrent_time))
                     // If this time helped to decide -> machine rewound,
                     // we have to try again, maybe the queue is not empty?.
                     continue;
@@ -409,7 +409,7 @@ forkingMachine<Keycode, Time, archived_event_t>::key_pressed_too_long(Time curre
 
 template <typename Keycode, typename Time, typename archived_event_t>
 bool
-forkingMachine<Keycode, Time, archived_event_t>::step_by_time(Time current_time)
+forkingMachine<Keycode, Time, archived_event_t>::transition_by_time(Time current_time)
 {
     // confirm fork:
     mdb("%s%s%s state: %s, queue: %d, time: %u key: %d\n",
@@ -758,7 +758,7 @@ forkingMachine<Keycode, Time, archived_event_t>::apply_event_to_verify_state(std
  */
 template <typename Keycode, typename Time, typename archived_event_t>
 void
-forkingMachine<Keycode, Time, archived_event_t>::step_automaton_by_key(std::unique_ptr<key_event> ev)
+forkingMachine<Keycode, Time, archived_event_t>::transition_by_key(std::unique_ptr<key_event> ev)
 {
     mdb("%s:\n", __func__);
 

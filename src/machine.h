@@ -485,9 +485,9 @@ public:
     }
 
 private:
-    void step_automaton_by_key(std::unique_ptr<key_event> ev);
+    void transition_by_key(std::unique_ptr<key_event> ev);
 
-    bool step_by_time(Time current_time);
+    bool transition_by_time(Time current_time);
 
 public:
     void accept_event(std::unique_ptr<PlatformEvent> pevent);
