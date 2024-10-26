@@ -334,12 +334,10 @@ forkingMachine<Keycode, Time, archived_event_t>::run_automaton(bool force_also)
 template <typename Keycode, typename Time, typename archived_event_t>
 void
 forkingMachine<Keycode, Time, archived_event_t>::accept_event(std::unique_ptr<PlatformEvent> pevent) noexcept(false) {
-    lock();           // fixme: mouse must not interrupt us.
-
-    // this can only throw
+    lock();
+    // fixme: mouse must not preempt us. But what if it does?
     auto event = std::make_unique<key_event>(std::move(pevent));
-    event->original_keycode = no_key; // makes sense?. could be environment->detail_of(pevent);
-    // fixme:
+
     if (mCurrent_time > environment->time_of(event->p_event))
         mdb("bug: time moved backwards!");
 
