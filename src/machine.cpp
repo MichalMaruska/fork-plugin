@@ -316,7 +316,7 @@ void
 forkingMachine<Keycode, Time, archived_event_t>::run_automaton(bool force_also)
 {
     // fixme: maybe All I need is the nextPlugin?
-
+    lock();
     if (environment->output_frozen() ||
         (!input_queue.empty() || !internal_queue.empty())
         ) {
@@ -348,11 +348,11 @@ forkingMachine<Keycode, Time, archived_event_t>::run_automaton(bool force_also)
             }
         }
     }
-    /* assert(!plugin_frozen(plugin->next)   --->
-     *              queue_empty(machine->input_queue)) */
+    unlock();
 }
 
-/** we take over pevent and promise to deliver back via
+/**
+ *  We take over pevent and promise to deliver back via
  *  relay_event -> hand_over_event_to_next_plugin
  *
  *  todo: PlatformEvent is now owned ... it will be destroyed by Environment.
