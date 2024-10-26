@@ -571,8 +571,8 @@ public:
 #endif
         if (last_events_log.full()) {
             std::for_each(last_events_log.begin(),
-                      last_events_log.end() - 1,
-                      lambda);
+                          last_events_log.end(),
+                          lambda);
         } else {
             std::for_each(last_events_log.begin(),
                           last_events_log.begin() + last_events_log.size(),
