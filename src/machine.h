@@ -520,12 +520,12 @@ public:
 
     // calculated:
     [[nodiscard]] Time next_decision_time() const {
-        check_locked();
         if ((state == st_verify)
             || (state == st_suspect))
-        // we are indeed waiting:
+            // we are indeed waiting:
             return mDecision_time;
-        else return 0;
+        else
+            return 0;
     }
 
     /** Create 2 configuration sets:
