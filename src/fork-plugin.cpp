@@ -101,25 +101,19 @@ handle_config_key(const PluginInstance *const plugin, const InternalEvent *event
         switch (keycode) {
             case keycodes::PAUSE:
                 machine = plugin_machine(plugin);
-                machine->lock();
                 machine->dump_last_events(std::make_unique<xorg_event_dumper>(plugin->device).get());
                 ErrorF("%s: serviced %d\n", __func__, keycode);
-                machine->unlock();
                 break;
 #if MULTIPLE_CONFIGURATIONS
             case keycodes::zero:
                 machine = plugin_machine(plugin);
-                machine->lock();
                 machine->switch_config(0); // current ->toggle ?
-                machine->unlock();
                 /* fixme: but this is default! */
                 machine->forkActive[keycode] = 0; /* ignore the release as well. */
                 break;
             case keycodes::one:
                 machine = plugin_machine(plugin);
-                machine->lock();
                 machine->switch_config(1); // current ->toggle ?
-                machine->unlock();
                 machine->forkActive[keycode] = 0;
                 break;
 #endif
