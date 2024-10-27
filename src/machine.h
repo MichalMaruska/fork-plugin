@@ -111,7 +111,7 @@ private:
 
     // atomic?
     // volatile mutable int
-    mutable std::recursive_mutex mLock;
+    mutable std::mutex mLock;
     /* the mouse interrupt handler should ..... err!  `volatile'
      *
      * useless mmc!  But i want to avoid any caching it.... SMP ??*/
@@ -384,7 +384,6 @@ private:
         assert(ev->p_event != nullptr);
         mdb("%s: %p %p\n", __func__, ev.get(), ev->p_event);
         output_queue.push(ev.release());
-        flush_to_next(); // unlocks possibly!
     }
 
     // can modify the event!

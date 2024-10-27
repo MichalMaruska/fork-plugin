@@ -344,6 +344,8 @@ forkingMachine<Keycode, Time, archived_event_t>::accept_event(std::unique_ptr<Pl
         input_queue.push(event.release());
     }
     run_automaton(false);
+
+    flush_to_next();
 }
 
 /*
