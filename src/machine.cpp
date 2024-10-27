@@ -290,7 +290,7 @@ void
 forkingMachine<Keycode, Time, archived_event_t>::run_automaton(bool force_also)
 {
     // fixme: maybe All I need is the nextPlugin?
-    lock();
+    std::scoped_lock lock(mLock);
     if (environment->output_frozen() ||
         (!input_queue.empty() || !internal_queue.empty())
         ) {
@@ -322,7 +322,6 @@ forkingMachine<Keycode, Time, archived_event_t>::run_automaton(bool force_also)
             }
         }
     }
-    unlock();
 }
 
 /**
@@ -334,16 +333,16 @@ forkingMachine<Keycode, Time, archived_event_t>::run_automaton(bool force_also)
 template <typename Keycode, typename Time, typename archived_event_t>
 void
 forkingMachine<Keycode, Time, archived_event_t>::accept_event(std::unique_ptr<PlatformEvent> pevent) noexcept(false) {
-    lock();
-    // fixme: mouse must not preempt us. But what if it does?
-    auto event = std::make_unique<key_event>(std::move(pevent));
+    {
+        std::scoped_lock lock(mLock);
+        // fixme: mouse must not preempt us. But what if it does?
+        auto event = std::make_unique<key_event>(std::move(pevent));
 
-    if (mCurrent_time > environment->time_of(event->p_event))
-        mdb("bug: time moved backwards!");
+        if (mCurrent_time > environment->time_of(event->p_event))
+            mdb("bug: time moved backwards!");
 
-    input_queue.push(event.release());
-    unlock();
-
+        input_queue.push(event.release());
+    }
     run_automaton(false);
 }
 

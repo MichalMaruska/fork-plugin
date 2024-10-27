@@ -11,6 +11,7 @@
 #include "colors.h"
 #include <boost/circular_buffer.hpp>
 #include <memory>
+#include <mutex>
 
 
 #include "fork_configuration.h"
@@ -109,37 +110,45 @@ private:
     };
 
     // atomic?
-    volatile mutable int mLock;           /* the mouse interrupt handler should ..... err!  `volatile'
-                                  *
-                                  * useless mmc!  But i want to avoid any caching it.... SMP ??*/
+    // volatile mutable int
+    mutable std::recursive_mutex mLock;
+    /* the mouse interrupt handler should ..... err!  `volatile'
+     *
+     * useless mmc!  But i want to avoid any caching it.... SMP ??*/
+
 public:
     std::unique_ptr<Environment_t> environment;
 #if USE_LOCKING
     void stop() {
         // wait & stop
-        lock();
-        unlock();
+        std::scoped_lock wait_lock(mLock);
     }
 
     void set_debug(int level) {
-        lock();
+        std::scoped_lock lock(mLock);
         config->debug = level;
         // (machine->config->debug? 0: 1);
-        unlock();
     }
 
 private:
 
     void lock() const
     {
-        mLock=1;
+        mLock.lock();
         // mdb_raw("/--\n");
     }
     void unlock() const
     {
-        mLock=0;
+        mLock.unlock();
         // mdb_raw("\\__ (unlock)\n");
     }
+    void check_locked() const {
+        // assert(mLock);
+    }
+    void check_unlocked() const {
+        // assert(mLock == 0);
+    }
+
 #endif
 
 
@@ -240,12 +249,6 @@ private:
         last_events_log.push_back(archived_event);
     }
 
-    void check_locked() const {
-        assert(mLock);
-    }
-    void check_unlocked() const {
-        assert(mLock == 0);
-    }
 
     static bool
     forkable_p(const fork_configuration* config, Keycode code)
@@ -438,8 +441,7 @@ public:
     ~forkingMachine() {};
 
     explicit forkingMachine(Environment_t* environment)
-        : mLock(0),
-          environment(environment),
+        : environment(environment),
           state(st_normal), suspect(0), verificator_keycode(0), suspect_time(0),
           last_released(KEYCODE_UNUSED), last_released_time(0),
           mDecision_time(0),
@@ -472,13 +474,14 @@ public:
     // This is a public api!
     void accept_event(std::unique_ptr<PlatformEvent> pevent);
     void accept_time(const Time now) {
-        lock();
-        /* push the time ! */
-        if (mCurrent_time > now)
-            mdb("bug: time moved backwards!");
-        else
-            mCurrent_time = now;
-        unlock();
+        {
+            std::scoped_lock lock(mLock);
+            /* push the time ! */
+            if (mCurrent_time > now)
+                mdb("bug: time moved backwards!");
+            else
+                mCurrent_time = now;
+        }
 
         run_automaton(false);
         flush_to_next();
@@ -512,13 +515,12 @@ public:
      * If in Suspect or Verify state, force the fork. (todo: should be
      * configurable)
      */
-    void step_by_force() {
-        lock();
+    void step_by_force() { // fixme!
+        std::scoped_lock lock(mLock);
         /* bug: if we were frozen, then we have a sequence of keys, which
          * might be already released, so the head is not to be forked!
          */
         step_by_force_internal();
-        unlock();
     }
 
 private:
@@ -534,11 +536,11 @@ private:
      **/
     void flush_to_next() {
         while (!environment->output_frozen() && !output_queue.empty()) {
-            lock();
-            std::unique_ptr<key_event> event(output_queue.pop());
-
-            save_event_log(event.get());
-            unlock();
+            {
+                std::scoped_lock lock(mLock);
+                std::unique_ptr<key_event> event(output_queue.pop());
+                save_event_log(event.get());
+            }
             relay_event(event.get());
         }
         if (!environment->output_frozen()) {
@@ -591,6 +593,8 @@ public:
         @return false if allocation  failed.
     */
     bool create_configs() {
+        std::scoped_lock lock(mLock);
+
         environment->log("%s\n", __func__);
 
         try {
@@ -616,7 +620,7 @@ public:
     }
 
     void dump_last_events(event_dumper<archived_event_t>* dumper) const {
-        lock();
+        std::scoped_lock lock(mLock);
 #if 0
         std::function<void(const event_dumper&, const archived_event_t&)> doit0 = &event_dumper::operator();
         // lambda?
@@ -633,7 +637,6 @@ public:
                           last_events_log.begin() + last_events_log.size(),
                           lambda);
         }
-        unlock();
     }
 
 private:
