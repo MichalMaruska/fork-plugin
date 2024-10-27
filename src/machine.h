@@ -109,18 +109,33 @@ private:
     };
 
     // atomic?
-    volatile int mLock;           /* the mouse interrupt handler should ..... err!  `volatile'
+    volatile mutable int mLock;           /* the mouse interrupt handler should ..... err!  `volatile'
                                   *
                                   * useless mmc!  But i want to avoid any caching it.... SMP ??*/
 public:
     std::unique_ptr<Environment_t> environment;
 #if USE_LOCKING
-    void lock()
+    void stop() {
+        // wait & stop
+        lock();
+        unlock();
+    }
+
+    void set_debug(int level) {
+        lock();
+        config->debug = level;
+        // (machine->config->debug? 0: 1);
+        unlock();
+    }
+
+private:
+
+    void lock() const
     {
         mLock=1;
         // mdb_raw("/--\n");
     }
-    void unlock()
+    void unlock() const
     {
         mLock=0;
         // mdb_raw("\\__ (unlock)\n");
@@ -601,6 +616,7 @@ public:
     }
 
     void dump_last_events(event_dumper<archived_event_t>* dumper) const {
+        lock();
 #if 0
         std::function<void(const event_dumper&, const archived_event_t&)> doit0 = &event_dumper::operator();
         // lambda?
@@ -617,6 +633,7 @@ public:
                           last_events_log.begin() + last_events_log.size(),
                           lambda);
         }
+        unlock();
     }
 
 private:

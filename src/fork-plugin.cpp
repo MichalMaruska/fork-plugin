@@ -125,10 +125,8 @@ handle_config_key(const PluginInstance *const plugin, const InternalEvent *event
 #endif
             case keycodes::key_l:
                 machine = plugin_machine(plugin);
-                machine->lock();
                 ErrorF("%s: toggle debug\n", __func__);
-                machine->config->debug = (machine->config->debug? 0: 1);
-                machine->unlock();
+                machine->set_debug(1);
                 break;
             default:            /* todo: remove this: */
                 // so press BREAK FROM TO
@@ -388,7 +386,6 @@ create_plugin(const DeviceIntPtr keybd, DevicePluginRec* plugin_class)
     auto xorg = std::make_unique<XOrgEnvironment>(keybd, plugin);
     auto* const forking_machine = new machineRec(xorg.release());
     forking_machine->create_configs();
-    forking_machine->unlock();
 
     plugin->data = static_cast<void *>(forking_machine);
 
@@ -523,10 +520,9 @@ static int
 stop_and_exhaust_machine(PluginInstance* plugin)
 {
     const auto machine = plugin_machine(plugin);
-    machine->lock();
     machine->mdb("%s: what to do?\n", __func__);
     // free all the stuff, and then:
-    // machine->unlock();
+    machine->stop();
 
     xkb_remove_plugin(plugin); // will this lead to destroy_plugin()?
     return 1;
@@ -541,7 +537,7 @@ destroy_plugin(PluginInstance* plugin)
     DeleteCallback(&DeviceEventCallback, (CallbackProcPtr) mouse_call_back,
                    (void*) plugin);
     // still dangerous? We need to wait for the callback to finish, but it's in this thread!
-    machine->lock();
+    machine->stop();
     delete machine;
     return 1;
 }
