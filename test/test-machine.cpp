@@ -143,10 +143,8 @@ TEST_F(machineTest, AcceptEvent) {
   EXPECT_CALL(*environment, relay_event);
 // .WillOnce(ReturnRef(bar1)
 
-  fm->lock();           // fixme: mouse must not interrupt us.
   fm->accept_event(std::move(pevent));
   // machine->next_decision_time()
-  fm->unlock();
   // expect call to
   // virtual void hand_over_event_to_next_plugin(PlatformEvent* event);
   // CALLED
@@ -209,7 +207,6 @@ TEST_F(machineTest, EventFreed) {
       event->key = b;
     });
 
-  fm->lock();           // fixme: mouse must not interrupt us.
   fm->accept_event(std::move(A_pevent));
   // we lost A_pevent
   EXPECT_CALL(*environment, relay_event); // (a)
@@ -217,7 +214,6 @@ TEST_F(machineTest, EventFreed) {
   EXPECT_CALL(*environment, free_event(a)); // (nullptr)
 
   fm->accept_time(a_time + next_time);
-  fm->unlock();
 
   Mock::VerifyAndClearExpectations(environment);
 }
@@ -281,14 +277,9 @@ TEST_F(machineTest, ForkBySecond) {
   // this drop leaks ^^^
   EXPECT_CALL(*environment, free_event(a)); // (nullptr)
 
-
-  fm->lock();           // fixme: mouse must not interrupt us.
   fm->accept_event(std::move(A_pevent));
   fm->accept_event(std::move(B_pevent));
   fm->accept_event(std::move(B_release_pevent));
-
-
-  fm->unlock();
 
   Mock::VerifyAndClearExpectations(environment);
 }
