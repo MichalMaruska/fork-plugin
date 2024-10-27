@@ -535,11 +535,10 @@ private:
      **/
     void flush_to_next() {
         while (!environment->output_frozen() && !output_queue.empty()) {
-            {
-                std::scoped_lock lock(mLock);
-                std::unique_ptr<key_event> event(output_queue.pop());
-                save_event_log(event.get());
-            }
+            std::scoped_lock lock(mLock);
+            std::unique_ptr<key_event> event(output_queue.pop());
+            save_event_log(event.get());
+            // unlocks!
             relay_event(event.get());
         }
         if (!environment->output_frozen()) {
