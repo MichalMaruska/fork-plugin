@@ -316,7 +316,7 @@ forkingMachine<Keycode, Time, archived_event_t>::run_automaton(bool force_also)
             }
 
             if (force_also && (state != st_normal)) {
-                step_by_force();
+                transition_by_force();
             } else {
                 break;
             }

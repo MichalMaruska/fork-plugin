@@ -344,14 +344,7 @@ mouse_call_back(CallbackListPtr *, PluginInstance* plugin,
     if (event->any.type == ET_Motion) {
 
         machineRec *machine = plugin_machine(plugin);
-#if 0
-        // fixme:
-        if (machine->mLock)
-            ErrorF("%s running, while the machine is locked!\n", __func__);
-#endif
-        /* else */
-
-        machine->step_by_force(); // oh,
+        machine->accept_confirmation();
     }
 }
 

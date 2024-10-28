@@ -489,7 +489,7 @@ public:
     /**
      * low-level machine step.
      */
-    void step_by_force_internal() {
+    void transition_by_force() {
       if (state == st_normal) {
         // so (internal_queue.empty())
         return;
@@ -514,12 +514,12 @@ public:
      * If in Suspect or Verify state, force the fork. (todo: should be
      * configurable)
      */
-    void step_by_force() { // fixme!
-        std::scoped_lock lock(mLock);
+    void accept_confirmation() { // fixme!
         /* bug: if we were frozen, then we have a sequence of keys, which
          * might be already released, so the head is not to be forked!
          */
-        step_by_force_internal();
+        run_automaton(true);
+        flush_to_next();        // does this clash?
     }
 
 private:
