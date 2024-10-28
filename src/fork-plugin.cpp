@@ -317,7 +317,7 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
     // if locked .... put order on shared data .... then retry to lock ... if lock -> process the
     // order. if not, we know someone will process it. ....but a memory barrier is needed.
 
-    machine->accept_time(now); // possibly unlocks
+    machine->accept_time(now);
 
     if (!plugin_frozen(plugin->next) && PluginClass(plugin->prev)->NotifyThaw) {
         /* thaw the previous! */
