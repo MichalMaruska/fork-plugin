@@ -78,6 +78,7 @@ enum keycodes {
     zero = 19,
     one = 10,
     PAUSE = 127,
+    key_k = 45,
     key_l = 46,
 };
 
@@ -122,6 +123,12 @@ handle_config_key(const PluginInstance *const plugin, const InternalEvent *event
                 ErrorF("%s: toggle debug\n", __func__);
                 machine->set_debug(1);
                 break;
+            case keycodes::key_k:
+                machine = plugin_machine(plugin);
+                ErrorF("%s: toggle debug\n", __func__);
+                machine->set_debug(0);
+                break;
+
             default:            /* todo: remove this: */
                 // so press BREAK FROM TO
                 // to have FROM fork to TO
