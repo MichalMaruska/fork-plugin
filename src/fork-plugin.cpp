@@ -440,7 +440,6 @@ machine_configure_get(PluginInstance* plugin, int values[5], int return_config[3
    return 0;
 }
 
-
 /* Scan the DATA (of given length), and translate into configuration commands,
    and execute on plugin's machine */
 int
@@ -462,7 +461,6 @@ machine_configure(PluginInstance* plugin, int values[5])
             break;
 
         case 1:
-            machine->mdb("%s\n", __func__);
             machine->configure_key(type_subtype(type), values[1], values[2], true);
             break;
 
@@ -500,8 +498,6 @@ machine_command(ClientPtr client, PluginInstance* plugin, int cmd, int data1,
           DB("%s Unknown command!\n", __func__);
   }
 }
-
-
 
 /* fixme!
    This is a wrong API: there is no guarantee we can do this.
