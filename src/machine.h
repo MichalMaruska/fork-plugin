@@ -574,8 +574,8 @@ private:
             environment->push_time(now);
         }
     }
-public:
-    // calculated:
+
+    // fixme: returned by the accept_* public API methods
     [[nodiscard]] Time next_decision_time() const {
         if ((state == st_verify)
             || (state == st_suspect))
