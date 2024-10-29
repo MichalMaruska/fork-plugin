@@ -20,8 +20,8 @@ template void forkNS::reverse_splice(my_queue<Time> & pre, my_queue<Time> &post)
 // explicit instantation:
 
 // public api:
-template void forkingMachine<KeyCode, Time, archived_event>::accept_event(std::unique_ptr<PlatformEvent> pevent);
-template void forkingMachine<KeyCode, Time, archived_event>::accept_time(const Time);
+template Time forkingMachine<KeyCode, Time, archived_event>::accept_event(std::unique_ptr<PlatformEvent> pevent);
+template Time forkingMachine<KeyCode, Time, archived_event>::accept_time(const Time);
 
 #if MULTIPLE_CONFIGURATIONS
 template void forkingMachine<KeyCode, Time, archived_event>::switch_config(int);

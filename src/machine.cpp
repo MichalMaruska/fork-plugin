@@ -331,7 +331,7 @@ forkingMachine<Keycode, Time, archived_event_t>::run_automaton(bool force_also)
  *  todo: PlatformEvent is now owned ... it will be destroyed by Environment.
  */
 template <typename Keycode, typename Time, typename archived_event_t>
-void
+Time
 forkingMachine<Keycode, Time, archived_event_t>::accept_event(std::unique_ptr<PlatformEvent> pevent) noexcept(false) {
     {
         std::scoped_lock lock(mLock);

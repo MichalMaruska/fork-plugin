@@ -471,8 +471,9 @@ public:
     int dump_last_events_to_client(event_publisher<archived_event_t>* publisher, int max_requested);
 
     // This is a public api!
-    void accept_event(std::unique_ptr<PlatformEvent> pevent);
-    void accept_time(const Time now) {
+    Time accept_event(std::unique_ptr<PlatformEvent> pevent);
+
+    Time accept_time(const Time now) {
         {
             std::scoped_lock lock(mLock);
             /* push the time ! */
@@ -484,6 +485,7 @@ public:
 
         run_automaton(false);
         flush_to_next();
+        return next_decision_time();
     }
 
     /**
@@ -583,6 +585,7 @@ public:
             return 0;
     }
 
+public:
     /** Create 2 configuration sets:
         0. w/o forking,  no-op.
         1. user-configurable

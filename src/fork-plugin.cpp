@@ -281,9 +281,9 @@ ForkProcessEvent(PluginInstance* plugin, InternalEvent *event, const Bool owner)
         // bug:
         if (!ev) // memory problems
             goto exit_free;
-        machine->accept_event(std::move(ev));
+        Time next = machine->accept_event(std::move(ev));
         // unlocked here now!
-        set_wakeup_time(plugin, machine->next_decision_time());
+        set_wakeup_time(plugin, next);
     }
 
 
@@ -303,9 +303,9 @@ step_in_time(PluginInstance* plugin, Time now)
     machineRec *machine = plugin_machine(plugin);
     machine->mdb("%s: %" TIME_FMT "\n", __func__, now);
 
-    machine->accept_time(now);
+    Time next = machine->accept_time(now);
     // todo: we could push the time before the first event in internal queue!
-    set_wakeup_time(plugin, machine->next_decision_time());
+    set_wakeup_time(plugin, next);
 
     return PLUGIN_NON_FROZEN;
 };
@@ -324,11 +324,11 @@ fork_thaw_notify(PluginInstance* plugin, Time now)
     // if locked .... put order on shared data .... then retry to lock ... if lock -> process the
     // order. if not, we know someone will process it. ....but a memory barrier is needed.
 
-    machine->accept_time(now);
+    Time next = machine->accept_time(now);
 
     if (!plugin_frozen(plugin->next) && PluginClass(plugin->prev)->NotifyThaw) {
         /* thaw the previous! */
-        set_wakeup_time(plugin, machine->next_decision_time());
+        set_wakeup_time(plugin, next);
 
         machine->mdb("%s -- sending thaw Notify upwards!\n", __func__);
         /* fixme:  Tail-recursion! */
