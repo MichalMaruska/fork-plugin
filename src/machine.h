@@ -223,8 +223,8 @@ public:
  */
 
 private:
-    int set_last_events_count(const int new_max) {
-        // fixme:  lock ??
+    void set_last_events_count(const int new_max) {
+        check_locked();
         mdb("%s: allocating %d events\n", __func__, new_max);
 
         if (max_last > new_max) {

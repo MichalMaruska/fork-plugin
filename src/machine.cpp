@@ -65,79 +65,80 @@ forkingMachine<Keycode, Time, archived_event_t>::switch_config(int id)
 template <typename Keycode, typename Time, typename archived_event_t>
 int
 forkingMachine<Keycode, Time, archived_event_t>::configure_global(int type, int value, bool set) {
-   const auto fork_configuration = this->config.get();
+    std::scoped_lock lock(mLock);
+    const auto fork_configuration = this->config.get();
 
-   switch (type) {
-   case fork_configure_overlap_limit:
-        if (set)
-          fork_configuration->overlap_tolerance[0][0] = value;
-        else
-          return fork_configuration->overlap_tolerance[0][0];
-        break;
+    switch (type) {
+        case fork_configure_overlap_limit:
+            if (set)
+                fork_configuration->overlap_tolerance[0][0] = value;
+            else
+                return fork_configuration->overlap_tolerance[0][0];
+            break;
 
-   case fork_configure_total_limit:
-        if (set)
-          fork_configuration->verification_interval[0][0] = value;
-        else
-          return fork_configuration->verification_interval[0][0];
-        break;
+        case fork_configure_total_limit:
+            if (set)
+                fork_configuration->verification_interval[0][0] = value;
+            else
+                return fork_configuration->verification_interval[0][0];
+            break;
 
-   case fork_configure_clear_interval:
-        if (set)
-          fork_configuration->clear_interval = value;
-        else
-          return fork_configuration->clear_interval;
-        break;
+        case fork_configure_clear_interval:
+            if (set)
+                fork_configuration->clear_interval = value;
+            else
+                return fork_configuration->clear_interval;
+            break;
 
-   case fork_configure_repeat_limit:
-        if (set)
-          fork_configuration->repeat_max = value;
-        else
-          return fork_configuration->repeat_max;
-        break;
+        case fork_configure_repeat_limit:
+            if (set)
+                fork_configuration->repeat_max = value;
+            else
+                return fork_configuration->repeat_max;
+            break;
 
-   case fork_configure_repeat_consider_forks:
-        if (set)
-          fork_configuration->consider_forks_for_repeat = value;
-        return fork_configuration->consider_forks_for_repeat;
-   case fork_configure_last_events:
-        if (set)
-          set_last_events_count(value);
-        else
-          return max_last;
-        break;
-   case fork_configure_debug:
-        if (set) {
-          //  here we force, rather than using MDB !
-          mdb("fork_configure_debug set: %d -> %d\n",
-              config->debug,
-              value);
-          fork_configuration->debug = value;
-        } else {
-          mdb("fork_configure_debug get: %d\n",
-              fork_configuration->debug);
-          return fork_configuration->debug; // (bool) ?True:FALSE
-        }
-        break;
+        case fork_configure_repeat_consider_forks:
+            if (set)
+                fork_configuration->consider_forks_for_repeat = value;
+            return fork_configuration->consider_forks_for_repeat;
+        case fork_configure_last_events:
+            if (set)
+                set_last_events_count(value);
+            else
+                return max_last;
+            break;
+        case fork_configure_debug:
+            if (set) {
+                //  here we force, rather than using MDB !
+                mdb("fork_configure_debug set: %d -> %d\n",
+                    config->debug,
+                    value);
+                fork_configuration->debug = value;
+            } else {
+                mdb("fork_configure_debug get: %d\n",
+                    fork_configuration->debug);
+                return fork_configuration->debug; // (bool) ?True:FALSE
+            }
+            break;
 
-   case fork_server_dump_keys:
-       dump_last_events(environment->get_event_dumper().get());
-       break;
+        case fork_server_dump_keys:
+            dump_last_events(environment->get_event_dumper().get());
+            break;
 
-       // mmc: this is special:
-   case fork_configure_switch:
-        assert(set);
+            // mmc: this is special:
+        case fork_configure_switch:
+            assert(set);
 
-        mdb("fork_configure_switch: %d\n", value);
+            mdb("fork_configure_switch: %d\n", value);
 #if MULTIPLE_CONFIGURATIONS
-        switch_config(value);
+            switch_config(value);
 #endif
-        break;
+            break;
 
-   default:
-        mdb("%s: invalid option %d\n", __func__, value);
-   }
-   return 0;
+        default:
+            mdb("%s: invalid option %d\n", __func__, value);
+    }
+    return 0;
 }
 
 /**
