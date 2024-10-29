@@ -346,6 +346,7 @@ forkingMachine<Keycode, Time, archived_event_t>::accept_event(std::unique_ptr<Pl
     run_automaton(false);
 
     flush_to_next();
+    return next_decision_time();
 }
 
 /*
