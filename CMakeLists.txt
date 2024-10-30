@@ -18,6 +18,7 @@ endif ()
 
 
 add_subdirectory(src)
+add_subdirectory(libinput)
 
 export(EXPORT fork FILE dump.cmake)
 
