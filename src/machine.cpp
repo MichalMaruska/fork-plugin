@@ -12,55 +12,6 @@
 
 namespace forkNS {
 
-#if MULTIPLE_CONFIGURATIONS
-template <typename Keycode, typename Time, typename archived_event_t>
-ForkConfiguration<Keycode, Time, 256>**
-forkingMachine<Keycode, Time, archived_event_t>::find_configuration_n(const int n)
-{
-    fork_configuration** config_p = &config;
-
-    while (((*config_p)->next) && ((*config_p)->id != n)) {
-        environment->log("%s skipping over %d\n", __func__, (*config_p)->id);
-        config_p = &((*config_p) -> next);
-    }
-    return ((*config_p)->id == n)? config_p: NULL;
-}
-
-// and replay whatever is inside the machine!
-// locked?
-template <typename Keycode, typename Time, typename archived_event_t>
-void
-forkingMachine<Keycode, Time, archived_event_t>::switch_config(int id)
-{
-    environment->log("%s %d\n", __func__, id);
-    fork_configuration** config_p = find_configuration_n(id);
-    environment->log("%s found\n", __func__);
-
-    // fixme:   `move_to_top'   find an element in a linked list, and move it to the head.
-    if ((config_p)
-        // useless:
-        && (*config_p)
-        && (*config_p != config)) {
-        mdb("switching configs %d -> %d\n", config->id, id);
-
-        fork_configuration* new_current = *config_p;
-        //fixme: this sequence works at the beginning too!!!
-
-        // remove from the list:
-        *config_p = new_current->next; //   n-1 -> n + 1
-
-        // reinsert at the beginning:
-        new_current->next = config; //    n -> 1
-        config = new_current; //     -> n
-
-        mdb("switched configs %d -> %d\n", config->id, id);
-        replay_events(false);
-    } else {
-        environment->log("config remains %d\n", config->id);
-    }
-}
-#endif // MULTIPLE_CONFIGURATIONS
-
 /** update the configuration */
 template <typename Keycode, typename Time, typename archived_event_t>
 int

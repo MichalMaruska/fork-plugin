@@ -461,9 +461,7 @@ public:
         };
         environment->log("ctor: end\n");
     };
-#if MULTIPLE_CONFIGURATIONS
-    void switch_config(int id);
-#endif
+
     int configure_global(int type, int value, bool set);
     int configure_twins(int type, Keycode key, Keycode twin, int value, bool set);
     int configure_key(int type, Keycode key, int value, bool set);
