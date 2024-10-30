@@ -131,11 +131,7 @@ public:
         return plugin_frozen(nextPlugin);
     };
 
-    KeyCode detail_of(const PlatformEvent* pevent) override {
-        auto event = static_cast<const XorgEvent*>(pevent)->event;
-        return event->device_event.detail.key;
-    };
-
+    /* certain keys might be emulating a different device. */
     bool ignore_event(const PlatformEvent *pevent) override {
         if (!keybd || !keybd->key) {
             // should I just assert(keybd)
@@ -148,6 +144,39 @@ public:
         return (xkb->ctrls->enabled_ctrls & XkbMouseKeysMask);
     }
 
+
+
+    KeyCode detail_of(const PlatformEvent* pevent) override {
+        auto event = static_cast<const XorgEvent*>(pevent)->event;
+        return event->device_event.detail.key;
+    };
+
+    virtual void rewrite_event(PlatformEvent* pevent, KeyCode code) override {
+        auto event = static_cast<XorgEvent*>(pevent)->event;
+        event->device_event.detail.key = code;
+    }
+
+    virtual bool press_p(const PlatformEvent* pevent) override {
+        auto event = static_cast<const XorgEvent*>(pevent)->event;
+        return (event->any.type == ET_KeyPress);
+    }
+    virtual bool release_p(const PlatformEvent* pevent) override {
+        auto event = static_cast<const XorgEvent*>(pevent)->event;
+        return (event->any.type == ET_KeyRelease);
+    }
+    virtual Time time_of(const PlatformEvent* pevent) override {
+        auto event = static_cast<const XorgEvent*>(pevent)->event;
+        return event->any.time;
+    }
+
+    virtual void free_event(PlatformEvent* pevent) const override {
+        if (pevent == nullptr) {
+            ErrorF("BUG %s: %p\n", __func__, pevent);
+            return;
+        }
+        InternalEvent* event = static_cast<XorgEvent*>(pevent)->event;
+        free(event);
+    }
 
     // so this is orthogonal? platform-independent?
     void archive_event(archived_event& archived_event, const PlatformEvent *pevent) override {
@@ -164,32 +193,6 @@ public:
         archived_event.time = time_of(pevent);
         archived_event.press = press_p(pevent);
     };
-
-    virtual void rewrite_event(PlatformEvent* pevent, KeyCode code) override {
-        auto event = static_cast<XorgEvent*>(pevent)->event;
-        event->device_event.detail.key = code;
-    }
-
-    virtual void free_event(PlatformEvent* pevent) const override {
-        if (pevent == nullptr) {
-            ErrorF("BUG %s: %p\n", __func__, pevent);
-            return;
-        }
-        InternalEvent* event = static_cast<XorgEvent*>(pevent)->event;
-        free(event);
-    }
-    virtual bool press_p(const PlatformEvent* pevent) override {
-        auto event = static_cast<const XorgEvent*>(pevent)->event;
-        return (event->any.type == ET_KeyPress);
-    }
-    virtual bool release_p(const PlatformEvent* pevent) override {
-        auto event = static_cast<const XorgEvent*>(pevent)->event;
-        return (event->any.type == ET_KeyRelease);
-    }
-    virtual Time time_of(const PlatformEvent* pevent) override {
-        auto event = static_cast<const XorgEvent*>(pevent)->event;
-        return event->any.time;
-    }
 
     virtual void relay_event(PlatformEvent* &pevent) override {
         auto event = static_cast<XorgEvent*>(pevent)->event;
