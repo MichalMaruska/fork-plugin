@@ -235,7 +235,6 @@ private:
         }
 
         max_last = new_max;
-        return 0;
     }
 
     void save_event_log(const key_event *event) {
