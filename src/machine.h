@@ -455,7 +455,7 @@ public:
         environment->log("ctor: allocated last_events %lu (%lu\n", last_events_log.size(), max_last);
 
         environment->log("ctor: resetting forkActive\n");
-        for (unsigned char &i: forkActive) {
+        for (auto &i: forkActive) { // unsigned char
             i = KEYCODE_UNUSED; /* not active */
         };
         environment->log("ctor: end\n");
