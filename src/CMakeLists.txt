@@ -37,8 +37,11 @@ add_compile_options("-Wall")
 
 add_library(fork MODULE ${sources})
 target_compile_definitions(fork PRIVATE VERSION_STRING="git-local-2")
-set_property(TARGET fork PROPERTY NO_SONAME)
-# SHARED
+
+set_target_properties(fork PROPERTIES PREFIX "" # drop lib
+  NO_SONAME "fork.so"
+  OUTPUT_NAME "fork"
+)
 
 pkg_search_module(xorg-server REQUIRED xorg-server
   IMPORTED_TARGET GLOBAL)
