@@ -141,11 +141,8 @@ public:
   };
 
   virtual void rewrite_event(PlatformEvent* pevent, int code) override {
-    auto event = static_cast<libinputEvent*>(pevent)->event;
-    // fixme:
-#if 0
-    libinput_event_keyboard_set_key(event, code);
-#endif
+    auto event = GET_EVENT(pevent);
+    services->rewrite(event, code);
   }
 
 
