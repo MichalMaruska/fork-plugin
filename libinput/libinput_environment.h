@@ -205,12 +205,12 @@ public:
   virtual void log(const char* format ...) const override {
     va_list args;
     va_start(args, format);
-    services->log(services, LIBINPUT_LOG_PRIORITY_INFO, format, args);
+    services->vlog(services, LIBINPUT_LOG_PRIORITY_INFO, format, args);
     va_end(args);
   }
 
   virtual void vlog(const char* format, va_list args) const override {
-    services->log(services, LIBINPUT_LOG_PRIORITY_INFO, format, args);
+    services->vlog(services, LIBINPUT_LOG_PRIORITY_INFO, format, args);
   }
 
 
