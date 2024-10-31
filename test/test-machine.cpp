@@ -98,6 +98,24 @@ public:
 using machineRec = forkNS::forkingMachine<KeyCode, Time, archived_event>;
 using fork_configuration = ForkConfiguration<KeyCode, Time, 256>;
 
+// template instantiation
+namespace forkNS {
+template Time forkingMachine<KeyCode, Time, archived_event>::accept_event(std::unique_ptr<PlatformEvent> pevent);
+template Time forkingMachine<KeyCode, Time, archived_event>::accept_time(const Time);
+
+template bool forkingMachine<KeyCode, Time, archived_event>::create_configs();
+
+template int forkingMachine<KeyCode, Time, archived_event>::configure_key(int type, KeyCode key, int value, bool set);
+
+template int forkingMachine<KeyCode, Time, archived_event>::configure_global(int type, int value, bool set);
+
+template int forkingMachine<KeyCode, Time, archived_event>::configure_twins(int type, KeyCode key, KeyCode twin, int value, bool set);
+
+template int forkingMachine<KeyCode, Time, archived_event>::dump_last_events_to_client(event_publisher<archived_event>* publisher, int max_requested);
+}
+// end template instantiation
+
+
 class machineTest : public testing::Test {
 
 protected:
