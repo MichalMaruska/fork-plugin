@@ -1,3 +1,10 @@
+fork-plugin (3.0.0) unstable; urgency=medium
+
+  * libinput plugin
+  * C++ refreshed
+
+ -- Michal Maruska <mmaruska@gmail.com>  Thu, 31 Oct 2024 17:55:07 +0100
+
 fork-plugin (2.13.1) unstable; urgency=medium
 
   * UNRELEASED
