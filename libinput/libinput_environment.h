@@ -24,13 +24,12 @@ struct archived_event
 class libinputEvent : public PlatformEvent {
 public:
   // private:
+  // we don't own them!
   const libinput_event_keyboard* event;
   const libinput_device *device;
 
 public:
   libinputEvent(const libinput_event_keyboard *event, const libinput_device *device) : event(event), device(device) {};
-  ~libinputEvent() {} // free(event);
-  // we own it
 };
 
 #if 0
