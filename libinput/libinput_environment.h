@@ -24,12 +24,11 @@ struct archived_event
 class libinputEvent : public PlatformEvent {
 public:
   // private:
-  libinput_event_keyboard* event;
-  libinput_device *device;
+  const libinput_event_keyboard* event;
+  const libinput_device *device;
 
 public:
-  libinputEvent(libinput_event_keyboard *event, libinput_device *device) : event(event), device(device) {};
-  // todo UniquePointer?
+  libinputEvent(const libinput_event_keyboard *event, const libinput_device *device) : event(event), device(device) {};
   ~libinputEvent() {} // free(event);
   // we own it
 };
