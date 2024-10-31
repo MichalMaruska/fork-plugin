@@ -47,7 +47,7 @@ static void
 accept_time(void* user_data, struct libinput_device *device, uint64_t time) {
   machineRec* forking_machine = static_cast<machineRec*>(user_data);
 
-  uint64_t time = forking_machine->accept_time(time);
+  uint64_t next_time = forking_machine->accept_time(time);
 };
 
 extern "C" {
