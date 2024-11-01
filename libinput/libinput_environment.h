@@ -169,7 +169,7 @@ public:
 
   virtual uint64_t time_of(const PlatformEvent* pevent) override {
     auto* event = GET_EVENT(pevent);
-    return libinput_event_keyboard_get_time_usec(event);
+    return libinput_event_keyboard_get_time(event);
   }
 
   // so this is orthogonal? platform-independent?
