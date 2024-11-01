@@ -195,6 +195,8 @@ public:
     services->post_event(services, GET_DEVICE(pevent), event);
     // we didn't allocate?
     // pevent = nullptr;
+    static_cast<libinputEvent*>(pevent)->event = NULL;
+    static_cast<libinputEvent*>(pevent)->device = NULL;
   };
 
   virtual void push_time(uint64_t now) override {
