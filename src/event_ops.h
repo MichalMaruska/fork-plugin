@@ -5,6 +5,8 @@ extern "C" {
     // this must precede!
 #include <xorg-server.h>
 #include <xorg/eventstr.h>
+#undef max
+#undef min
 }
 
 bool release_p(const InternalEvent* event);
