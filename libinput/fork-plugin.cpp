@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <libinput.h>
 #include <memory>
+#include <map>
 #include "machine.h"
 #include "machine.cpp"
 #include "libinput_environment.h"
@@ -64,7 +65,38 @@ void fork_init(struct libinput_fork_services* services)
   machineRec *forking_machine = new machineRec(libinputEnv.release());
   forking_machine->create_configs();
   forking_machine->set_debug(1);
-  forking_machine->configure_key(fork_configure_key_fork, 57, 42, 1);
+
+  // space -> shift
+
+  forking_machine->configure_key(fork_configure_key_fork,
+                                 65-8,
+                                 29, 1);
+  for ( auto const& [from,to] : std::map<int, int>{
+      {41, 61},
+      {46, 61},
+
+      {38,66},
+      {45,66},
+
+      {58,37},
+
+      {40,109},
+      {44,109},
+
+      {39,192},
+      {65,37},
+      {55,37},
+      {47,37},
+
+      {54,108},
+      {64,208},
+    }) {
+    forking_machine->configure_key(fork_configure_key_fork,
+                                   from - 8,
+                                   to - 8,
+                                   1);
+  };
+
 
   // todo:
   // * create timer
