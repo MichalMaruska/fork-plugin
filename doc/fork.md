@@ -13,11 +13,11 @@
 ## Status:
 
    [17 jannuary 05] first attempt to get the code into xfree86 cvs
-   [02 june 05] after further 4 months of "modularizing", i think i collected enough code to retry my assault in another series of mails to the mailing list. (see also medved)
+   [02 june 05] after further 4 months of "modularizing", I think I collected enough code to retry my assault in another series of mails to the mailing list. (see also medved)
    2005: I wrote a lot of emails about my reimplementation of input "pipeline"
 
 ## Motivation
-   The driving force for this extension is my long-lasting interest for good interaction via keyboard. I went through a course of typing (against my will, though), and since then I started to apply the "typing without looking at keys" at computer keyboard. With years i found new ways to improve my typing ability.
+   The driving force for this extension is my long-lasting interest for good interaction via keyboard. I went through a course of typing (against my will, though), and since then I started to apply the "typing without looking at keys" at computer keyboard. With years I found new ways to improve my typing ability.
 
    I don't have connection w/ keyboard manufactures, so I hardly could improve the physical/hardware side. But I would certainly like to, see keyboard.
 
@@ -27,7 +27,7 @@
 | The basic idea is: detect when you use a (letter) key as if it was a modifier key, and switch the keycode it produces to that of the real modifier key. |
 | ---- |
 
-   > So, what is the different, when I press a modifier key? Well, sometimes I press a modifier (Hyper for example), and then think what I want to do. Or I change my mind and don't do anything and release the modifier. I want the 'forked' keys to have such do-nothing-if-i-think behaviour. That rules out repetition, though. If I press "a" for a long
+   > So, what is the different, when I press a modifier key? Well, sometimes I press a modifier (Hyper for example), and then think what I want to do. Or I change my mind and don't do anything and release the modifier. I want the 'forked' keys to have such do-nothing-if-I-think behaviour. That rules out repetition, though. If I press "a" for a long
    > period, and want it to do nothing, I can't generate anything, (there is no way to go back, undo).
 
    > So, the only way to actually write "a" is to press the key and release it quickly (which is what you do already, so nothing changes). After a timeout it becomes a modifier. And we arrive at the first timing parameter.
