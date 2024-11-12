@@ -80,7 +80,11 @@ ErrorControl   = 0                  ; SERVICE_ERROR_IGNORE
 ServiceBinary  = %13%\kbfiltr.sys
 
 [kbfiltr.NT.HW]
+; https://learn.microsoft.com/en-us/windows-hardware/drivers/install/inf-ddinstall-hw-section
 ; Add the device upper filter
+
+;; [DDInstall.HW]
+;; mmc: AddReg=add-registry-section[,add-registry-section] .
 AddReg = kbfiltr.HW.AddReg
 
 ; run the directives need by the port driver
@@ -88,7 +92,14 @@ Include=keyboard.inf
 Needs=STANDARD_Inst.HW
 
 [kbfiltr.HW.AddReg]
+; mmc: is this registry path?
+; HKR = Relative root, in which keys that are specified by using this abbreviation are relative
+; to the registry key associated with the INF section in which
+;  this AddReg directive appears, as indicated in the following table.
 HKR,,"UpperFilters",0x00010000,"kbfiltr"
+
+;;
+;; reg-root,[subkey],[value-entry-name],[flags],[value][,[value]]
 
 
 [kbfiltr.NT.Wdf]
