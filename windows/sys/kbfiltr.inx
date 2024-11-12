@@ -125,12 +125,12 @@ REG_DWORD      = 0x00010001
 ; Localizable Strings
 ;
 
-ProviderName = "TODO-Set-Provider"
-MfgName      = "TODO-Set-Manufacturer"
+ProviderName = "maruska"
+MfgName      = "maruska-Manufacturer"
 
-kbfiltr.DeviceDesc = "Keyboard Filter Sample Device"
+kbfiltr.DeviceDesc = "Keyboard Filter logging Sample Device"
 
 ; Make sure the service description is unique to avoid collision with another INF.
-kbfiltr.SvcDesc = "Keyboard Filter Sample Driver"
+kbfiltr.SvcDesc = "Keyboard Filter Sample Driver logging"
 
 DiskId1 = "Keyboard Filter Install Disk"
