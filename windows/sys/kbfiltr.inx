@@ -127,12 +127,12 @@ REG_DWORD      = 0x00010001
 ; Localizable Strings
 ;
 
-ProviderName = "maruska"
-MfgName      = "maruska-Manufacturer"
+ProviderName = "maruska-git"
+MfgName      = "maruska-git-Manufacturer"
 
-kbfiltr.DeviceDesc = "Keyboard Filter logging Sample Device"
+kbfiltr.DeviceDesc = "Keyboard Filter Device-git"
 
 ; Make sure the service description is unique to avoid collision with another INF.
-kbfiltr.SvcDesc = "Keyboard Filter Sample Driver logging"
+kbfiltr.SvcDesc = "Keyboard Filter service-git"
 
 DiskId1 = "Keyboard Filter Install Disk"
