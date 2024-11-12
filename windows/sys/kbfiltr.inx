@@ -40,7 +40,9 @@ kbfiltr.sys = 1
 %MfgName% = Standard,NT$ARCH$.10.0...16299
 
 [Standard.NT$ARCH$.10.0...16299]
-%kbfiltr.DeviceDesc% = kbfiltr, *PNP0BAAD
+; %kbfiltr.DeviceDesc% = kbfiltr, *PNP0BAAD
+ %kbfiltr.DeviceDesc% = kbfiltr, ACPI\VEN_PNP&DEV_0303
+; %kbfiltr.DeviceDesc% = kbfiltr, ACPI\VEN_DLLK&DEV_05BE
 
 ;
 ; General installation section
