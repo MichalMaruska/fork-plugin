@@ -100,3 +100,14 @@ build/
 /.idea/
 /.cache/
 /compile_commands.json
+
+
+# windows:
+windows/DvlErrLog.txt
+windows/sys/RCa16560
+windows/sys/RCb16560
+/.vs/
+/windows/.vs/
+/windows/exe/x64
+/windows/sys/x64
+
