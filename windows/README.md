@@ -20,6 +20,8 @@ This sample also creates a raw PDO and registers an interface so that applicatio
 
 This driver filters input for a particular keyboard on the system. If you want to filter keyboard inputs from all the keyboards plugged into the system, you can install this driver as a class filter below the KbdClass filter driver by adding the service name of this filter driver before the KbdClass filter in the registry at:
 
+mmc: I confirm that I see there: REG_MULTI_SZ kbdclass
+
 `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{4D36E96B-E325-11CE-BFC1-08002BE10318}\UpperFilters`
 
 ## Universal Windows Driver Compliant
@@ -30,12 +32,15 @@ This sample builds a Universal Windows Driver. It uses only APIs and DDIs that a
 
 This step is required for automatic deployment (described later) to work properly. In the kbfiltr.inx file (located with the driver source files), find the [DDK\_Ex.Mfg.NT\$ARCH\$] section. Change the hardware ID in the %DDK\_Ex% entry from the dummy value to the hardware ID of the PS/2 keyboard on the target computer. The following example shows the hardware ID change.
 
+mmc!
 ```inf
 ; For XP and above
 [DDK_Ex.Mfg.NT$ARCH$]
 ;%DDK_Ex% = kbfiltr, *PNP0BAAD
 %DDK_Ex% = kbfiltr, ACPI\VEN_PNP&DEV_0303
 ```
+Italian keyboard is different!!! so look at the HW-ids of the current driver
+
 
 ## Build the sample using Visual Studio
 
@@ -51,12 +56,18 @@ In File Explorer, navigate to the folder that contains your built driver package
 
 The package contains these files:
 
+x64/Debug/kbfiltr/
+
 | File | Description |
 | --- | --- |
 | Kmdfsamples.cat | A signed catalog file, which serves as the signature for the entire package. |
+ ^^^ nope!!!!!
 | kbfiltr.inf | An information (INF) file that contains information needed to install the driver. |
-| WdfCoinstaller010xx.dll | The coinstaller for version 1.xx of KMDF. |
+| WdfCoinstaller010xx.dll | The coinstaller for version 1.xx of KMDF. |   mmc! no!!!
 | kbfiltr.sys | The driver file. |
+
+
+
 
 ## Using MSBuild
 
