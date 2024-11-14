@@ -108,3 +108,15 @@ RE recovery:
 dism /image:c:\ /get-drivers
 dism /image:c:\ /remove-driver /driver:oem#.inf
 
+
+* allocate machine, queues, env
+
+- once I get event in a buffer .... what to do, copy over to.
+
+ExAllocatePoolWithTag()
+
+
+|--queue----|--- queue--|----qH----|
+                              ^ put it here?
+
+exit --> buffer.
