@@ -37,6 +37,14 @@ Environment:
 
 --*/
 
+#ifdef NTDD_WIN8
+#define KERNEL 1
+#else
+#define KERNEL 1
+#define DISABLE_STD_LIBRARY 1
+#endif
+static_assert(KERNEL == 1);
+
 #include "kbfiltr.h"
 
 #ifdef ALLOC_PRAGMA
