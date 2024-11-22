@@ -34,6 +34,12 @@ public:
   winEnvironment() = default;
   ~winEnvironment() = default;
 
+  void* operator new(size_t size, void* p) noexcept
+  {
+    UNREFERENCED_PARAMETER(size);
+    return p;
+  }
+
   bool press_p(const extendedEvent& event) const override {
     return event.press;
   }
