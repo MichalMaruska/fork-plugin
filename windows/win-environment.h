@@ -32,13 +32,20 @@ private:
 
 public:
   winEnvironment() = default;
-  ~winEnvironment() = default;
+  // no:
+  ~winEnvironment() {}
 
   void* operator new(size_t size, void* p) noexcept
   {
     UNREFERENCED_PARAMETER(size);
     return p;
   }
+
+  void operator delete(void* p) noexcept
+  {
+    ExFreePool(p);
+  }
+
 
   bool press_p(const extendedEvent& event) const override {
     return event.press;
