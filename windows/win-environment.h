@@ -1,6 +1,7 @@
 #pragma once
 #include "platform.h"
 #include "circular.h"
+#include <stdarg.h>
 
 typedef long time_type;
 
@@ -67,10 +68,23 @@ public:
     UNREFERENCED_PARAMETER(now);
   }
 
-#ifndef KERNEL
-    virtual void log(const char* format...) const = 0;
-    virtual void vlog(const char* format, va_list argptr) const = 0;
-#endif
+  virtual void log(const char* format...) const {
+    // output to debugger if it's attached?
+    va_list args;
+    va_start(args, format);
+
+    ULONG ComponentId = DPFLTR_KBDCLASS_ID; // (long) 'FORK';
+    ULONG   Level = DPFLTR_TRACE_LEVEL;
+    vDbgPrintEx(ComponentId, Level, format,args);
+    va_end(args);
+  };
+
+  virtual void vlog(const char* format, va_list argptr) const {
+    //NTSYSAPI ULONG
+    ULONG ComponentId = DPFLTR_KBDCLASS_ID; // (long) 'FORK';
+    ULONG   Level = DPFLTR_TRACE_LEVEL;
+    vDbgPrintEx(ComponentId, Level, format,argptr);
+  };
 
   void fmt_event(const char* message, const extendedEvent& pevent) const override {
     UNREFERENCED_PARAMETER(message);
