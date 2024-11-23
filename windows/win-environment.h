@@ -44,8 +44,8 @@ class winEnvironment
 #endif
 {
 
-private:
-
+public:
+    WDFDEVICE   hDevice;
 public:
   winEnvironment() = default;
   // no:
