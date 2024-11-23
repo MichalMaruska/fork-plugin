@@ -11,6 +11,12 @@ typedef struct _archived_event
     USHORT key;
     USHORT forked;
     bool press;                  /* client type? */
+
+    void* operator new(size_t size, void* p) noexcept
+    {
+        UNREFERENCED_PARAMETER(size);
+        return p;
+    };
 } extendedEvent;
 
 
