@@ -911,14 +911,21 @@ startTimer(WDFTIMER timerHandle, int miliseconds)
 }
 
 
-void accept_event(PKEYBOARD_INPUT_DATA event, machineRec *forking_machine)
+void accept_event(PKEYBOARD_INPUT_DATA event, PDEVICE_EXTENSION devExt)
 {
     extendedEvent ev;
+    auto *forking_machine = (machineRec*) devExt->machine;
 
     win_event_to_extended(*event, ev, current_time_miliseconds());
 
-    KdPrint(("%s passing \n", __func__));
-    forking_machine->accept_event(ev);
+    // KdPrint(("%s passing \n", __func__));
+    int timeout = forking_machine->accept_event(ev);
+    if (timeout != 0) {
+        startTimer(devExt->timerHandle, timeout);
+    } else {
+        // can I stop an already stopped?
+        WdfTimerStop(devExt->timerHandle, FALSE);
+    }
 }
 
 
@@ -967,7 +974,7 @@ Return Value:
     devExt = FilterGetData(hDevice);
 
     for (PKEYBOARD_INPUT_DATA event = InputDataStart; event != InputDataEnd; event++) {
-        accept_event(event, (machineRec*) devExt->machine);
+        accept_event(event, devExt);
     }
 
     // ok?
