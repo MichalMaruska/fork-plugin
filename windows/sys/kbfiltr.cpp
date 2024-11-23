@@ -890,6 +890,20 @@ startTimer(WDFTIMER timerHandle, int miliseconds)
   return already;
 }
 
+void pass_event(const extendedEvent& pevent, WDFDEVICE hDevice)
+{
+    PDEVICE_EXTENSION devExt = FilterGetData(hDevice);
+    KEYBOARD_INPUT_DATA event;
+    event.MakeCode = pevent.key;
+    event.Flags = (pevent.press) ? 0 : 1;
+    ULONG InputDataConsumed;
+
+    (*(PSERVICE_CALLBACK_ROUTINE)(ULONG_PTR) devExt->UpperConnectData.ClassService)(
+        devExt->UpperConnectData.ClassDeviceObject,
+        &event,
+        &event + 1,
+        &InputDataConsumed);
+}
 
 VOID
 KbFilter_ServiceCallback(
