@@ -19,6 +19,7 @@ typedef struct _archived_event
     };
 } extendedEvent;
 
+extern void pass_event(const extendedEvent& pevent, WDFDEVICE hDevice);
 
 void win_event_to_extended(const KEYBOARD_INPUT_DATA& event, extendedEvent &ev, const time_type time)
 {
@@ -88,8 +89,7 @@ public:
   bool output_frozen() OVERRIDE {return false;};
 
   void relay_event(const extendedEvent &pevent) const OVERRIDE {
-    UNREFERENCED_PARAMETER(pevent);
-    // todo:
+    pass_event(pevent, hDevice);
   }
 
   void push_time(time_type now) {
