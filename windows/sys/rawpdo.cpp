@@ -25,7 +25,7 @@ Environment:
     Kernel mode only.
 
 --*/
-
+#define KERNEL 1
 #include "kbfiltr.h"
 #include "public.h"
 
