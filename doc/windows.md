@@ -267,3 +267,6 @@ https://www.youtube.com/watch?v=UlzctiY2NSg
 ExAllocatePoolWithTag()
 exFreePool()
 
+
+pragma
+https://learn.microsoft.com/en-us/cpp/preprocessor/alloc-text
