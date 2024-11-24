@@ -154,7 +154,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="kbfiltr.cpp" />
-    <ClCompile Include="rawpdo.c" />
+    <ClCompile Include="rawpdo.cpp" />
+
     <ResourceCompile Include="kbfiltr.rc" />
   </ItemGroup>
   <ItemGroup>
