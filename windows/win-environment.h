@@ -87,9 +87,7 @@ public:
   };
 
   void fmt_event(const char* message, const extendedEvent& pevent) const override {
-    UNREFERENCED_PARAMETER(message);
-    UNREFERENCED_PARAMETER(pevent);
-    //
+    log("%s (%s): %u %s\n", message, __func__, detail_of(pevent), press_p(pevent)?"press":"release");
   }
 
 
