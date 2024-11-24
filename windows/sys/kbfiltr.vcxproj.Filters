@@ -22,7 +22,7 @@
     <ClCompile Include="kbfiltr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rawpdo.c">
+    <ClCompile Include="rawpdo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
