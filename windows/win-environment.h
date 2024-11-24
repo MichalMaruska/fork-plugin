@@ -102,6 +102,7 @@ public:
 
 
   void rewrite_event(extendedEvent& pevent, USHORT code) override {
+    log("%s: to %u\n", __func__, code);
     pevent.key = code;
   }
 };
