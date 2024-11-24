@@ -281,7 +281,7 @@ Return Value:
     const long tag = (long) 'kbfi';
 
     kernelAllocator<winEnvironment> envAllocator;
-    auto *environment = envAllocator.allocate(1);
+    [[maybe_unused]] auto *environment = envAllocator.allocate(1);
     if (environment == nullptr)
         return status;
 
@@ -294,7 +294,7 @@ Return Value:
     // this will invoke
     //       operator new(size, space)
     // and then...
-    UNREFERENCED_PARAMETER(environment);
+    // UNREFERENCED_PARAMETER(environment);
 
 
     // machineConfig* space3 = kernelAllocator<machineConfig>::allocate(1);
