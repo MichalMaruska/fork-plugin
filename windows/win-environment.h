@@ -89,6 +89,7 @@ public:
   bool output_frozen() OVERRIDE {return false;};
 
   void relay_event(const extendedEvent &pevent) const OVERRIDE {
+    fmt_event(__func__, pevent);
     pass_event(pevent, hDevice);
   }
 
