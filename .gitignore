@@ -106,4 +106,5 @@ build/
 windows/DvlErrLog.txt
 windows/sys/RCa16560
 windows/sys/RCb16560
-
+/.vs/
+/windows/.vs/
