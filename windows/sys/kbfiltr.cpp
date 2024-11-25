@@ -817,6 +817,20 @@ Return Value:
     return retVal;
 }
 
+BOOLEAN
+startTimer(WDFTIMER timerHandle, int miliseconds)
+{
+  LONGLONG DueTime = - miliseconds * 1000 * 10; // 10 microseconds, 1000 miliseconds , 100 of them.
+  // negative: relative to now.
+
+  BOOLEAN already = WdfTimerStart(timerHandle, DueTime);
+  if (already) {
+      KdPrint(("timer start in %ld: %s\n", DueTime, already?"already":"new"));
+  }
+  return already;
+}
+
+
 VOID
 KbFilter_ServiceCallback(
     IN PDEVICE_OBJECT  DeviceObject,
