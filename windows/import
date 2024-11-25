@@ -1,0 +1,52 @@
+#!/bin/zsh -feu
+
+set -x
+
+target=~/repo/fork/fork-plugin/windows/
+# on target,
+# I can have a second root!
+# git checkout window base
+cd $target
+branch=windows
+git checkout $branch
+
+repo=~/git/windows/Windows-driver-samples/
+COMMIT=base
+cd $repo
+cd input/kbfiltr/
+git checkout $COMMIT
+sha=$(git rev-parse $COMMIT)
+
+
+files=(
+    README.md
+    kbfiltr.sln
+    sys/kbfiltr.c
+    sys/kbfiltr.h
+    sys/kbfiltr.inx
+    sys/kbfiltr.rc
+    sys/kbfiltr.vcxproj
+    sys/kbfiltr.vcxproj.Filters
+    sys/public.h
+    sys/rawpdo.c
+    )
+
+if false;
+then
+    foreach file ($files) {
+        cp --verbose $file  $target/$file
+    }
+else
+    cp --parents --verbose --update  --target-directory $target  $files
+
+    for file ($files) {
+        dos2unix $target/$file
+    }
+
+    cd $target
+    git add $files
+    git commit -m "import at $sha"
+fi
+
+
+# git commit -m "Import from "
