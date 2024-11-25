@@ -120,11 +120,11 @@ Return Value:
     // you can override that by manually setting the EvtDriverUnload in the
     // config structure. In general xxx_CONFIG_INIT macros are provided to
     // initialize most commonly used members.
-    //
+    // mmc: just struct init.
 
     WDF_DRIVER_CONFIG_INIT(
         &config,
-        KbFilter_EvtDeviceAdd
+        KbFilter_EvtDeviceAdd   /* so PnP !!!! */
     );
 
     //
@@ -200,13 +200,14 @@ Return Value:
     // Create a framework device object.  This call will in turn create
     // a WDM deviceobject, attach to the lower stack and set the
     // appropriate flags and attributes.
-    //
+    // mmc:
     status = WdfDeviceCreate(&DeviceInit, &deviceAttributes, &hDevice);
     if (!NT_SUCCESS(status)) {
         DebugPrint(("WdfDeviceCreate failed with status code 0x%x\n", status));
         return status;
     }
 
+    // mmc: WDF_DECLARE_CONTEXT_TYPE_WITH_NAME macro this 
     filterExt = FilterGetData(hDevice);
 
     //
