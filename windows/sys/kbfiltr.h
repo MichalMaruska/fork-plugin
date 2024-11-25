@@ -120,12 +120,18 @@ WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(WORKER_ITEM_CONTEXT, GetWorkItemContext)
 //
 // Prototypes
 //
+#if __cplusplus
+     extern "C" {
+#endif
 DRIVER_INITIALIZE DriverEntry;
 
 EVT_WDF_DRIVER_DEVICE_ADD KbFilter_EvtDeviceAdd;
 EVT_WDF_IO_QUEUE_IO_DEVICE_CONTROL KbFilter_EvtIoDeviceControlForRawPdo;
 EVT_WDF_IO_QUEUE_IO_DEVICE_CONTROL KbFilter_EvtIoDeviceControlFromRawPdo;
 EVT_WDF_IO_QUEUE_IO_INTERNAL_DEVICE_CONTROL KbFilter_EvtIoInternalDeviceControl;
+#if __cplusplus
+}
+#endif
 
 NTSTATUS
 KbFilter_InitializationRoutine(
@@ -193,11 +199,17 @@ typedef struct _RPDO_DEVICE_DATA
 WDF_DECLARE_CONTEXT_TYPE_WITH_NAME(RPDO_DEVICE_DATA, PdoGetData)
 
 
+#if __cplusplus
+     extern "C" {
+#endif
 NTSTATUS
 KbFiltr_CreateRawPdo(
     WDFDEVICE       Device,
     ULONG           InstanceNo
 );
+#if __cplusplus
+}
+#endif
 
 
 

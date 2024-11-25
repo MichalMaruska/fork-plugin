@@ -47,7 +47,7 @@ Environment:
 
 ULONG InstanceNo = 0;
 
-NTSTATUS
+extern "C" NTSTATUS
 DriverEntry(
     IN PDRIVER_OBJECT  DriverObject,
     IN PUNICODE_STRING RegistryPath
@@ -426,7 +426,7 @@ Return Value:
         //
         status = WdfRequestRetrieveInputBuffer(Request,
                                     sizeof(CONNECT_DATA),
-                                    &connectData,
+                                    (PVOID *) &connectData,
                                     &length);
         if(!NT_SUCCESS(status)){
             DebugPrint(("WdfRequestRetrieveInputBuffer failed %x\n", status));
@@ -481,7 +481,7 @@ Return Value:
         //
         status = WdfRequestRetrieveInputBuffer(Request,
                             sizeof(INTERNAL_I8042_HOOK_KEYBOARD),
-                            &hookKeyboard,
+                            (PVOID*) &hookKeyboard, // who can give us this?
                             &length);
         if(!NT_SUCCESS(status)){
             DebugPrint(("WdfRequestRetrieveInputBuffer failed %x\n", status));
