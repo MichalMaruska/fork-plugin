@@ -242,6 +242,16 @@ Return Value:
     return status;
 }
 
+inline long current_time_miliseconds()
+{
+    LARGE_INTEGER CurrentTime;
+    KeQuerySystemTime(&CurrentTime);
+    // count of 100-nanosecond intervals since
+    const __int64 &t = CurrentTime.QuadPart;
+    return (long) ( t / (1000 * 10) % (3600 * 1000)); // inside 1 hour
+}
+
+// https://learn.microsoft.com/en-us/windows-hardware/drivers/wdf/request-handlers
 VOID
 KbFilter_EvtIoDeviceControlFromRawPdo(
     IN WDFQUEUE      Queue,
