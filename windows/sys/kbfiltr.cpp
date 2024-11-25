@@ -905,9 +905,20 @@ startTimer(WDFTIMER timerHandle, int miliseconds)
 
   BOOLEAN already = WdfTimerStart(timerHandle, DueTime);
   if (already) {
-    KdPrint(("timer start in %ld: %s\n", DueTime, already?"already":"new"));
+      KdPrint(("timer start in %ld: %s\n", DueTime, already?"already":"new"));
   }
   return already;
+}
+
+
+void accept_event(PKEYBOARD_INPUT_DATA event, machineRec *forking_machine)
+{
+    extendedEvent ev;
+
+    win_event_to_extended(*event, ev, current_time_miliseconds());
+
+    KdPrint(("%s passing \n", __func__));
+    forking_machine->accept_event(ev);
 }
 
 
@@ -955,11 +966,12 @@ Return Value:
 
     devExt = FilterGetData(hDevice);
 
-    (*(PSERVICE_CALLBACK_ROUTINE)(ULONG_PTR) devExt->UpperConnectData.ClassService)(
-        devExt->UpperConnectData.ClassDeviceObject,
-        InputDataStart,
-        InputDataEnd,
-        InputDataConsumed);
+    for (PKEYBOARD_INPUT_DATA event = InputDataStart; event != InputDataEnd; event++) {
+        accept_event(event, (machineRec*) devExt->machine);
+    }
+
+    // ok?
+    *InputDataConsumed = 1;
 }
 
 VOID
