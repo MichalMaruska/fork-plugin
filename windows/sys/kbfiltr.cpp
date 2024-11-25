@@ -45,6 +45,7 @@ Environment:
 static_assert(KERNEL == 1);
 #endif
 
+
 #include "kbfiltr.h"
 
 #ifdef ALLOC_PRAGMA
@@ -52,6 +53,26 @@ static_assert(KERNEL == 1);
 #pragma alloc_text (PAGE, KbFilter_EvtDeviceAdd)
 #pragma alloc_text (PAGE, KbFilter_EvtIoInternalDeviceControl)
 #endif
+
+
+#include "my-memory.h"
+#include "win-environment.h"
+#include "machine.h"
+#include "circular.h"
+
+using machineConfig = forkNS::ForkConfiguration<USHORT, time_type, forkNS::MAX_KEYCODE >;
+
+// experiments:
+#if 1
+#include "empty_last.h"
+using last_event_t = empty_last_events_t<extendedEvent>;
+#else
+using last_event_t = circular_buffer<extendedEvent, false, kernelAllocator<extendedEvent> >;
+#endif
+
+using machineRec =  forkNS::forkingMachine<USHORT, time_type,
+                                           extendedEvent, winEnvironment, extendedEvent, last_event_t >;
+
 
 void KbFilter_EvtWdfTimer(IN WDFTIMER Timer);
 static NTSTATUS prepare_timer(WDFDEVICE hDevice);
@@ -257,6 +278,114 @@ Return Value:
         DebugPrint( ("WdfTimerCreate failed 0x%x\n", status));
         return status;
     }
+
+    long tag = (long) 'kbfi';
+
+    kernelAllocator<winEnvironment> envAllocator;
+    auto *environment = envAllocator.allocate(1);
+    if (environment == nullptr)
+        return status;
+
+    environment = new(environment) winEnvironment;
+    environment->hDevice = hDevice;
+
+    void *space;
+#if 0
+    space = ExAllocatePool2(NonPagedPool, sizeof(winEnvironment), tag);
+    if (space == nullptr) {
+        // output to debugger if it's attached?
+        KdPrint(("Failed to allocate %lu bytes\n", sizeof(machineConfig)));
+    } else {
+        KdPrint(("Allocated %lu bytes\n", sizeof(machineConfig)));
+    };
+#endif
+
+    // kernelAllocator<winEnvironment>::allocate(1);
+
+    // this will invoke
+    //       operator new(size, space)
+    // and then...
+    UNREFERENCED_PARAMETER(environment);
+
+
+    // machineConfig* space3 = kernelAllocator<machineConfig>::allocate(1);
+    space = ExAllocatePool2(POOL_FLAG_PAGED, sizeof(machineConfig), tag); // NonPagedPool
+    if (space == nullptr) {
+        // output to debugger if it's attached?
+        KdPrint(("Failed to allocate %lu bytes\n", sizeof(machineConfig)));
+    } else {
+        KdPrint(("Allocated %lu bytes\n", sizeof(machineConfig)));
+    };
+    machineConfig *config =new(space) machineConfig();
+
+    UNREFERENCED_PARAMETER(config);
+
+#if 0
+    kernelAllocator<extendedEvent> allocator;
+
+    extendedEvent* events = allocator.allocate(20); // 240 ?  20*12
+
+    UNREFERENCED_PARAMETER(events);
+
+    last_event_t last_events;
+    UNREFERENCED_PARAMETER(last_events); // 100 * 12 ?
+
+
+
+    empty_last_event_t empty_last_events;
+    empty_last_events.set_capacity(200);
+    empty_last_events.size();
+
+
+    environment->log("does it work?\n");
+
+    triqueue_t<extendedEvent, winEnvironment>::env = environment;
+    triqueue_t<extendedEvent, winEnvironment> tq{100}; // 100 * 12
+
+#endif
+
+
+    space = ExAllocatePool2(POOL_FLAG_PAGED, sizeof(machineRec), tag); // NonPagedPool
+    if (space == nullptr) {
+        // output to debugger if it's attached?
+        KdPrint(("Failed to allocate %lu bytes\n", sizeof(machineRec)));
+        //
+        return status;
+    } else {
+        KdPrint(("Allocated %lu bytes\n", sizeof(machineRec)));
+    };
+
+
+    auto* forking_machine = new(space) machineRec(environment);
+    // machineRec* space1 = kernelAllocator<machineRec>::allocate(1);
+    UNREFERENCED_PARAMETER(forking_machine);
+    forking_machine->config = config;
+    filterExt->machine = forking_machine;
+
+#if 0
+    machineConfig* space3 = kernelAllocator<machineConfig>::allocate(1);
+    forking_machine->config =new(space3) machineConfig();
+#endif
+
+    forking_machine->set_debug(1);
+
+#if 0
+    forking_machine->configure_key(fork_configure_key_fork,
+                                   58, // from, to, SET
+                                   59, 1);
+#endif
+    // 1 -> 2
+    forking_machine->configure_key(fork_configure_key_fork,
+                                   2, // from, to, SET
+                                   // to shift
+                                   42, 1);
+
+    forking_machine->configure_key(fork_configure_key_fork,
+                                   65-8,
+                                   29, 1);
+
+
+    KdPrint(("mmc: everything passed\n"));
 
 // at IRQL = DISPATCH_LEVEL
     return status;
