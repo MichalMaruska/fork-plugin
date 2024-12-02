@@ -40,12 +40,15 @@ kbfiltr.sys = 1
 
 [Standard.NT$ARCH$.10.0...16299]
 ; %kbfiltr.DeviceDesc% = kbfiltr, *PNP0BAAD
-; %kbfiltr.DeviceDesc% = kbfiltr, ACPI\VEN_PNP&DEV_0303
-; italian?
-; %kbfiltr.DeviceDesc% = kbfiltr, ACPI\VEN_DLLK&DEV_07A7
-%kbfiltr.DeviceDesc% = kbfiltr, ACPI\DLLK07A7\4&398fdba2&0
-; ??
-; %kbfiltr.DeviceDesc% = kbfiltr, ACPI\VEN_DLLK&DEV_05BE
+%kbfiltr.DeviceDesc% = kbfiltr, ACPI\VEN_PNP&DEV_0303
+
+; italian? 7480
+%kbfiltr.DeviceDesc% = kbfiltr, ACPI\VEN_DLLK&DEV_07A7
+; %kbfiltr.DeviceDesc% = kbfiltr, ACPI\DLLK07A7\4&398fdba2&0
+
+; italian e6540?
+%kbfiltr.DeviceDesc% = kbfiltr, ACPI\VEN_DLLK&DEV_05BE
+
 
 ;
 ; General installation section
@@ -132,7 +135,7 @@ REG_DWORD      = 0x00010001
 ;
 
 ProviderName = "maruska"
-MfgName      = "maruska"
+MfgName      = "maruska-1"
 
 kbfiltr.DeviceDesc = "Forking Keyboard Device"
 
