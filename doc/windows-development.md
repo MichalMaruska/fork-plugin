@@ -38,3 +38,13 @@ Look at the log of driver installation/use at boot:
 ```
 copy C:\Windows\inf\setupapi.dev.log \\server\share\
 ```
+
+
+## preparing the release:
+
+certificate in text vs binary:
+```
+openssl x509 -text        -in kbfiltr.cer -out kbfiltr.txt
+
+openssl x509 -outform DER -in kbfiltr.txt   -out kbfiltr.der
+```
