@@ -1,0 +1,75 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            61:60:80:7d:21:bf:0d:be:4a:d9:a0:7d:f6:44:17:d4
+        Signature Algorithm: sha1WithRSAEncryption
+        Issuer: CN=WDKTestCert Gebruiker,133751023496814809
+        Validity
+            Not Before: Nov  3 10:12:29 2024 GMT
+            Not After : Nov  3 00:00:00 2034 GMT
+        Subject: CN=WDKTestCert Gebruiker,133751023496814809
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:ad:6e:91:6c:02:8e:a3:79:c2:a6:47:a2:88:31:
+                    49:c4:9f:c4:77:36:f2:64:07:6a:d0:7c:64:93:2f:
+                    e0:45:bb:be:2f:c5:5c:23:d5:2d:42:ae:f9:c9:0a:
+                    00:64:92:5d:39:64:25:96:47:46:b3:09:40:b7:9f:
+                    62:31:1a:ee:de:cf:9d:29:b0:13:ff:9c:06:70:44:
+                    90:f6:40:56:2a:04:1f:e7:e5:7a:dd:78:0b:a5:99:
+                    f7:0f:b4:8c:98:86:5b:1f:29:15:d8:57:60:90:d9:
+                    37:19:9f:bd:90:4d:51:1e:7a:38:84:7a:ee:a7:59:
+                    fd:3a:3f:cd:95:3f:cc:65:6c:12:ae:05:38:49:64:
+                    08:36:f7:c0:9c:09:4f:57:5f:34:b5:8e:aa:b3:68:
+                    33:70:a1:f6:23:3b:b1:cb:7e:48:5f:2e:c1:d4:f5:
+                    aa:6d:c1:d8:f6:ba:48:c0:d5:6b:c8:82:a8:74:d3:
+                    bf:c4:98:c9:7c:84:23:99:99:b3:7a:11:3a:98:25:
+                    57:dc:94:17:69:06:cc:24:83:97:8e:34:a3:e8:d0:
+                    c1:32:98:84:f7:a5:87:21:0f:14:23:3a:7e:4d:04:
+                    18:28:d4:d9:65:54:2f:cb:05:c1:55:42:d6:5f:69:
+                    bb:8d:13:00:64:35:d6:f6:33:06:72:88:6a:29:de:
+                    f2:01
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Key Usage: 
+                Key Encipherment, Data Encipherment
+            X509v3 Extended Key Usage: 
+                Code Signing
+    Signature Algorithm: sha1WithRSAEncryption
+    Signature Value:
+        6e:2d:e6:ba:5f:d6:6f:33:06:af:aa:2d:fd:bc:03:21:f8:d5:
+        79:8a:b9:67:c2:99:9d:7c:c8:2b:3c:6b:8b:66:a3:04:b0:ee:
+        ec:6e:83:7c:4f:75:e9:33:9d:fa:7b:b2:8d:18:14:94:24:4c:
+        20:27:ff:79:3b:49:32:a7:65:af:16:5e:8a:46:71:9f:1c:2c:
+        ca:62:b3:d3:42:79:8c:a6:7d:f0:aa:87:9c:eb:1e:19:4c:f0:
+        c7:68:e6:4c:74:41:ce:11:e9:6f:22:e0:1a:14:69:e4:2f:51:
+        07:62:0f:19:b7:fa:eb:b3:23:46:82:87:a7:72:54:a8:11:6a:
+        fa:e6:0e:7b:af:69:1d:02:28:25:36:71:57:83:e6:2c:9f:60:
+        da:38:f9:2b:7f:54:ec:f0:d6:a3:66:f4:fc:aa:76:94:31:58:
+        de:0f:58:af:20:83:7f:23:ce:c6:9b:fb:9b:6e:a5:8c:da:0c:
+        e1:60:3c:ef:07:a6:f7:6e:cb:23:61:b5:d6:6e:e0:a4:ad:89:
+        4b:ed:37:b9:0a:d5:31:e6:00:9d:3c:f4:8c:a6:81:1c:35:97:
+        ac:18:fb:0d:fd:04:e2:19:1f:1d:9f:70:66:58:92:08:1c:df:
+        81:4c:d1:55:7d:b6:b1:c4:5d:c5:bd:8a:56:5f:29:e7:d8:95:
+        f2:fa:1a:e2
+-----BEGIN CERTIFICATE-----
+MIIDFDCCAfygAwIBAgIQYWCAfSG/Db5K2aB99kQX1DANBgkqhkiG9w0BAQUFADAz
+MTEwLwYDVQQDEyhXREtUZXN0Q2VydCBHZWJydWlrZXIsMTMzNzUxMDIzNDk2ODE0
+ODA5MB4XDTI0MTEwMzEwMTIyOVoXDTM0MTEwMzAwMDAwMFowMzExMC8GA1UEAxMo
+V0RLVGVzdENlcnQgR2VicnVpa2VyLDEzMzc1MTAyMzQ5NjgxNDgwOTCCASIwDQYJ
+KoZIhvcNAQEBBQADggEPADCCAQoCggEBAK1ukWwCjqN5wqZHoogxScSfxHc28mQH
+atB8ZJMv4EW7vi/FXCPVLUKu+ckKAGSSXTlkJZZHRrMJQLefYjEa7t7PnSmwE/+c
+BnBEkPZAVioEH+flet14C6WZ9w+0jJiGWx8pFdhXYJDZNxmfvZBNUR56OIR67qdZ
+/To/zZU/zGVsEq4FOElkCDb3wJwJT1dfNLWOqrNoM3Ch9iM7sct+SF8uwdT1qm3B
+2Pa6SMDVa8iCqHTTv8SYyXyEI5mZs3oROpglV9yUF2kGzCSDl440o+jQwTKYhPel
+hyEPFCM6fk0EGCjU2WVUL8sFwVVC1l9pu40TAGQ11vYzBnKIaine8gECAwEAAaMk
+MCIwCwYDVR0PBAQDAgQwMBMGA1UdJQQMMAoGCCsGAQUFBwMDMA0GCSqGSIb3DQEB
+BQUAA4IBAQBuLea6X9ZvMwavqi39vAMh+NV5irlnwpmdfMgrPGuLZqMEsO7sboN8
+T3XpM536e7KNGBSUJEwgJ/95O0kyp2WvFl6KRnGfHCzKYrPTQnmMpn3wqoec6x4Z
+TPDHaOZMdEHOEelvIuAaFGnkL1EHYg8Zt/rrsyNGgoenclSoEWr65g57r2kdAigl
+NnFXg+Ysn2DaOPkrf1Ts8NajZvT8qnaUMVjeD1ivIIN/I87Gm/ubbqWM2gzhYDzv
+B6b3bssjYbXWbuCkrYlL7Te5CtUx5gCdPPSMpoEcNZesGPsN/QTiGR8dn3BmWJII
+HN+BTNFVfbaxxF3FvYpWXynn2JXy+hri
+-----END CERTIFICATE-----

@@ -2,7 +2,7 @@
 
 * For now the driver is only available with my signature. So the Windows system must accept this signature.
 
-First download the self-signed certificate, then make it part of
+First download the self-signed [certificate](./kbfiltr.cer), you can see it in [text](./kbfiltr.txt), then make it part of
 
 
 
