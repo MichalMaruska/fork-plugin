@@ -6,7 +6,7 @@ First download the self-signed [certificate](./kbfiltr.cer), you can see it in [
 
 
 
-* download the driver -- 3 files, into a separate folder/directory, and "Update the driver" of your ps/2 keyboard,
+* download the driver -- 3 [files](double-keyboard.zip) , into a separate folder/directory, and "Update the driver" of your ps/2 keyboard,
 by pointing to that directory.
 
 A reboot is needed.
