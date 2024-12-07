@@ -509,18 +509,22 @@ Return Value:
             (PI8042_KEYBOARD_INITIALIZATION_ROUTINE)
             KbFilter_InitializationRoutine;
 
+#if 0
+        // mmc: I don't need it
         if (hookKeyboard->IsrRoutine) {
             devExt->UpperIsrHook = hookKeyboard->IsrRoutine;
         }
         hookKeyboard->IsrRoutine = (PI8042_KEYBOARD_ISR) KbFilter_IsrHook;
+#endif
 
+#if 0
         //
         // Store all of the other important stuff
         //
         devExt->IsrWritePort = hookKeyboard->IsrWritePort;
         devExt->QueueKeyboardPacket = hookKeyboard->QueueKeyboardPacket;
         devExt->CallContext = hookKeyboard->CallContext;
-
+#endif
         status = STATUS_SUCCESS;
         break;
 
