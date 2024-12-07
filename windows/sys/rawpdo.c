@@ -349,7 +349,7 @@ Return Value:
 
 Cleanup:
 
-    DebugPrint(("KbFiltr_CreatePdo failed %x\n", status));
+    DebugPrint(("KbFiltr_CreateRawPdo failed %x\n", status));
 
     //
     // Call WdfDeviceInitFree if you encounter an error while initializing
