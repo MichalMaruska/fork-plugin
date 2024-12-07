@@ -280,7 +280,7 @@ Return Value:
         return status;
     }
 
-    long tag = (long) 'kbfi';
+    const long tag = (long) 'kbfi';
 
     kernelAllocator<winEnvironment> envAllocator;
     [[maybe_unused]] auto *environment = envAllocator.allocate(1);
