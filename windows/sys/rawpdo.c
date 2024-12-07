@@ -298,9 +298,10 @@ Return Value:
     //
     WDF_DEVICE_PNP_CAPABILITIES_INIT(&pnpCaps);
 
+    const WDF_TRI_STATE hide = WdfTrue;
     pnpCaps.Removable         = WdfTrue;
     pnpCaps.SurpriseRemovalOK = WdfTrue;
-    pnpCaps.NoDisplayInUI     = WdfTrue;
+    pnpCaps.NoDisplayInUI     = hide;
 
     pnpCaps.Address  = InstanceNo;
     pnpCaps.UINumber = InstanceNo;
@@ -314,7 +315,7 @@ Return Value:
     // IRP_MN_QUERY_DEVICE_STATE request.
     //
     WDF_DEVICE_STATE_INIT(&deviceState);
-    deviceState.DontDisplayInUI = WdfTrue;
+    deviceState.DontDisplayInUI = hide;
     WdfDeviceSetDeviceState(hChild, &deviceState);
 
     //
