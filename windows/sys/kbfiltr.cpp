@@ -129,10 +129,10 @@ Return Value:
     // Create a framework driver object to represent our driver.
     //
     status = WdfDriverCreate(DriverObject,
-                            RegistryPath,
-                            WDF_NO_OBJECT_ATTRIBUTES,
-                            &config,
-                            WDF_NO_HANDLE); // hDriver optional
+                             RegistryPath,
+                             WDF_NO_OBJECT_ATTRIBUTES,
+                             &config,
+                             WDF_NO_HANDLE); // hDriver optional
     if (!NT_SUCCESS(status)) {
         DebugPrint(("WdfDriverCreate failed with status 0x%x\n", status));
     }
