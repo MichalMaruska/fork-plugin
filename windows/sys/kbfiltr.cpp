@@ -968,6 +968,11 @@ void accept_event(PKEYBOARD_INPUT_DATA event, PDEVICE_EXTENSION devExt)
     extendedEvent ev;
     auto *forking_machine = (machineRec*) devExt->machine;
 
+    if (event->Flags & (KEY_E0 | KEY_E1)) {
+        //  KEY_E1
+        KdPrint(("%s we lose information about flags %d\n", __func__, event->Flags));
+    }
+
     win_event_to_extended(*event, ev, current_time_miliseconds());
 
     // KdPrint(("%s passing \n", __func__));
