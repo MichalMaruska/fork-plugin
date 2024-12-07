@@ -229,16 +229,17 @@ Return Value:
     // The driver can specify the driver's default locale by calling
     // WdfPdoInitSetDefaultLocale.
     //
+    const long USLocaleID = 0x409;
     status = WdfPdoInitAddDeviceText(pDeviceInit,
-                                        &buffer,
-                                        &deviceLocation,
-                                        0x409
-                                        );
+                                     &buffer,
+                                     &deviceLocation,
+                                     USLocaleID // locale id: en-US
+                                     );
     if (!NT_SUCCESS(status)) {
         goto Cleanup;
     }
 
-    WdfPdoInitSetDefaultLocale(pDeviceInit, 0x409);
+    WdfPdoInitSetDefaultLocale(pDeviceInit, USLocaleID);
 
     //
     // Initialize the attributes to specify the size of PDO device extension.
