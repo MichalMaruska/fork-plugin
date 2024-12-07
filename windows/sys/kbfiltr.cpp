@@ -206,7 +206,7 @@ Return Value:
         return status;
     }
 
-    // mmc: WDF_DECLARE_CONTEXT_TYPE_WITH_NAME macro this 
+    // mmc: WDF_DECLARE_CONTEXT_TYPE_WITH_NAME macro this
     filterExt = FilterGetData(hDevice);
 
     //
