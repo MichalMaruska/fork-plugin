@@ -290,27 +290,13 @@ Return Value:
     environment = new(environment) winEnvironment;
     environment->hDevice = hDevice;
 
-    void *space;
-#if 0
-    space = ExAllocatePool2(NonPagedPool, sizeof(winEnvironment), tag);
-    if (space == nullptr) {
-        // output to debugger if it's attached?
-        KdPrint(("Failed to allocate %lu bytes\n", sizeof(machineConfig)));
-    } else {
-        KdPrint(("Allocated %lu bytes\n", sizeof(machineConfig)));
-    };
-#endif
-
-    // kernelAllocator<winEnvironment>::allocate(1);
-
     // this will invoke
     //       operator new(size, space)
     // and then...
     // UNREFERENCED_PARAMETER(environment);
 
-
-    // machineConfig* space3 = kernelAllocator<machineConfig>::allocate(1);
-    space = ExAllocatePool2(POOL_FLAG_PAGED, sizeof(machineConfig), tag); // NonPagedPool
+    void *space = ExAllocatePool2(POOL_FLAG_PAGED, sizeof(machineConfig), tag); // NonPagedPool
+    // kernelAllocator<machineConfig>::allocate(1);
     if (space == nullptr) {
         // output to debugger if it's attached?
         KdPrint(("Failed to allocate %lu bytes\n", sizeof(machineConfig)));
@@ -320,31 +306,6 @@ Return Value:
     machineConfig *config =new(space) machineConfig();
 
     UNREFERENCED_PARAMETER(config);
-
-#if 0
-    kernelAllocator<extendedEvent> allocator;
-
-    extendedEvent* events = allocator.allocate(20); // 240 ?  20*12
-
-    UNREFERENCED_PARAMETER(events);
-
-    last_event_t last_events;
-    UNREFERENCED_PARAMETER(last_events); // 100 * 12 ?
-
-
-
-    empty_last_event_t empty_last_events;
-    empty_last_events.set_capacity(200);
-    empty_last_events.size();
-
-
-    environment->log("does it work?\n");
-
-    triqueue_t<extendedEvent, winEnvironment>::env = environment;
-    triqueue_t<extendedEvent, winEnvironment> tq{100}; // 100 * 12
-
-#endif
-
 
     space = ExAllocatePool2(POOL_FLAG_PAGED, sizeof(machineRec), tag); // NonPagedPool
     if (space == nullptr) {
