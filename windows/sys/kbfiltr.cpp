@@ -478,6 +478,36 @@ Return Value:
         bytesTransferred = sizeof(KEYBOARD_ATTRIBUTES);
 
         break;
+
+    case IOCTL_KBFILTR_SET_FORK:
+    {
+        DebugPrint(("trying to set fork\n"));
+
+        devExt = FilterGetData(hDevice);
+        auto *forking_machine = (machineRec*) devExt->machine;
+
+        PVOID InputBuffer;
+        InputBuffer = NULL;
+        // if (InputBufferLength < sizeof(ULONG))
+        if (InputBufferLength > 0) {
+            status = WdfRequestRetrieveInputBuffer(Request,
+                                                   InputBufferLength,
+                                                   &InputBuffer,
+                                                   NULL);
+        }
+
+        int values[5];
+        for (int i=0; i< InputBufferLength/sizeof(int); i++) {
+            // *(PULONG)
+            values[i] = *((int*) InputBuffer + i);
+        }
+        // other values should be zero.
+        machine_configure(forking_machine, values);
+
+        // todo: put into the OutputBuffer if OutputBufferLength
+    }
+        break;
+
     default:
         status = STATUS_NOT_IMPLEMENTED;
         break;
