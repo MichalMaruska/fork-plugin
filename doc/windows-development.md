@@ -40,6 +40,13 @@ Look at the log of driver installation/use at boot:
 copy C:\Windows\inf\setupapi.dev.log \\server\share\
 ```
 
+### remove old drivers
+```
+pnputil /enum-devices /class Keyboard
+
+pnputil /delete-driver oemXX.inf
+```
+
 
 ## preparing the release:
 
