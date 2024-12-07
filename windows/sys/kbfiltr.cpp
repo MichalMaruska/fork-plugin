@@ -478,6 +478,9 @@ Return Value:
         bytesTransferred = sizeof(KEYBOARD_ATTRIBUTES);
 
         break;
+
+     // mmc:
+     // todo: fork_to(from, to)  scancodes. Does the user-space know about scancodes?
     default:
         status = STATUS_NOT_IMPLEMENTED;
         break;
