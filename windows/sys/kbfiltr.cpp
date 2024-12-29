@@ -108,7 +108,7 @@ Return Value:
     WDF_DRIVER_CONFIG               config;
     NTSTATUS                        status;
 
-    DebugPrint(("Keyboard Filter Driver Sample - Driver Framework Edition.\n"));
+    DebugPrint(("Keyboard Forking Driver.\n"));
     DebugPrint(("Built %s %s\n", __DATE__, __TIME__));
 
     //
