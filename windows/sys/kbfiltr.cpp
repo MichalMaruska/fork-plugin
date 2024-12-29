@@ -328,6 +328,17 @@ Return Value:
 
     forking_machine->set_debug(1);
 
+    // 1 -> 2
+    forking_machine->configure_key(fork_configure_key_fork,
+                                   2, // from, to, SET
+                                   // to shift
+                                   42, 1);
+
+    forking_machine->configure_key(fork_configure_key_fork,
+                                   65-8,
+                                   29, 1);
+
+
     KdPrint(("mmc: everything passed\n"));
 
     // at IRQL = DISPATCH_LEVEL
