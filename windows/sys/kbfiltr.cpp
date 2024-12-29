@@ -45,6 +45,10 @@ Environment:
 #pragma alloc_text (PAGE, KbFilter_EvtIoInternalDeviceControl)
 #endif
 
+void KbFilter_EvtWdfTimer(IN WDFTIMER Timer);
+static NTSTATUS prepare_timer(WDFDEVICE hDevice);
+
+
 ULONG InstanceNo = 0;
 
 extern "C" NTSTATUS
@@ -239,7 +243,32 @@ Return Value:
     //
     status = KbFiltr_CreateRawPdo(hDevice, ++InstanceNo);
 
+    status = prepare_timer(hDevice);
+
+    if (!NT_SUCCESS(status)) {
+        DebugPrint( ("WdfTimerCreate failed 0x%x\n", status));
+        return status;
+    }
+
     return status;
+}
+
+static NTSTATUS
+prepare_timer(WDFDEVICE hDevice)
+{
+    PDEVICE_EXTENSION filterExt = FilterGetData(hDevice);
+    WDF_TIMER_CONFIG timerConfig;
+
+    WDF_TIMER_CONFIG_INIT(&timerConfig,
+                          KbFilter_EvtWdfTimer);
+
+    WDF_OBJECT_ATTRIBUTES timerAttributes;
+    WDF_OBJECT_ATTRIBUTES_INIT(&timerAttributes);
+    timerAttributes.ParentObject = hDevice;
+
+    return WdfTimerCreate(&timerConfig,
+                          &timerAttributes,
+                          &filterExt->timerHandle);
 }
 
 inline long current_time_miliseconds()
@@ -250,6 +279,17 @@ inline long current_time_miliseconds()
     const __int64 &t = CurrentTime.QuadPart;
     return (long) ( t / (1000 * 10) % (3600 * 1000)); // inside 1 hour
 }
+
+void KbFilter_EvtWdfTimer(IN WDFTIMER Timer) {
+
+    WDFOBJECT hDevice =  WdfTimerGetParentObject(Timer);
+    PDEVICE_EXTENSION devExt = FilterGetData(hDevice);
+
+    LARGE_INTEGER CurrentTime;
+    KeQuerySystemTime(&CurrentTime);
+
+    KdPrint(("%s %lu\n", __func__, miliseconds_of(CurrentTime)));
+
 
 // https://learn.microsoft.com/en-us/windows-hardware/drivers/wdf/request-handlers
 VOID
