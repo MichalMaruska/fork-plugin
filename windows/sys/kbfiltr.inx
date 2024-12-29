@@ -137,11 +137,11 @@ REG_DWORD      = 0x00010001
 ;
 
 ProviderName = "maruska"
-MfgName      = "maruska-1"
+MfgName      = "maruska"
 
-kbfiltr.DeviceDesc = "Keyboard Filter Device-git"
+kbfiltr.DeviceDesc = "Forking Keyboard Device"
 
 ; Make sure the service description is unique to avoid collision with another INF.
-kbfiltr.SvcDesc = "Keyboard Filter service-git"
+kbfiltr.SvcDesc = "Keyboard Forking service"
 
-DiskId1 = "Keyboard Filter Install Disk"
+DiskId1 = "Forking-Keyboard Install Disk"
