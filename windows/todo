@@ -114,6 +114,20 @@ RE recovery:
 dism /image:c:\ /get-drivers
 dism /image:c:\ /remove-driver /driver:oem#.inf
 
+:
+/ ... left to Right-shift  and / goes ok for \
+
+F8
+    automatic
+Troubleshoot
+Advanced
+cmd
+---------------
+cancel ? Advanced >
+
+* inf2cat during build  ... date
+https://learn.microsoft.com/th-th/windows-hardware/drivers/devtest/inf2cat
+
 
 * allocate machine, queues, env
 

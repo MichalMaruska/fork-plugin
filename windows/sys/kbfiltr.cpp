@@ -53,6 +53,26 @@ static_assert(KERNEL == 1);
 #pragma alloc_text (PAGE, KbFilter_EvtIoInternalDeviceControl)
 #endif
 
+
+#include "my-memory.h"
+#include "win-environment.h"
+#include "machine.h"
+#include "circular.h"
+
+using machineConfig = forkNS::ForkConfiguration<USHORT, time_type, forkNS::MAX_KEYCODE >;
+
+// experiments:
+#if 1
+#include "empty_last.h"
+using last_event_t = empty_last_events_t<extendedEvent>;
+#else
+using last_event_t = circular_buffer<extendedEvent, false, kernelAllocator<extendedEvent> >;
+#endif
+
+using machineRec =  forkNS::forkingMachine<USHORT, time_type,
+                                           extendedEvent, winEnvironment, extendedEvent, last_event_t >;
+
+
 void KbFilter_EvtWdfTimer(IN WDFTIMER Timer);
 static NTSTATUS prepare_timer(WDFDEVICE hDevice);
 
@@ -257,6 +277,58 @@ Return Value:
         DebugPrint( ("WdfTimerCreate failed 0x%x\n", status));
         return status;
     }
+
+    const long tag = (long) 'kbfi';
+
+    kernelAllocator<winEnvironment> envAllocator;
+    auto *environment = envAllocator.allocate(1);
+    if (environment == nullptr)
+        return status;
+
+    environment = new(environment) winEnvironment;
+    environment->hDevice = hDevice;
+
+    void *space;
+    // kernelAllocator<winEnvironment>::allocate(1);
+
+    // this will invoke
+    //       operator new(size, space)
+    // and then...
+    UNREFERENCED_PARAMETER(environment);
+
+
+    // machineConfig* space3 = kernelAllocator<machineConfig>::allocate(1);
+    space = ExAllocatePool2(POOL_FLAG_PAGED, sizeof(machineConfig), tag); // NonPagedPool
+    if (space == nullptr) {
+        // output to debugger if it's attached?
+        KdPrint(("Failed to allocate %lu bytes\n", sizeof(machineConfig)));
+    } else {
+        KdPrint(("Allocated %lu bytes\n", sizeof(machineConfig)));
+    };
+    machineConfig *config =new(space) machineConfig();
+
+    UNREFERENCED_PARAMETER(config);
+
+    space = ExAllocatePool2(POOL_FLAG_PAGED, sizeof(machineRec), tag); // NonPagedPool
+    if (space == nullptr) {
+        // output to debugger if it's attached?
+        KdPrint(("Failed to allocate %lu bytes\n", sizeof(machineRec)));
+        //
+        return status;
+    } else {
+        KdPrint(("Allocated %lu bytes\n", sizeof(machineRec)));
+    };
+
+
+    auto* forking_machine = new(space) machineRec(environment);
+    // machineRec* space1 = kernelAllocator<machineRec>::allocate(1);
+    UNREFERENCED_PARAMETER(forking_machine);
+    forking_machine->config = config;
+    filterExt->machine = forking_machine;
+
+    forking_machine->set_debug(1);
+
+    KdPrint(("mmc: everything passed\n"));
 
     return status;
 }
