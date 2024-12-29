@@ -330,6 +330,7 @@ Return Value:
 
     KdPrint(("mmc: everything passed\n"));
 
+    // at IRQL = DISPATCH_LEVEL
     return status;
 }
 
@@ -364,6 +365,7 @@ void accept_time(long time, PDEVICE_EXTENSION devExt);
 
 void KbFilter_EvtWdfTimer(IN WDFTIMER Timer) {
 
+    // UNREFERENCED_PARAMETER(Timer);
     WDFOBJECT hDevice =  WdfTimerGetParentObject(Timer);
     PDEVICE_EXTENSION devExt = FilterGetData(hDevice);
 
