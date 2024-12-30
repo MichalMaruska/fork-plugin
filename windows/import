@@ -2,22 +2,26 @@
 
 set -x
 
-target=~/repo/fork/fork-plugin/windows/
+# Hardcoded input:
+# canibalize files from this tree:
+src_repo=~/git/windows/Windows-driver-samples/
+# but it's a git, so this commit:
+COMMIT="base"
+
+# we will create git commits on this branch: of the current git repo:
+target_branch="win-import"
+target=$(git rev-parse --show-toplevel)/windows/
 # on target,
 # I can have a second root!
-# git checkout window base
-cd $target
-branch=windows
-git checkout $branch
 
-repo=~/git/windows/Windows-driver-samples/
-COMMIT=base
-cd $repo
-cd input/kbfiltr/
-git checkout $COMMIT
-sha=$(git rev-parse $COMMIT)
+# fixme: drop this:
+# git -C $target checkout $target_branch
+
+git -C $src_repo checkout $COMMIT
+sha=$(git -C $src_repo rev-parse $COMMIT)
 
 
+cd $src_repo/input/kbfiltr/
 files=(
     README.md
     kbfiltr.sln
