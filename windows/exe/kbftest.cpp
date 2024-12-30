@@ -104,7 +104,7 @@ bool list_kbfilter_devices(HDEVINFO &hardwareDeviceInfo,
 
             predictedLength = requiredLength;
 
-            deviceInterfaceDetailData = malloc (predictedLength);
+            deviceInterfaceDetailData = (PSP_DEVICE_INTERFACE_DETAIL_DATA) malloc(predictedLength);
 
             if(deviceInterfaceDetailData) {
                 deviceInterfaceDetailData->cbSize =
