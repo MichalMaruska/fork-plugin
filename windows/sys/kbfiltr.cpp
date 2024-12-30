@@ -517,7 +517,7 @@ Return Value:
      // mmc:
      // todo: fork_to(from, to)  scancodes. Does the user-space know about scancodes?
     case IOCTL_KBFILTR_SET_FORK:
-
+    {
         DebugPrint(("trying to set fork\n"));
 
         devExt = FilterGetData(hDevice);
@@ -542,6 +542,8 @@ Return Value:
         int return_config;
         machine_configure_get(forking_machine, values, &return_config);
 
+        // todo: put into the OutputBuffer if OutputBufferLength
+    }
         break;
 
     default:
