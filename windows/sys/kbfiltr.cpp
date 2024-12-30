@@ -415,10 +415,10 @@ machine_configure_get(machineRec* machine, int values[5], int* return_config)
            *return_config = machine->configure_global(type_subtype(type), 0, 0);
            break;
    case 1:
-           *return_config = machine->configure_key(type_subtype(type), values[1], 0, 0);
+           *return_config = machine->configure_key(type_subtype(type), (USHORT) values[1], 0, 0);
            break;
    case 2:
-           *return_config = machine->configure_twins(type_subtype(type), values[1], values[2], 0, 0);
+           *return_config = machine->configure_twins(type_subtype(type), (USHORT) values[1], (USHORT) values[2], 0, 0);
            break;
    case 3:
            return 0;
