@@ -50,48 +50,17 @@ DEFINE_GUID(GUID_DEVINTERFACE_KBFILTER,
 // {3FB7299D-6847-4490-B0C9-99E0986AB886}
 
 
-int
-_cdecl
-main(
-    _In_ int argc,
-    _In_ char *argv[]
-    )
+bool list_kbfilter_devices(HDEVINFO &hardwareDeviceInfo,
+                           SP_DEVICE_INTERFACE_DATA *pDeviceInterfaceData,
+                           PSP_DEVICE_INTERFACE_DETAIL_DATA &deviceInterfaceDetailData)
 {
-    HDEVINFO                            hardwareDeviceInfo;
-    SP_DEVICE_INTERFACE_DATA            deviceInterfaceData;
-    PSP_DEVICE_INTERFACE_DETAIL_DATA    deviceInterfaceDetailData = NULL;
-    ULONG                               predictedLength = 0;
-    ULONG                               requiredLength = 0, bytes=0;
-    HANDLE                              file;
-    ULONG                               i =0;
-    KEYBOARD_ATTRIBUTES                 kbdattrib;
-
-    UNREFERENCED_PARAMETER(argc);
-    UNREFERENCED_PARAMETER(argv);
-
-    //
-    // Open a handle to the device interface information set of all
-    // present toaster class interfaces.
-    //
-
-    hardwareDeviceInfo = SetupDiGetClassDevs (
-                       (LPGUID)&GUID_DEVINTERFACE_KBFILTER,
-                       NULL, // Define no enumerator (global)
-                       NULL, // Define no
-                       (DIGCF_PRESENT | // Only Devices present
-                       DIGCF_DEVICEINTERFACE)); // Function class devices.
-    if(INVALID_HANDLE_VALUE == hardwareDeviceInfo)
-    {
-        printf("SetupDiGetClassDevs failed: %x\n", GetLastError());
-        return 0;
-    }
-
-    deviceInterfaceData.cbSize = sizeof (SP_DEVICE_INTERFACE_DATA);
+    ULONG predictedLength = 0;
+    ULONG requiredLength = 0;
 
     printf("\nList of KBFILTER Device Interfaces\n");
     printf("---------------------------------\n");
 
-    i = 0;
+    int i = 0;
 
     //
     // Enumerate devices of toaster class
@@ -99,10 +68,10 @@ main(
 
     do {
         if (SetupDiEnumDeviceInterfaces (hardwareDeviceInfo,
-                                 0, // No care about specific PDOs
-                                 (LPGUID)&GUID_DEVINTERFACE_KBFILTER,
-                                 i, //
-                                 &deviceInterfaceData)) {
+                                         0, // No care about specific PDOs
+                                         (LPGUID)&GUID_DEVINTERFACE_KBFILTER,
+                                         i, //
+                                         pDeviceInterfaceData)) {
 
             if(deviceInterfaceDetailData) {
                 free (deviceInterfaceDetailData);
@@ -120,7 +89,7 @@ main(
 
             if(!SetupDiGetDeviceInterfaceDetail (
                     hardwareDeviceInfo,
-                    &deviceInterfaceData,
+                    pDeviceInterfaceData,
                     NULL, // probing so no output buffer yet
                     0, // probing so output buffer length of zero
                     &requiredLength,
@@ -149,7 +118,7 @@ main(
 
             if (! SetupDiGetDeviceInterfaceDetail (
                        hardwareDeviceInfo,
-                       &deviceInterfaceData,
+                       pDeviceInterfaceData,
                        deviceInterfaceDetailData,
                        predictedLength,
                        &requiredLength,
@@ -171,6 +140,52 @@ main(
             break;
 
     } WHILE (TRUE);
+
+    return TRUE;
+}
+
+
+
+int
+_cdecl
+main(
+    _In_ int argc,
+    _In_ char *argv[]
+    )
+{
+    HDEVINFO                            hardwareDeviceInfo;
+    SP_DEVICE_INTERFACE_DATA            deviceInterfaceData;
+    PSP_DEVICE_INTERFACE_DETAIL_DATA    deviceInterfaceDetailData = NULL;
+    ULONG                               bytes=0;
+    HANDLE                              file;
+    KEYBOARD_ATTRIBUTES                 kbdattrib;
+
+    UNREFERENCED_PARAMETER(argc);
+    UNREFERENCED_PARAMETER(argv);
+
+    //
+    // Open a handle to the device interface information set of all
+    // present toaster class interfaces.
+    //
+
+    hardwareDeviceInfo = SetupDiGetClassDevs (
+                       (LPGUID)&GUID_DEVINTERFACE_KBFILTER,
+                       NULL, // Define no enumerator (global)
+                       NULL, // Define no
+                       (DIGCF_PRESENT | // Only Devices present
+                       DIGCF_DEVICEINTERFACE)); // Function class devices.
+    if(INVALID_HANDLE_VALUE == hardwareDeviceInfo)
+    {
+        printf("SetupDiGetClassDevs failed: %x\n", GetLastError());
+        return 0;
+    }
+
+    deviceInterfaceData.cbSize = sizeof (SP_DEVICE_INTERFACE_DATA);
+
+    // this can assign to deviceInterfaceDetailData
+    if (FALSE == list_kbfilter_devices(hardwareDeviceInfo, &deviceInterfaceData, deviceInterfaceDetailData))
+        // strange way of exiting:
+        return FALSE;
 
 
     SetupDiDestroyDeviceInfoList(hardwareDeviceInfo);
