@@ -213,6 +213,7 @@ public:
         const auto fork_configuration = this->config.get();
 
         switch (type) {
+#if VERIFICATION_MATRIX
         case fork_configure_overlap_limit:
             if (set)
                 fork_configuration->overlap_tolerance[0][0] = value;
@@ -227,6 +228,7 @@ public:
                 return fork_configuration->verification_interval[0][0];
             break;
 
+#endif // VERIFICATION_MATRIX
         case fork_configure_clear_interval:
             if (set)
                 fork_configuration->clear_interval = value;
@@ -1072,6 +1074,7 @@ public:
     };
 
     int configure_twins(int type, Keycode key, Keycode twin, int value, bool set) {
+#if VERIFICATION_MATRIX
         switch (type) {
         case fork_configure_total_limit:
             if (set)
@@ -1087,6 +1090,13 @@ public:
         default:
             mdb("%s: invalid type %d\n", __func__, type);;
         }
+#else
+        UNUSED(type);
+        UNUSED(key);
+        UNUSED(twin);
+        UNUSED(value);
+        UNUSED(set);
+#endif
         return 0;
     }
 
