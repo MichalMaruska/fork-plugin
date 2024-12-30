@@ -39,6 +39,10 @@ Environment:
 
 #include "..\sys\public.h"
 
+#include <array>
+#include "fork_enums.h"
+
+
 //-----------------------------------------------------------------------------
 // 4127 -- Conditional Expression is Constant warning
 //-----------------------------------------------------------------------------
@@ -181,6 +185,23 @@ bool get_keyboard_attributes(HANDLE file)
 
 
 
+// Send an IOCTL to request forking
+bool fork_configure(HANDLE file, std::array<int,4> command)
+{
+    ULONG bytes=0;
+
+    if (!DeviceIoControl (file,
+                          IOCTL_KBFILTR_SET_FORK,
+                          command.data(), sizeof(command),
+                          NULL, 0, // sizeof(kbdattrib)
+                          &bytes, NULL)) {
+        printf("fork_configure request failed:0x%x\n", GetLastError());
+
+        return FALSE;
+    }
+    return TRUE;
+}
+
 int
 _cdecl
 main(
@@ -249,6 +270,14 @@ main(
         free (deviceInterfaceDetailData);
         return 0;
     }
+
+    fork_configure(file, std::array<int,4> {
+            fork_configure_key_fork << 2 | fork_LOCAL_OPTION,
+            // code, fork
+            2, 42,
+            // set
+            1
+      });
 
 
     if (get_keyboard_attributes(file) == FALSE) {
