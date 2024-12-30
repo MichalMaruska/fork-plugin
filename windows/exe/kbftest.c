@@ -230,7 +230,7 @@ main(
     }
 
     //
-    // Open the last toaster device interface
+    // Open the last kbfilter device interface
     //
 
     printf("\nOpening the last interface:\n %s\n",
