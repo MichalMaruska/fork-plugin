@@ -252,7 +252,7 @@ Return Value:
     status = WdfIoQueueCreate(hDevice,
                             &ioQueueConfig,
                             WDF_NO_OBJECT_ATTRIBUTES,
-                            &hQueue
+                            &hQueue // mmc:
                             );
     if (!NT_SUCCESS(status)) {
         DebugPrint( ("WdfIoQueueCreate failed 0x%x\n", status));
