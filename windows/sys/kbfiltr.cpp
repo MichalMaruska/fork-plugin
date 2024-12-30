@@ -353,6 +353,47 @@ void KbFilter_EvtWdfTimer(IN WDFTIMER Timer) {
 }
 
 
+/* Return a value requested, or 0 on error.*/
+inline int subtype_n_args(int t) { return  (t & 3);}
+inline int type_subtype(int t) { return (t >> 2);}
+
+static int
+machine_configure(machineRec* machine, int values[5])
+{
+  // assert (strcmp (PLUGIN_NAME(plugin), FORK_PLUGIN_NAME) == 0);
+
+   const int type = values[0];
+
+   /* fixme: why is type int?  shouldn't CARD8 be enough?
+      <int type>
+      <int keycode or time value>
+      <keycode or time value>
+      <timevalue>
+
+      type: local & global
+   */
+
+   machine->mdb("%s: %d operands, command %d: %d %d\n", __func__, subtype_n_args(type),
+                type_subtype(type), values[1], values[2]);
+
+   switch (subtype_n_args(type)){
+   case fork_GLOBAL_OPTION:
+           machine->configure_global(type_subtype(type), (USHORT) values[1], true);
+           break;
+   case fork_LOCAL_OPTION:
+           machine->configure_key(type_subtype(type), (USHORT) values[1], (USHORT) values[2], true);
+           break;
+   case fork_TWIN_OPTION:
+           machine->configure_twins(type_subtype(type), (USHORT) values[1], (USHORT) values[2], (USHORT) values[3], true);
+           break;
+
+   default:
+      machine->mdb("%s: invalid option %d\n", __func__, subtype_n_args(type));
+   }
+   return 0;
+}
+
+
 // https://learn.microsoft.com/en-us/windows-hardware/drivers/wdf/request-handlers
 VOID
 KbFilter_EvtIoDeviceControlFromRawPdo(
