@@ -201,12 +201,12 @@ main(
         free (deviceInterfaceDetailData);
         return 0;
     }
-    
+
     //
     // Send an IOCTL to retrive the keyboard attributes
     // These are cached in the kbfiltr
     //
-    
+
     if (!DeviceIoControl (file,
                           IOCTL_KBFILTR_GET_KEYBOARD_ATTRIBUTES,
                           NULL, 0,
@@ -216,8 +216,8 @@ main(
         free (deviceInterfaceDetailData);
         CloseHandle(file);
         return 0;
-    } 
-        
+    }
+
     printf("\nKeyboard Attributes:\n"
            " KeyboardMode:          0x%x\n"
            " NumberOfFunctionKeys:  0x%x\n"
@@ -227,9 +227,9 @@ main(
            kbdattrib.KeyboardMode,
            kbdattrib.NumberOfFunctionKeys,
            kbdattrib.NumberOfIndicators,
-           kbdattrib.NumberOfKeysTotal, 
+           kbdattrib.NumberOfKeysTotal,
            kbdattrib.InputDataQueueLength);
-    
+
     free (deviceInterfaceDetailData);
     CloseHandle(file);
     return 0;
