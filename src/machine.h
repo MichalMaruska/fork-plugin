@@ -210,7 +210,13 @@ public:
      * or ... ignored  */
     int configure_global(int type, int value, bool set) {
         scoped_lock lock(mLock);
-        const auto fork_configuration = this->config.get();
+        const auto fork_configuration = 
+#ifndef DISABLE_STD_LIBRARY
+            this->config.get()
+#else
+            this->config
+#endif
+            ;
 
         switch (type) {
 #if VERIFICATION_MATRIX
