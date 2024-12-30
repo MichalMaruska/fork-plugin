@@ -85,7 +85,20 @@ Return Value:
     case IOCTL_KBFILTR_GET_KEYBOARD_ATTRIBUTES:
     case IOCTL_KBFILTR_SET_FORK:
         WDF_REQUEST_FORWARD_OPTIONS_INIT(&forwardOptions);
+
+        // so we put it into a different queue!!!!
         status = WdfRequestForwardToParentDeviceIoQueue(Request, pdoData->ParentQueue, &forwardOptions);
+
+        if (!NT_SUCCESS(status)) {
+            WdfRequestComplete(Request, status);
+        }
+        break;
+    case IOCTL_KBFILTR_SET_FORK:
+        WDF_REQUEST_FORWARD_OPTIONS_INIT(&forwardOptions);
+
+        // so we put it into a different queue!!!!
+        status = WdfRequestForwardToParentDeviceIoQueue(Request, pdoData->ParentQueue, &forwardOptions);
+
         if (!NT_SUCCESS(status)) {
             WdfRequestComplete(Request, status);
         }
