@@ -139,8 +139,9 @@ Return Value:
     //
     // Allocate a WDFDEVICE_INIT structure and set the properties
     // so that we can create a device object for the child.
+    // mmc: physical device - pdo  (out of our fdo/Functional device object )
     //
-    pDeviceInit = WdfPdoInitAllocate(Device);
+    pDeviceInit = WdfPdoInitAllocate(Device); // mmc: so this is Parent then!
 
     if (pDeviceInit == NULL) {
         status = STATUS_INSUFFICIENT_RESOURCES;
@@ -268,9 +269,12 @@ Return Value:
 
     //
     // Get the parent queue we will be forwarding to
+    // mmc: finally:
+    // so we have 2 devices: the keyboard, and another fake (raw.....) and
+    // they both have some extension: pdoData, rawPdoQueue
     //
     devExt = FilterGetData(Device);
-    pdoData->ParentQueue = devExt->rawPdoQueue;
+    pdoData->ParentQueue = devExt->rawPdoQueue; // that driver exposes this, we know about it, so use it.
 
     //
     // Configure the default queue associated with the control device object
