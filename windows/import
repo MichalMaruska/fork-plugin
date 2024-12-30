@@ -29,6 +29,10 @@ files=(
     sys/kbfiltr.vcxproj.Filters
     sys/public.h
     sys/rawpdo.c
+    # user-space app:
+    exe/kbftest.c
+    exe/kbftest.vcxproj
+    exe/kbftest.vcxproj.Filters
     )
 
 if false;
