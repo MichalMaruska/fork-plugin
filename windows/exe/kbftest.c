@@ -145,6 +145,41 @@ bool list_kbfilter_devices(HDEVINFO &hardwareDeviceInfo,
 }
 
 
+bool get_keyboard_attributes(HANDLE file)
+{
+    KEYBOARD_ATTRIBUTES kbdattrib{0};
+    ULONG bytes=0;
+
+    //
+    // Send an IOCTL to retrive the keyboard attributes
+    // These are cached in the kbfiltr
+    //
+
+    if (!DeviceIoControl (file,
+                          IOCTL_KBFILTR_GET_KEYBOARD_ATTRIBUTES,
+                          NULL, 0,
+                          &kbdattrib, sizeof(kbdattrib),
+                          &bytes, NULL)) {
+        printf("Retrieve Keyboard Attributes request failed:0x%x\n", GetLastError());
+
+        return FALSE;
+    }
+
+    printf("\nKeyboard Attributes:\n"
+           " KeyboardMode:          0x%x\n"
+           " NumberOfFunctionKeys:  0x%x\n"
+           " NumberOfIndicators:    0x%x\n"
+           " NumberOfKeysTotal:     0x%x\n"
+           " InputDataQueueLength:  0x%x\n",
+           kbdattrib.KeyboardMode,
+           kbdattrib.NumberOfFunctionKeys,
+           kbdattrib.NumberOfIndicators,
+           kbdattrib.NumberOfKeysTotal,
+           kbdattrib.InputDataQueueLength);
+    return TRUE;
+}
+
+
 
 int
 _cdecl
@@ -154,11 +189,9 @@ main(
     )
 {
     HDEVINFO                            hardwareDeviceInfo;
-    SP_DEVICE_INTERFACE_DATA            deviceInterfaceData;
+    SP_DEVICE_INTERFACE_DATA            deviceInterfaceData{0};
     PSP_DEVICE_INTERFACE_DETAIL_DATA    deviceInterfaceDetailData = NULL;
-    ULONG                               bytes=0;
     HANDLE                              file;
-    KEYBOARD_ATTRIBUTES                 kbdattrib;
 
     UNREFERENCED_PARAMETER(argc);
     UNREFERENCED_PARAMETER(argv);
@@ -217,33 +250,12 @@ main(
         return 0;
     }
 
-    //
-    // Send an IOCTL to retrive the keyboard attributes
-    // These are cached in the kbfiltr
-    //
 
-    if (!DeviceIoControl (file,
-                          IOCTL_KBFILTR_GET_KEYBOARD_ATTRIBUTES,
-                          NULL, 0,
-                          &kbdattrib, sizeof(kbdattrib),
-                          &bytes, NULL)) {
-        printf("Retrieve Keyboard Attributes request failed:0x%x\n", GetLastError());
+    if (get_keyboard_attributes(file) == FALSE) {
         free (deviceInterfaceDetailData);
         CloseHandle(file);
         return 0;
     }
-
-    printf("\nKeyboard Attributes:\n"
-           " KeyboardMode:          0x%x\n"
-           " NumberOfFunctionKeys:  0x%x\n"
-           " NumberOfIndicators:    0x%x\n"
-           " NumberOfKeysTotal:     0x%x\n"
-           " InputDataQueueLength:  0x%x\n",
-           kbdattrib.KeyboardMode,
-           kbdattrib.NumberOfFunctionKeys,
-           kbdattrib.NumberOfIndicators,
-           kbdattrib.NumberOfKeysTotal,
-           kbdattrib.InputDataQueueLength);
 
     free (deviceInterfaceDetailData);
     CloseHandle(file);
