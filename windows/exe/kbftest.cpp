@@ -282,6 +282,7 @@ main(
                              1
                            });
     }
+#if 0
     if (get_keyboard_attributes(file) == FALSE) {
         free (deviceInterfaceDetailData);
         CloseHandle(file);
@@ -290,6 +291,7 @@ main(
 
     free (deviceInterfaceDetailData);
     CloseHandle(file);
+#endif
     return 0;
 }
 
