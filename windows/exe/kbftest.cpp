@@ -268,11 +268,15 @@ main(
         return 0;
     }
 
+    printf("invoked with %d args\n", argc);
+
     if (argc == 3) {
         int keycode = atoi(argv[1]);
         int fork = atoi(argv[2]);
 
-        if (keycode && fork)
+        if (keycode != 0 && fork != 0) {
+            printf("Trying to fork %u to %u\n", keycode, fork);
+
             fork_configure(file,
                            std::array<int,4> {
                              fork_configure_key_fork << 2 | fork_LOCAL_OPTION,
@@ -281,7 +285,9 @@ main(
                              // set
                              1
                            });
+        }
     }
+
 #if 0
     if (get_keyboard_attributes(file) == FALSE) {
         free (deviceInterfaceDetailData);
