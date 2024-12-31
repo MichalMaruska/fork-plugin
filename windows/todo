@@ -1,3 +1,11 @@
+
+DebugPrint(("trying to set fork\n"));
+vs.
+KdPrint()
+KdPrint(("%s we see E0/E1 flag %u\n", __func__, event->Flags));
+
+
+
 * Convert to C++
 ** just filter
 ** ....circular
