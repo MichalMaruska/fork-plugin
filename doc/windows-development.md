@@ -13,6 +13,8 @@ Using debugger?
 
 Always handy to have shared filesystem for quick transfer (in both directions). Samba...
 
+follow [installation](windows-client-install.md)
+
 ### Certificate (once)
 Use PowerShell to invoke
 
@@ -26,9 +28,8 @@ And check in the certml tool that it's present (as one of Root certificates)
 ![Screenshot of certml](images/Screenshot-ITA-certificate-manger.png)
 
 
-### update the PS/2 keyboard driver from a local folder/directory
 
-![Screenshot of keyboard drivers tree](images/Screenshot-ITA-driver-manager.png)
+
 
 
 ## Handy commands:
