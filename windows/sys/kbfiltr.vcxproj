@@ -94,6 +94,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>..\..\src\;..;..\..\include</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>Level4</WarningLevel>
       <ExceptionHandling>
@@ -127,6 +128,7 @@
       <ExceptionHandling>
       </ExceptionHandling>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>%(IntDir);%(AdditionalIncludeDirectories);..\..\src\;..;..\..\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies);$(DDK_LIB_PATH)\wdmsec.lib;$(DDK_LIB_PATH)\ntstrsafe.lib;$(DDK_LIB_PATH)\rtlver.lib</AdditionalDependencies>
