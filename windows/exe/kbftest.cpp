@@ -214,9 +214,6 @@ main(
     PSP_DEVICE_INTERFACE_DETAIL_DATA    deviceInterfaceDetailData = NULL;
     HANDLE                              file;
 
-    UNREFERENCED_PARAMETER(argc);
-    UNREFERENCED_PARAMETER(argv);
-
     //
     // Open a handle to the device interface information set of all
     // present toaster class interfaces.
@@ -271,15 +268,20 @@ main(
         return 0;
     }
 
-    fork_configure(file, std::array<int,4> {
-            fork_configure_key_fork << 2 | fork_LOCAL_OPTION,
-            // code, fork
-            2, 42,
-            // set
-            1
-      });
+    if (argc == 3) {
+        int keycode = atoi(argv[1]);
+        int fork = atoi(argv[2]);
 
-
+        if (keycode && fork)
+            fork_configure(file,
+                           std::array<int,4> {
+                             fork_configure_key_fork << 2 | fork_LOCAL_OPTION,
+                             // code, fork
+                             keycode, fork,
+                             // set
+                             1
+                           });
+    }
     if (get_keyboard_attributes(file) == FALSE) {
         free (deviceInterfaceDetailData);
         CloseHandle(file);
