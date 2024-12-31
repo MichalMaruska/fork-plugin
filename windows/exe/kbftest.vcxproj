@@ -92,6 +92,7 @@
       <AdditionalDependencies>%(AdditionalDependencies);setupapi.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
+      <AdditionalIncludeDirectories>..\..\include</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
@@ -116,6 +117,7 @@
       <AdditionalDependencies>%(AdditionalDependencies);setupapi.lib</AdditionalDependencies>
     </Link>
     <ClCompile>
+      <AdditionalIncludeDirectories>..\..\include</AdditionalIncludeDirectories>
       <ExceptionHandling>
       </ExceptionHandling>
     </ClCompile>
