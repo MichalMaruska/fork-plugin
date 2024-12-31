@@ -173,7 +173,7 @@ main(
     } WHILE (TRUE);
 
 
-    SetupDiDestroyDeviceInfoList (hardwareDeviceInfo);
+    SetupDiDestroyDeviceInfoList(hardwareDeviceInfo);
 
     if(!deviceInterfaceDetailData)
     {
