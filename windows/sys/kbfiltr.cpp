@@ -922,6 +922,17 @@ void accept_time(long time, PDEVICE_EXTENSION devExt)
 }
 
 
+void accept_event(PKEYBOARD_INPUT_DATA event, machineRec *forking_machine)
+{
+    extendedEvent ev;
+
+    win_event_to_extended(*event, ev, current_time_miliseconds());
+
+    KdPrint(("%s passing \n", __func__));
+    forking_machine->accept_event(ev);
+}
+
+
 VOID
 KbFilter_ServiceCallback(
     IN PDEVICE_OBJECT  DeviceObject,
@@ -966,11 +977,11 @@ Return Value:
 
     devExt = FilterGetData(hDevice);
 
-    (*(PSERVICE_CALLBACK_ROUTINE)(ULONG_PTR) devExt->UpperConnectData.ClassService)(
-        devExt->UpperConnectData.ClassDeviceObject,
-        InputDataStart,
-        InputDataEnd,
-        InputDataConsumed);
+    for (PKEYBOARD_INPUT_DATA event = InputDataStart; event != InputDataEnd; event++) {
+        accept_event(event, (machineRec*) devExt->machine);
+    }
+
+    *InputDataConsumed = (ULONG) (InputDataEnd - InputDataStart);
 }
 
 VOID
