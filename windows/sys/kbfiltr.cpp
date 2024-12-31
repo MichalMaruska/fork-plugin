@@ -340,15 +340,17 @@ inline long current_time_miliseconds()
     return (long) ( t / (1000 * 10) % (3600 * 1000)); // inside 1 hour
 }
 
+void accept_time(long time, PDEVICE_EXTENSION devExt);
+
 void KbFilter_EvtWdfTimer(IN WDFTIMER Timer) {
 
     WDFOBJECT hDevice =  WdfTimerGetParentObject(Timer);
     PDEVICE_EXTENSION devExt = FilterGetData(hDevice);
 
-    LARGE_INTEGER CurrentTime;
-    KeQuerySystemTime(&CurrentTime);
-
-    KdPrint(("%s %lu\n", __func__, miliseconds_of(CurrentTime)));
+    long time = current_time_miliseconds();
+    KdPrint(("%s woken up at %ld\n", __func__, time));
+    accept_time(time, devExt);
+}
 
 
 // https://learn.microsoft.com/en-us/windows-hardware/drivers/wdf/request-handlers
@@ -904,6 +906,21 @@ void pass_event(const extendedEvent& pevent, WDFDEVICE hDevice)
         &event + 1,
         &InputDataConsumed);
 }
+
+void accept_time(long time, PDEVICE_EXTENSION devExt)
+{
+    auto *forking_machine = (machineRec*) devExt->machine;
+
+    int timeout = forking_machine->accept_time(time);
+
+    if (timeout != 0) {
+        startTimer(devExt->timerHandle, timeout);
+    } else {
+        // can I stop an already stopped?
+        WdfTimerStop(devExt->timerHandle, FALSE);
+    }
+}
+
 
 VOID
 KbFilter_ServiceCallback(
