@@ -9,6 +9,7 @@ typedef struct _archived_event
 {
     time_type time;
     USHORT key;
+    USHORT flags;
     USHORT forked;
     bool press;                  /* client type? */
 
@@ -26,7 +27,8 @@ void win_event_to_extended(const KEYBOARD_INPUT_DATA& event, extendedEvent &ev, 
   ev.time = time;
   ev.key = event.MakeCode;
   ev.forked = 0;
-  ev.press = (event.Flags == 0);
+  ev.flags = event.Flags;
+  ev.press = !(event.Flags & 1);
 }
 
 // KEYBOARD_INPUT_DATA, will be converted to extendedEvent immediately.
@@ -78,6 +80,7 @@ public:
   }
 
   USHORT detail_of(const extendedEvent& event) const OVERRIDE{
+    // note: we ignore the E0/E1 bits!
     return event.key;
   }
 
