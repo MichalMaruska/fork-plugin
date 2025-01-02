@@ -53,6 +53,25 @@ static_assert(KERNEL == 1);
 #pragma alloc_text (PAGE, KbFilter_EvtIoInternalDeviceControl)
 #endif
 
+#include "my-memory.h"
+#include "win-environment.h"
+#include "machine.h"
+#include "circular.h"
+
+using machineConfig = forkNS::ForkConfiguration<USHORT, time_type, forkNS::MAX_KEYCODE >;
+
+// experiments:
+#if 1
+#include "empty_last.h"
+using last_event_t = empty_last_events_t<extendedEvent>;
+#else
+using last_event_t = circular_buffer<extendedEvent, false, kernelAllocator<extendedEvent> >;
+#endif
+
+using machineRec =  forkNS::forkingMachine<USHORT, time_type,
+                                           extendedEvent, winEnvironment, extendedEvent, last_event_t >;
+
+
 void KbFilter_EvtWdfTimer(IN WDFTIMER Timer);
 static NTSTATUS prepare_timer(WDFDEVICE hDevice);
 
@@ -120,6 +139,8 @@ Return Value:
 
     return status;
 }
+
+static NTSTATUS create_machine(PDEVICE_EXTENSION filterExt, WDFDEVICE hDevice);
 
 NTSTATUS
 KbFilter_EvtDeviceAdd(
@@ -258,7 +279,38 @@ Return Value:
         return status;
     }
 
+    status = create_machine(filterExt, hDevice);
+    if (!NT_SUCCESS(status)) {
+        DebugPrint( ("machine creation failed 0x%x\n", status));
+        return status;
+    }
+
+    KdPrint(("mmc: everything passed\n"));
     return status;
+}
+
+
+// NonPagedPool is restricted, can fail!
+void* operator ::new(size_t size) {
+    const long tag = (long) 'kbfi';
+    return ExAllocatePool2(POOL_FLAG_PAGED, size, tag);
+}
+
+static NTSTATUS
+create_machine(PDEVICE_EXTENSION filterExt, WDFDEVICE hDevice)
+{
+    auto *environment = ::new(winEnvironment);
+    environment->hDevice = hDevice;
+
+    machineConfig *config = ::new machineConfig;
+
+    auto* forking_machine = ::new(machineRec)(environment);
+    forking_machine->config = config;
+    filterExt->machine = forking_machine;
+
+    forking_machine->set_debug(1);
+
+    return  STATUS_SUCCESS;
 }
 
 static NTSTATUS
