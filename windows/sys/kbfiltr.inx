@@ -77,13 +77,14 @@ kbfiltr.sys
 ;
 
 [kbfiltr.NT.Services]
-AddService = kbfiltr,  , kbfiltr_Service_Inst
+AddService = kbdouble, , kbdouble_Service_Inst
 ; Install the port driver and mouclass from keyboard.inf
 Include=keyboard.inf
 Needs=STANDARD_Inst.Services
 
-[kbfiltr_Service_Inst]
-DisplayName    = %kbfiltr.SvcDesc%
+; mmc: I can see these in the Registry:
+[kbdouble_Service_Inst]
+DisplayName    = %kbdouble.SvcDesc%
 ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
 StartType      = 3                  ; SERVICE_DEMAND_START
 ErrorControl   = 0                  ; SERVICE_ERROR_IGNORE
@@ -142,6 +143,6 @@ MfgName      = "maruska"
 kbfiltr.DeviceDesc = "Forking Keyboard Device"
 
 ; Make sure the service description is unique to avoid collision with another INF.
-kbfiltr.SvcDesc = "Keyboard Forking service"
+kbdouble.SvcDesc = "Double Keyboard service"
 
 DiskId1 = "Forking-Keyboard Install Disk"
