@@ -110,31 +110,36 @@ Return Value:
     DebugPrint(("Keyboard Forking Driver.\n"));
     DebugPrint(("Built %s %s\n", __DATE__, __TIME__));
 
-    //
-    // Initialize driver config to control the attributes that
-    // are global to the driver. Note that framework by default
-    // provides a driver unload routine. If you create any resources
-    // in the DriverEntry and want to be cleaned in driver unload,
-    // you can override that by manually setting the EvtDriverUnload in the
-    // config structure. In general xxx_CONFIG_INIT macros are provided to
-    // initialize most commonly used members.
-    //
+    if (*InitSafeBootMode == 0) {
 
-    WDF_DRIVER_CONFIG_INIT(
-        &config,
-        KbFilter_EvtDeviceAdd
-    );
+        //
+        // Initialize driver config to control the attributes that
+        // are global to the driver. Note that framework by default
+        // provides a driver unload routine. If you create any resources
+        // in the DriverEntry and want to be cleaned in driver unload,
+        // you can override that by manually setting the EvtDriverUnload in the
+        // config structure. In general xxx_CONFIG_INIT macros are provided to
+        // initialize most commonly used members.
+        //
 
-    //
-    // Create a framework driver object to represent our driver.
-    //
-    status = WdfDriverCreate(DriverObject,
-                             RegistryPath,
-                             WDF_NO_OBJECT_ATTRIBUTES,
-                             &config,
-                             WDF_NO_HANDLE); // hDriver optional
-    if (!NT_SUCCESS(status)) {
-        DebugPrint(("WdfDriverCreate failed with status 0x%x\n", status));
+        WDF_DRIVER_CONFIG_INIT(
+            &config,
+            KbFilter_EvtDeviceAdd
+        );
+
+        //
+        // Create a framework driver object to represent our driver.
+        //
+        status = WdfDriverCreate(DriverObject,
+                                 RegistryPath,
+                                 WDF_NO_OBJECT_ATTRIBUTES,
+                                 &config,
+                                 WDF_NO_HANDLE); // hDriver optional
+        if (!NT_SUCCESS(status)) {
+            DebugPrint(("WdfDriverCreate failed with status 0x%x\n", status));
+        }
+    } else {
+        KdPrint(("mmc: safe mode -> skipping \n"));
     }
 
     return status;
