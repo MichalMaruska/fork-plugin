@@ -57,6 +57,9 @@ static_assert(KERNEL == 1);
 #include "win-environment.h"
 #include "machine.h"
 #include "circular.h"
+extern "C" {
+  extern PULONG InitSafeBootMode;
+}
 
 using machineConfig = forkNS::ForkConfiguration<USHORT, time_type, forkNS::MAX_KEYCODE >;
 
@@ -294,7 +297,6 @@ Return Value:
     KdPrint(("mmc: everything passed\n"));
     // registry:
 #if 0
-    extern PULONG InitSafeBootMode;
     if (*InitSafeBootMode == 0)
 
     Do not attach the filter device object to the device stack.
