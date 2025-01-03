@@ -280,18 +280,17 @@ Return Value:
     status = prepare_timer(hDevice);
 
     if (!NT_SUCCESS(status)) {
-        DebugPrint( ("WdfTimerCreate failed 0x%x\n", status));
+        DebugPrint(("WdfTimerCreate failed 0x%x\n", status));
         return status;
     }
 
     status = create_machine(filterExt, hDevice);
     if (!NT_SUCCESS(status)) {
-        DebugPrint( ("machine creation failed 0x%x\n", status));
+        DebugPrint(("machine creation failed 0x%x\n", status));
         return status;
     }
 
     KdPrint(("mmc: everything passed\n"));
-
     // registry:
 #if 0
     extern PULONG InitSafeBootMode;
