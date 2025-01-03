@@ -8,8 +8,11 @@ typedef long time_type;
 typedef struct _archived_event
 {
     time_type time;
+    USHORT UnitId;
     USHORT key;
     USHORT flags;
+    USHORT Reserved; // for OS
+    ULONG  ExtraInformation;
     USHORT forked;
     bool press;                  /* client type? */
 
@@ -29,6 +32,10 @@ void win_event_to_extended(const KEYBOARD_INPUT_DATA& event, extendedEvent &ev, 
   ev.forked = 0;
   ev.flags = event.Flags;
   ev.press = !(event.Flags & 1);
+  //
+  ev.UnitId = event.UnitId;
+  ev.Reserved = event.Reserved;
+  ev.ExtraInformation = event.ExtraInformation;
 }
 
 // KEYBOARD_INPUT_DATA, will be converted to extendedEvent immediately.
