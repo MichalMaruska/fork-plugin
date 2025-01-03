@@ -1,0 +1,150 @@
+
+DebugPrint(("trying to set fork\n"));
+vs.
+KdPrint()
+KdPrint(("%s we see E0/E1 flag %u\n", __func__, event->Flags));
+
+
+
+* Convert to C++
+** just filter
+** ....circular
+** ...triqueue
+** compile use machine with ...?
+
+* how to read Registry?
+
+* install kbfilter
+
+* how to interract with the new PDO?
+
+* how to attach as class driver? (Registry)
+
+* time stamps
+
+* add/remove events
+
+
+* dmesg?
+
+
+> Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
+this is the lowest?
+the 3 levels of conformity?
+
+https://learn.microsoft.com/nl-nl/windows-hardware/drivers/develop/get-started-developing-windows-drivers
+
+
+
+devcon hwid =keyboard
+devcon classes
+devcon listclass keyboard
+devcon driverfiles *
+devcon driverfiles  "ACPI\VEN_PNP&DEV_0303"
+
+devcon drivernodes sw*
+devcon drivernodes acpi*
+
+    resources =keyboard
+    stack =keyboard
+    classfilter keyboard upper
+    reboot
+    rescan
+    .... failed
+
+
+* fixme: as administrator: !!!!
+devcon install *.inf  "ACPI\VEN_PNP&DEV_0303"
+
+"*DEV_0303"
+
+Device node created. Install is complete when drivers are installed...
+Updating drivers from
+devcon.exe failed.
+
+* ok I found the modification to be done to the .inx file!!!
+Then this works:
+devcon install *.inf  "ACPI\VEN_PNP&DEV_0303"
+and requires reboot.
+
+# devcon dp_add kbdfiltr.inf
+oem7.inf added
+
+pnputil /add-driver kbfiltr.inf
+published Name: oem7.inf
+
+log:
+* c:\windows\inf\setupapi.dev.log
+
+
+dvi: No CoInstallers found
+
+
+mmc:
+File> add/remove snap-in > Certificates > add
+> Computer account > ??? > Finish
+
+
+* debugview as admin !!!
+
+by rescan hardware I could restore it!
+
+
+
+* I tried to update the keyboard driver.
+I also edited the registry to have the top
+"kbfilter kbdclass"
+and I lost ....
+
+" kbdclass" this value also didn't work!
+"kbdclass" and reboot & voila'
+
+once again:
+
+
+"kbdclass,kbfiltr" ?
+
+
+
+
+* so:
+1. "kbdclass"
+2. removing & rescan
+"Standard PS/2 Keyboard"
+
+no need to reboot!
+
+
+
+* BSOD & reboot loop:
+RE recovery:
+
+dism /image:c:\ /get-drivers
+dism /image:c:\ /remove-driver /driver:oem#.inf
+
+:
+/ ... left to Right-shift  and / goes ok for \
+
+F8
+    automatic
+Troubleshoot
+Advanced
+cmd
+---------------
+cancel ? Advanced >
+
+* inf2cat during build  ... date
+https://learn.microsoft.com/th-th/windows-hardware/drivers/devtest/inf2cat
+
+
+* allocate machine, queues, env
+
+- once I get event in a buffer .... what to do, copy over to.
+
+ExAllocatePoolWithTag()
+
+
+|--queue----|--- queue--|----qH----|
+                              ^ put it here?
+
+exit --> buffer.
