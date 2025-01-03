@@ -108,7 +108,7 @@ Return Value:
 --*/
 {
     WDF_DRIVER_CONFIG               config;
-    NTSTATUS                        status;
+    NTSTATUS                        status = STATUS_SUCCESS;
 
     DebugPrint(("Keyboard Forking Driver.\n"));
     DebugPrint(("Built %s %s\n", __DATE__, __TIME__));
