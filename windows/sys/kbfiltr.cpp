@@ -109,6 +109,7 @@ Return Value:
 
     DebugPrint(("Keyboard Forking Driver.\n"));
     DebugPrint(("Built %s %s\n", __DATE__, __TIME__));
+    DebugPrint(("Registry root %wZ.\n", RegistryPath));
 
     if (*InitSafeBootMode == 0) {
 
