@@ -413,13 +413,17 @@ configure_from_registry(IN WDFDRIVER Driver,
     RtlInitUnicodeString(&ValueName, L"forks");
 
 
+    // create
     status = WdfDeviceOpenRegistryKey(Device,
-                                      PLUGPLAY_REGKEY_DRIVER,
-                                      KEY_READ,
+                                      PLUGPLAY_REGKEY_DRIVER, // Opens the driver's software key. A
+                                      // PLUGPLAY_REGKEY_DEVICE // type: Opens the device's hardware key.
+                                      KEY_READ, // !!!!
                                       WDF_NO_OBJECT_ATTRIBUTES,
                                       &hKey);
+
+
     if (!NT_SUCCESS(status)) {
-        DebugPrint(("failed to retrieve Device's registry key 0x%x\n", status));
+        DebugPrint(("failed to retrieve Device/Driver registry key 0x%x\n", status));
         return status;
     }
 
