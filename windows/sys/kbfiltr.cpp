@@ -416,10 +416,12 @@ configure_from_registry(IN WDFDRIVER Driver,
 
     while ((handle = WdfCollectionGetFirstItem(col)) != NULL) {
         // process:
-        status = WdfStringGetUnicodeString(handle, &UnicodeString);
+        WdfStringGetUnicodeString((WDFSTRING) handle, &UnicodeString);
+
+        DebugPrint(("value: %wZ.\n", &UnicodeString));
         // process:
         WdfCollectionRemoveItem(col, 0);
-        WdfObjectDelete(subRequest);
+        WdfObjectDelete(handle);
     }
 
     // now take .. "fork/config"
