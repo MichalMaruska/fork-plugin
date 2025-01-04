@@ -394,7 +394,7 @@ configure_from_registry(IN WDFDRIVER Driver,
 
 #endif
 
-#if 1
+#if 0
     // PWDF_OBJECT_ATTRIBUTES KeyAttributes,
     WDFKEY ParametersKey;
     status = WdfDriverOpenPersistentStateRegistryKey(Driver,
