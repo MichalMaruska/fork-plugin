@@ -374,13 +374,18 @@ configure_from_registry(IN WDFDRIVER Driver,
     UNREFERENCED_PARAMETER(registryPath);
     DebugPrint(("The Registry path for the driver is %w.\n", registryPath));
 
-#if 0
     // The Parameters key is for immutable settings provided in the INF file.
     status = WdfDriverOpenParametersRegistryKey(Driver,
-                                                         STANDARD_RIGHTS_ALL,
-                                                         WDF_NO_OBJECT_ATTRIBUTES,
-                                                         &hKey);
+                                                STANDARD_RIGHTS_ALL,
+                                                WDF_NO_OBJECT_ATTRIBUTES,
+                                                &hKey);
+    if (!NT_SUCCESS(status)) {
+        DebugPrint(("failed to retrieve Parameters registry key 0x%x\n", status));
+        return status;
+    }
+    WdfRegistryClose(hKey);
 
+#if 0
     // directory:
     NTSTATUS WdfDriverRetrieveDriverDataDirectoryString(
   [_In_] WDFDRIVER Driver,
