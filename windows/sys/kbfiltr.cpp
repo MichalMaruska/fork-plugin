@@ -150,7 +150,8 @@ Return Value:
 }
 
 static NTSTATUS create_machine(PDEVICE_EXTENSION filterExt, WDFDEVICE hDevice);
-static NTSTATUS configure_from_registry(IN WDFDRIVER        Driver,
+static NTSTATUS configure_from_registry(IN WDFDRIVER Driver,
+                                        IN WDFDEVICE Device,
                                         machineRec* forking_machine);
 
 
@@ -299,7 +300,7 @@ Return Value:
 
     KdPrint(("mmc: everything passed\n"));
     // registry:
-    configure_from_registry(Driver, filterExt->machine);
+    configure_from_registry(Driver, hDevice, filterExt->machine);
 #if 0
     if (*InitSafeBootMode == 0)
 
@@ -356,9 +357,13 @@ Return Value:
     return status;
 }
 
-static NTSTATUS configure_from_registry(IN WDFDRIVER        Driver,
-                                        machineRec* forking_machine)
+static NTSTATUS
+configure_from_registry(IN WDFDRIVER Driver,
+                        IN WDFDEVICE Device,
+                        machineRec* forking_machine)
 {
+    UNREFERENCED_PARAMETER(forking_machine);
+    UNREFERENCED_PARAMETER(Driver);
     NTSTATUS status;
     WDFKEY hKey;
 
