@@ -394,7 +394,7 @@ configure_from_registry(IN WDFDRIVER Driver,
 
 #endif
 
-#if 0
+#if 1
     // PWDF_OBJECT_ATTRIBUTES KeyAttributes,
     WDFKEY ParametersKey;
     status = WdfDriverOpenPersistentStateRegistryKey(Driver,
@@ -405,7 +405,8 @@ configure_from_registry(IN WDFDRIVER Driver,
         DebugPrint(("failed to retrieve State registry key 0x%x\n", status));
         return status;
     }
-    hKey = ParametersKey;
+
+    WdfRegistryClose(ParametersKey);
 #endif
 
     UNICODE_STRING  ValueName;
