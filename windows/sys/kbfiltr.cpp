@@ -411,10 +411,12 @@ configure_from_registry(IN WDFDRIVER Driver,
 
     count = WdfCollectionGetCount(col);
     // for (int i=0; i< count; i++) {
-    WDFOBJECT subRequest;
-    while ((subRequest = WdfCollectionGetFirstItem(col)) != NULL) {
+    WDFOBJECT handle;
+    UNICODE_STRING UnicodeString;
+
+    while ((handle = WdfCollectionGetFirstItem(col)) != NULL) {
         // process:
-        WDFSTRING string = subRequest;
+        status = WdfStringGetUnicodeString(handle, &UnicodeString);
         // process:
         WdfCollectionRemoveItem(col, 0);
         WdfObjectDelete(subRequest);
