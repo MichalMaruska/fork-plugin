@@ -367,10 +367,14 @@ configure_from_registry(IN WDFDRIVER Driver,
     NTSTATUS status;
     WDFKEY hKey;
 
-#if 0
     // null-terminated unicode string:
     PWSTR  registryPath = WdfDriverGetRegistryPath(Driver);
 
+    // Release build throws away DebugPrint!
+    UNREFERENCED_PARAMETER(registryPath);
+    DebugPrint(("The Registry path for the driver is %w.\n", registryPath));
+
+#if 0
     // The Parameters key is for immutable settings provided in the INF file.
     status = WdfDriverOpenParametersRegistryKey(Driver,
                                                          STANDARD_RIGHTS_ALL,
