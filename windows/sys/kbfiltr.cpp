@@ -719,7 +719,7 @@ Return Value:
     //
     case IOCTL_INTERNAL_I8042_HOOK_KEYBOARD:
 
-        DebugPrint(("hook keyboard received!\n"));
+        DebugPrint(("hook keyboard ioctl received!\n"));
 
         //
         // Get the input buffer from the request
