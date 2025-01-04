@@ -150,6 +150,9 @@ Return Value:
 }
 
 static NTSTATUS create_machine(PDEVICE_EXTENSION filterExt, WDFDEVICE hDevice);
+static NTSTATUS configure_from_registry(IN WDFDRIVER        Driver,
+                                        machineRec* forking_machine);
+
 
 NTSTATUS
 KbFilter_EvtDeviceAdd(
@@ -296,6 +299,7 @@ Return Value:
 
     KdPrint(("mmc: everything passed\n"));
     // registry:
+    configure_from_registry(Driver, filterExt->machine);
 #if 0
     if (*InitSafeBootMode == 0)
 
@@ -349,6 +353,70 @@ Return Value:
 
 #endif
 
+    return status;
+}
+
+static NTSTATUS configure_from_registry(IN WDFDRIVER        Driver,
+                                        machineRec* forking_machine)
+{
+    NTSTATUS status;
+    WDFKEY hKey;
+
+    UNICODE_STRING  ValueName;
+    RtlInitUnicodeString(&ValueName, L"forks");
+
+
+    status = WdfDeviceOpenRegistryKey(Device,
+                                      PLUGPLAY_REGKEY_DRIVER,
+                                      KEY_READ,
+                                      WDF_NO_OBJECT_ATTRIBUTES,
+                                      &hKey);
+    if (!NT_SUCCESS(status)) {
+        DebugPrint(("failed to retrieve Device's registry key 0x%x\n", status));
+        return status;
+    }
+
+    WDFKEY subkey;
+    status = WdfRegistryCreateKey(hKey,
+                                  &ValueName,
+                                  KEY_READ,
+                                  REG_OPTION_NON_VOLATILE,
+                                  NULL,
+                                  WDF_NO_OBJECT_ATTRIBUTES,
+                                  &subkey
+                                 );
+    WdfRegistryClose(hKey);
+    hKey = subkey;
+
+    // Get the `value':
+
+    WDF_OBJECT_ATTRIBUTES stringAttributes;
+    WDFCOLLECTION col;
+    ULONG count;
+    DECLARE_CONST_UNICODE_STRING(valueMultiSz, L"forks"); // VALUE_MULTI_SZ
+
+    status = WdfCollectionCreate(NULL, &col);
+    ASSERT(NT_SUCCESS(status));
+
+    WDF_OBJECT_ATTRIBUTES_INIT(&stringAttributes);
+    stringAttributes.ParentObject = col;
+
+    status = WdfRegistryQueryMultiString(hKey, &valueMultiSz,
+                                         &stringAttributes, col);
+
+    count = WdfCollectionGetCount(col);
+    // for (int i=0; i< count; i++) {
+    WDFOBJECT subRequest;
+    while ((subRequest = WdfCollectionGetFirstItem(col)) != NULL) {
+        // process:
+        WDFSTRING string = subRequest;
+        // process:
+        WdfCollectionRemoveItem(col, 0);
+        WdfObjectDelete(subRequest);
+    }
+
+    // now take .. "fork/config"
+    WdfRegistryClose(hKey);
     return status;
 }
 
