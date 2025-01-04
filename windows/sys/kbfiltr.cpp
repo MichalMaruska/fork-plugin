@@ -367,6 +367,38 @@ configure_from_registry(IN WDFDRIVER Driver,
     NTSTATUS status;
     WDFKEY hKey;
 
+#if 0
+    // null-terminated unicode string:
+    PWSTR  registryPath = WdfDriverGetRegistryPath(Driver);
+
+    // The Parameters key is for immutable settings provided in the INF file.
+    status = WdfDriverOpenParametersRegistryKey(Driver,
+                                                         STANDARD_RIGHTS_ALL,
+                                                         WDF_NO_OBJECT_ATTRIBUTES,
+                                                         &hKey);
+
+    // directory:
+    NTSTATUS WdfDriverRetrieveDriverDataDirectoryString(
+  [_In_] WDFDRIVER Driver,
+  [_In_] WDFSTRING String
+    );
+
+#endif
+
+#if 0
+    // PWDF_OBJECT_ATTRIBUTES KeyAttributes,
+    WDFKEY ParametersKey;
+    status = WdfDriverOpenPersistentStateRegistryKey(Driver,
+                                                     STANDARD_RIGHTS_ALL,
+                                                     WDF_NO_OBJECT_ATTRIBUTES,
+                                                     &ParametersKey);
+    if (!NT_SUCCESS(status)) {
+        DebugPrint(("failed to retrieve State registry key 0x%x\n", status));
+        return status;
+    }
+    hKey = ParametersKey;
+#endif
+
     UNICODE_STRING  ValueName;
     RtlInitUnicodeString(&ValueName, L"forks");
 
