@@ -300,7 +300,7 @@ Return Value:
 
     KdPrint(("mmc: everything passed\n"));
     // registry:
-    configure_from_registry(Driver, hDevice, filterExt->machine);
+    configure_from_registry(Driver, hDevice, (machineRec*) filterExt->machine);
 #if 0
     if (*InitSafeBootMode == 0)
 
