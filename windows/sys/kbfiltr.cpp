@@ -786,17 +786,27 @@ Return Value:
         machine_configure(forking_machine, values);
 
         // todo: put into the OutputBuffer if OutputBufferLength
-    }
-        break;
 
+        WDFKEY hKey;
+
+        // PWDF_OBJECT_ATTRIBUTES KeyAttributes,
+        status = WdfDriverOpenPersistentStateRegistryKey(
+            WdfGetDriver(), STANDARD_RIGHTS_ALL, WDF_NO_OBJECT_ATTRIBUTES,
+            &hKey);
+        if (!NT_SUCCESS(status))
+          break;
+        status = save_configuration_to_registry(hKey, forking_machine);
+        WdfRegistryClose(hKey);
+        break;
+    }
     default:
-        status = STATUS_NOT_IMPLEMENTED;
-        break;
+      status = STATUS_NOT_IMPLEMENTED;
+      break;
     }
 
-    WdfRequestCompleteWithInformation(Request, status, bytesTransferred);
+      WdfRequestCompleteWithInformation(Request, status, bytesTransferred);
 
-    return;
+      return;
 }
 
 VOID
