@@ -150,6 +150,11 @@ Return Value:
 }
 
 static NTSTATUS create_machine(PDEVICE_EXTENSION filterExt, WDFDEVICE hDevice);
+static NTSTATUS configure_from_registry(IN WDFDRIVER Driver,
+                                        IN WDFDEVICE Device,
+                                        machineRec* forking_machine);
+static NTSTATUS configure_from_registry_key(IN WDFKEY hKey,
+                                            machineRec* forking_machine);
 
 NTSTATUS
 KbFilter_EvtDeviceAdd(
@@ -296,6 +301,7 @@ Return Value:
 
     KdPrint(("mmc: everything passed\n"));
     // registry:
+    configure_from_registry(Driver, hDevice, (machineRec*) filterExt->machine);
 #if 0
     if (*InitSafeBootMode == 0)
 
@@ -348,6 +354,97 @@ Return Value:
     void WdfRegistryClose(WDFKEY Key);
 
 #endif
+
+    return status;
+}
+
+static NTSTATUS
+configure_from_registry(IN WDFDRIVER Driver,
+                        IN WDFDEVICE Device,
+                        machineRec* forking_machine)
+{
+    UNREFERENCED_PARAMETER(Driver);
+    UNREFERENCED_PARAMETER(Device);
+    NTSTATUS status;
+    // Find some Key:
+    WDFKEY hKey;
+
+    status = configure_from_registry_key(hKey, forking_machine);
+    WdfRegistryClose(hKey);
+    return status;
+}
+
+
+static NTSTATUS
+configure_from_registry_key(IN WDFKEY hKey,
+                            machineRec* forking_machine)
+{
+    NTSTATUS status;
+
+#if VERIFICATION_MATRIX
+    restore_global_value(hKey,
+                         L"overlap_limit",
+                         forking_machine,
+                         fork_configure_overlap_limit);
+#endif
+    restore_global_value(hKey,
+                         L"clear_interval",
+                         forking_machine,
+                         fork_configure_clear_interval);
+
+    restore_global_value(hKey,
+                         L"repeat_limit",
+                         forking_machine,
+                         fork_configure_repeat_limit);
+
+    restore_global_value(hKey,
+                         L"repeat_consider_forks",
+                         forking_machine,
+                         fork_configure_repeat_consider_forks);
+
+    restore_global_value(hKey,
+                         L"debug",
+                         forking_machine,
+                         fork_configure_debug);
+
+
+#define MAX_FORKS 16
+
+    DECLARE_CONST_UNICODE_STRING(valueBinary, L"binary-forks");
+
+    const bool SET=true;
+    ULONG binary_values[MAX_FORKS];
+    ULONG ValueType;
+    ULONG ValueLengthQueried;
+
+    status = WdfRegistryQueryValue(hKey, &valueBinary,
+                                   // sizeof(binary_values)
+                                   MAX_FORKS * sizeof(ULONG),
+                                   binary_values,
+                                   &ValueLengthQueried,
+                                   &ValueType
+                                  );
+
+    if (!NT_SUCCESS(status))
+    {
+        DebugPrint(("WdfRegistryQueryValue failed %x\n", status));
+        return status;
+    } else if (ValueType != REG_BINARY)
+    {
+        DebugPrint(("WdfRegistryQueryValue returned unexpected Type %lu\n", ValueType));
+        return STATUS_NOT_IMPLEMENTED;
+    }
+    for  (int i = 0; i < ValueLengthQueried / sizeof(ULONG); i++) {
+        ULONG val = binary_values[i];
+        USHORT key = val >> 16;
+#define MAX_USHORT 65535
+//         MaxValue =
+        USHORT fork = val & MAX_USHORT;
+        // binary_values[top++] = key << 16 | value;
+        DebugPrint(("fork %u to %u\n", key, fork));
+
+        forking_machine->configure_key(fork_configure_key_fork, key,  fork, SET);
+    }
 
     return status;
 }
