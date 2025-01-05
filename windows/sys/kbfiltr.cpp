@@ -358,6 +358,44 @@ Return Value:
     return status;
 }
 
+
+static NTSTATUS
+save_global_value(IN WDFKEY hKey,
+                  PWSTR ValueNameW,
+                  machineRec* forking_machine,
+                  int attribute)
+{
+    const bool GET=false;
+    UNICODE_STRING ValueName;
+    RtlInitUnicodeString(&ValueName, ValueNameW);
+    return WdfRegistryAssignULong(hKey, &ValueName,
+                                  forking_machine->configure_global(attribute, 0, GET));
+}
+
+static NTSTATUS
+restore_global_value(IN WDFKEY hKey,
+                     PWSTR ValueNameW,
+                     machineRec* forking_machine,
+                     int attribute)
+{
+    const bool SET=true;
+    UNICODE_STRING ValueName;
+    RtlInitUnicodeString(&ValueName, ValueNameW);
+    ULONG Value;
+    NTSTATUS status;
+
+    status = WdfRegistryQueryULong(hKey,
+                                   &ValueName,
+                                   &Value);
+    if (NT_SUCCESS(status)) {
+        forking_machine->configure_global(attribute, Value, SET);
+    } else {
+        DebugPrint(("configuration value %S not found\n", ValueNameW));
+    }
+    return status;
+}
+
+
 static NTSTATUS
 configure_from_registry(IN WDFDRIVER Driver,
                         IN WDFDEVICE Device,
