@@ -22,6 +22,7 @@
     <ProjectGuid>{7227DB35-883A-4EF0-B083-1698CFEF85A3}</ProjectGuid>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <KMDF_VERSION_MAJOR>1</KMDF_VERSION_MAJOR>
+    <KMDF_VERSION_MINOR>25</KMDF_VERSION_MINOR>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">x64</Platform>
     <SampleGuid>{878C17AE-8F1D-43E4-9F8E-0321CA186895}</SampleGuid>
