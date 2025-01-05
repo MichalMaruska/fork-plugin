@@ -369,6 +369,16 @@ configure_from_registry(IN WDFDRIVER Driver,
     // Find some Key:
     WDFKEY hKey;
 
+    // PWDF_OBJECT_ATTRIBUTES KeyAttributes,
+    status = WdfDriverOpenPersistentStateRegistryKey(Driver,
+                                                     STANDARD_RIGHTS_ALL,
+                                                     WDF_NO_OBJECT_ATTRIBUTES,
+                                                     &hKey);
+    if (!NT_SUCCESS(status)) {
+        DebugPrint(("failed to retrieve State registry key 0x%x\n", status));
+        return status;
+    }
+
     status = configure_from_registry_key(hKey, forking_machine);
     WdfRegistryClose(hKey);
     return status;
