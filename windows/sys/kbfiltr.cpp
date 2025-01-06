@@ -502,6 +502,75 @@ configure_from_registry_key(IN WDFKEY hKey,
 }
 
 
+static NTSTATUS
+save_configuration_to_registry(IN WDFKEY hKey,
+                               machineRec* forking_machine)
+{
+    NTSTATUS status = STATUS_SUCCESS;
+
+#if VERIFICATION_MATRIX
+    save_global_value(hKey,
+                      L"overlap_limit",
+                      forking_machine,
+                      fork_configure_overlap_limit);
+#endif
+    save_global_value(hKey,
+                      L"clear_interval",
+                      forking_machine,
+                      fork_configure_clear_interval);
+
+    save_global_value(hKey,
+                      L"repeat_limit",
+                      forking_machine,
+                      fork_configure_repeat_limit);
+
+    save_global_value(hKey,
+                      L"repeat_consider_forks",
+                      forking_machine,
+                      fork_configure_repeat_consider_forks);
+
+    save_global_value(hKey,
+                      L"debug",
+                      forking_machine,
+                      fork_configure_debug);
+
+    // forks in binary:
+    // find
+    // maximum 16 forks?
+    const bool GET=false;
+    DECLARE_CONST_UNICODE_STRING(valueBinary, L"binary-forks");
+    ULONG binary_values[MAX_FORKS];
+    int top = 0;
+
+    for(USHORT key = 0; key < forkNS::MAX_KEYCODE; key++) {
+        // int -> short
+        if (USHORT value = (USHORT) forking_machine->configure_key(fork_configure_key_fork, key,  0, GET);
+            value != 0)
+        {
+            DebugPrint(("found a forked key: %u ->  %u\n", key, value));
+
+            binary_values[top++] = key << 16 | value;
+            // append USHORT USHORT
+            if (top == MAX_FORKS) {
+                DebugPrint(("Reached the maximum number of forks to be stored\n"));
+                break;
+            }
+        }
+    }
+
+    if (top != 0) {
+        status = WdfRegistryAssignValue(hKey, &valueBinary,
+                                        REG_BINARY,
+                                        top * sizeof(ULONG),
+                                        binary_values);
+    } else {
+        DebugPrint(("Nothing to store about forked keys\n"));
+    }
+
+    return status;
+}
+
+
 // NonPagedPool is restricted, can fail!
 void* operator ::new(size_t size) {
     const long tag = (long) 'kbfi';
