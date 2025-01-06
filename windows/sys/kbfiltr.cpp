@@ -1265,7 +1265,7 @@ void pass_event(const extendedEvent& pevent, WDFDEVICE hDevice)
     event.Reserved = pevent.Reserved;
     event.ExtraInformation = pevent.ExtraInformation;
 
-    ULONG InputDataConsumed;
+    ULONG InputDataConsumed = 0;
 
     (*(PSERVICE_CALLBACK_ROUTINE)(ULONG_PTR) devExt->UpperConnectData.ClassService)(
         devExt->UpperConnectData.ClassDeviceObject,
