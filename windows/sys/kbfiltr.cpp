@@ -442,8 +442,12 @@ configure_from_registry_key(IN WDFKEY hKey,
         USHORT fork = val & MAX_USHORT;
         // binary_values[top++] = key << 16 | value;
         DebugPrint(("fork %u to %u\n", key, fork));
-
-        forking_machine->configure_key(fork_configure_key_fork, key,  fork, SET);
+        if (key > forkNS::MAX_KEYCODE) {
+            DebugPrint(("skipping overflow key %u\n", key));
+            continue;
+        } else {
+            forking_machine->configure_key(fork_configure_key_fork, key,  fork, SET);
+        }
     }
 
     return status;
