@@ -74,3 +74,7 @@ Open terminal/CMD as admin:
 ```
 bcdedit /set testsigning on
 ```
+
+
+./kbftest from to
+
