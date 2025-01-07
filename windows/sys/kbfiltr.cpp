@@ -1258,13 +1258,8 @@ void pass_event(const extendedEvent& pevent, WDFDEVICE hDevice)
 {
     PDEVICE_EXTENSION devExt = FilterGetData(hDevice);
     KEYBOARD_INPUT_DATA event;
-    event.MakeCode = pevent.key;
-    event.Flags = pevent.flags;
 
-    event.UnitId = pevent.UnitId;
-    event.Reserved = pevent.Reserved;
-    event.ExtraInformation = pevent.ExtraInformation;
-
+    extended_event_to_win(pevent, event);
     ULONG InputDataConsumed = 0;
 
     (*(PSERVICE_CALLBACK_ROUTINE)(ULONG_PTR) devExt->UpperConnectData.ClassService)(
