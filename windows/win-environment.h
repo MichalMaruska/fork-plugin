@@ -31,7 +31,7 @@ void win_event_to_extended(const KEYBOARD_INPUT_DATA& event, extendedEvent &ev, 
   ev.key = event.MakeCode;
   ev.forked = 0;
   ev.flags = event.Flags;
-  ev.press = !(event.Flags & 1);
+  ev.press = !(event.Flags & KEY_BREAK);
   //
   ev.UnitId = event.UnitId;
   ev.Reserved = event.Reserved;
