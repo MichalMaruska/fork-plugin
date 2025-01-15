@@ -1,33 +1,46 @@
+* rename again
+
+* publish:
+- how to get it certified?
+- how to build the ... cmake?
+
+
+* build from cmdline on Github ?
+
+
+* see keyboard.inf
+to understand why needed:
+STANDARD_Inst sections!
+
+
+* difference
+http://alter.org.ua/en/docs/nt_kernel/kdprint/
+https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-kdprint
+
+KdPrint is identical to the DbgPrint routine in code that is compiled for a debug
+configuration. This routine has no effect if compiled for a release configuration. Only
+kernel-mode drivers can call the KdPrint routine.
+
 
 DebugPrint(("trying to set fork\n"));
 vs.
-KdPrint()
+KdPrint() ..... so this is #ifdef DBG
 KdPrint(("%s we see E0/E1 flag %u\n", __func__, event->Flags));
 
+#ifdef DBG
+#define KdPrint(_x_) DbgPrint _x_
+#else
+#define KdPrint(_x_)
+#endif
 
 
-* Convert to C++
-** just filter
-** ....circular
-** ...triqueue
-** compile use machine with ...?
-
-* how to read Registry?
-
-* install kbfilter
-
-* how to interract with the new PDO?
 
 * how to attach as class driver? (Registry)
 
 * time stamps
 
-* add/remove events
 
-
-* dmesg?
-
-
+*
 > Universal Windows Driver. It uses only APIs and DDIs that are included in OneCoreUAP.
 this is the lowest?
 the 3 levels of conformity?
@@ -35,7 +48,7 @@ the 3 levels of conformity?
 https://learn.microsoft.com/nl-nl/windows-hardware/drivers/develop/get-started-developing-windows-drivers
 
 
-
+* is this the old tool?  pnptool is better?
 devcon hwid =keyboard
 devcon classes
 devcon listclass keyboard
@@ -64,6 +77,7 @@ devcon.exe failed.
 
 * ok I found the modification to be done to the .inx file!!!
 Then this works:
+
 devcon install *.inf  "ACPI\VEN_PNP&DEV_0303"
 and requires reboot.
 
@@ -83,12 +97,6 @@ dvi: No CoInstallers found
 mmc:
 File> add/remove snap-in > Certificates > add
 > Computer account > ??? > Finish
-
-
-* debugview as admin !!!
-
-by rescan hardware I could restore it!
-
 
 
 * I tried to update the keyboard driver.
@@ -113,38 +121,3 @@ once again:
 "Standard PS/2 Keyboard"
 
 no need to reboot!
-
-
-
-* BSOD & reboot loop:
-RE recovery:
-
-dism /image:c:\ /get-drivers
-dism /image:c:\ /remove-driver /driver:oem#.inf
-
-:
-/ ... left to Right-shift  and / goes ok for \
-
-F8
-    automatic
-Troubleshoot
-Advanced
-cmd
----------------
-cancel ? Advanced >
-
-* inf2cat during build  ... date
-https://learn.microsoft.com/th-th/windows-hardware/drivers/devtest/inf2cat
-
-
-* allocate machine, queues, env
-
-- once I get event in a buffer .... what to do, copy over to.
-
-ExAllocatePoolWithTag()
-
-
-|--queue----|--- queue--|----qH----|
-                              ^ put it here?
-
-exit --> buffer.
