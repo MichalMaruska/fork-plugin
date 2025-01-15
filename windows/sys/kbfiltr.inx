@@ -37,12 +37,17 @@ kbfiltr.sys = 1
 ;
 
 [Manufacturer]
+; what does this mean?
 %MfgName% = Standard,NT$ARCH$.10.0...16299
+;           ^^ models section
 
+; this is Models section:
 [Standard.NT$ARCH$.10.0...16299]
+;; device-description=install-section-name,[hw-id][,compatible-id...]
+;          undecorated name of the INF install section
+; ......DDInstall
 ; %kbfiltr.DeviceDesc% = kbfiltr, *PNP0BAAD
 %kbfiltr.DeviceDesc% = kbfiltr, ACPI\VEN_PNP&DEV_0303
-
 ; italian? 7480
 %kbfiltr.DeviceDesc% = kbfiltr, ACPI\VEN_DLLK&DEV_07A7
 ; %kbfiltr.DeviceDesc% = kbfiltr, ACPI\DLLK07A7\4&398fdba2&0
@@ -50,46 +55,60 @@ kbfiltr.sys = 1
 ; italian e6540?
 %kbfiltr.DeviceDesc% = kbfiltr, ACPI\VEN_DLLK&DEV_05BE
 
+; all point to: kbfilter.NT
 
-;
+; install-section-name == DDInstall  ?
+
+
 ; General installation section
 ;
 
+;; so this is DDInstall.HW ... implicitly activated by the Models section?
 [kbfiltr.NT]
 ; perform port related actions from keyboard.inf
 Include=keyboard.inf
 Needs=STANDARD_Inst
 
-; Copy the driver over
+; can be either @file or name of section with a list:
 CopyFiles=kbfiltr.CopyFiles
+;; mmc: here
+;; AddReg = kbfiltr.HW.AddReg
+;; would use the Software key!!!
+; UnregisterDlls=unregister-dll-section
+; Reboot
 
-
-;
-; File sections
-;
-
+; `DDInstall_CopyFile' section
 [kbfiltr.CopyFiles]
 kbfiltr.sys
 
-
-;
+; how is this picked? 
 ; Service Installation
-;
-
+; `DDInstall_Services'
 [kbfiltr.NT.Services]
+;; AddService=ServiceName, [flags],service-install-section[,event-log-install-section[,[EventLogType][,EventName]]]...
 AddService = kbfiltr,  , kbfiltr_Service_Inst
 ; Install the port driver and mouclass from keyboard.inf
 Include=keyboard.inf
+; that node should be parsed? or what?
 Needs=STANDARD_Inst.Services
 
+; service-install-section
+;
 [kbfiltr_Service_Inst]
 DisplayName    = %kbfiltr.SvcDesc%
 ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+; only when device is found...
 StartType      = 3                  ; SERVICE_DEMAND_START
-ErrorControl   = 0                  ; SERVICE_ERROR_IGNORE
+; 4 disabled !!
+
+;ErrorControl   = 0                  ; SERVICE_ERROR_IGNORE
+; display a warning to the user.
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
 ServiceBinary  = %13%\kbfiltr.sys
 ; mmc: what is %13% ?
+; StartName
 
+; `DDInstall_HW'
 [kbfiltr.NT.HW]
 ; https://learn.microsoft.com/en-us/windows-hardware/drivers/install/inf-ddinstall-hw-section
 ; Add the device upper filter
@@ -102,15 +121,35 @@ AddReg = kbfiltr.HW.AddReg
 Include=keyboard.inf
 Needs=STANDARD_Inst.HW
 
+
+;; if invoked from HW section:
+;; - he device's hardware key
+;; if (directly) from DDInstall
+;; - The device's software key
+
 [kbfiltr.HW.AddReg]
 ; mmc: is this registry path?
 ; HKR = Relative root, in which keys that are specified by using this abbreviation are relative
 ; to the registry key associated with the INF section in which
-;  this AddReg directive appears, as indicated in the following table.
-HKR,,"UpperFilters",0x00010000,"kbfiltr"
+; this AddReg directive appears, as indicated in the following table.
+; hardware key ?
 
-;;
+; The add-registry-section typically installs filters and/or stores per-device information
+; in the registry. An HKR specification in such an add-registry-section specifies the
+; device's hardware key, a device-specific registry subkey that contains information about
+; the device. A hardware key is also called a device key.
+; mmc: aha, HKR is not the root. hardware-key-registry?
+
 ;; reg-root,[subkey],[value-entry-name],[flags],[value][,[value]]
+;;    value             flags     value -- added or what? if multi-string?
+;;                  0x00010000 (FLG_ADDREG_TYPE_MULTI_SZ)
+;; -> The value field that follows can be a list of strings separated by commas.
+;; appended (flag value 0x00010008) to
+;; 8 = FLG_ADDREG_APPEND
+;; 2 = no clobber (do not replace)
+;; 4 = delete
+;; so ?  initial value? overwrites?
+HKR,,"UpperFilters",0x00010000,"kbfiltr"
 
 
 [kbfiltr.NT.Wdf]
