@@ -1,3 +1,25 @@
+* difference
+http://alter.org.ua/en/docs/nt_kernel/kdprint/
+https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-kdprint
+
+KdPrint is identical to the DbgPrint routine in code that is compiled for a debug
+configuration. This routine has no effect if compiled for a release configuration. Only
+kernel-mode drivers can call the KdPrint routine.
+
+
+DebugPrint(("trying to set fork\n"));
+vs.
+KdPrint() ..... so this is #ifdef DBG
+KdPrint(("%s we see E0/E1 flag %u\n", __func__, event->Flags));
+
+#ifdef DBG
+#define KdPrint(_x_) DbgPrint _x_
+#else
+#define KdPrint(_x_)
+#endif
+
+* rename in INF
+
 * Convert to C++
 Done:
 ** just filter
