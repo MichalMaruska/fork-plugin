@@ -86,7 +86,7 @@ kbfiltr.sys
 ; `DDInstall_Services'
 [kbfiltr.NT.Services]
 ;; AddService=ServiceName, [flags],service-install-section[,event-log-install-section[,[EventLogType][,EventName]]]...
-AddService = kbfiltr,  , kbfiltr_Service_Inst
+AddService = kbdouble, , kbdouble_Service_Inst
 ; Install the port driver and mouclass from keyboard.inf
 Include=keyboard.inf
 ; that node should be parsed? or what?
@@ -94,8 +94,9 @@ Needs=STANDARD_Inst.Services
 
 ; service-install-section
 ;
-[kbfiltr_Service_Inst]
-DisplayName    = %kbfiltr.SvcDesc%
+; mmc: I can see these in the Registry:
+[kbdouble_Service_Inst]
+DisplayName    = %kbdouble.SvcDesc%
 ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
 ; only when device is found...
 StartType      = 3                  ; SERVICE_DEMAND_START
@@ -149,8 +150,9 @@ Needs=STANDARD_Inst.HW
 ;; 2 = no clobber (do not replace)
 ;; 4 = delete
 ;; so ?  initial value? overwrites?
-HKR,,"UpperFilters",0x00010000,"kbfiltr"
-
+HKR,,"UpperFilters",0x00010000,"kbdouble"
+;                              ^^^^^^^^ is this the name of the service!
+; https://github.com/microsoft/Windows-driver-samples/blob/1fe4cc42bedfccb97a5b2cc169f9e5306d41d0de/input/kbfiltr/README.md
 
 [kbfiltr.NT.Wdf]
 KmdfService = kbfiltr, kbfiltr_wdfsect
@@ -181,6 +183,6 @@ MfgName      = "maruska"
 kbfiltr.DeviceDesc = "Forking Keyboard Device"
 
 ; Make sure the service description is unique to avoid collision with another INF.
-kbfiltr.SvcDesc = "Keyboard Forking service"
+kbdouble.SvcDesc = "Double Keyboard service"
 
 DiskId1 = "Forking-Keyboard Install Disk"
