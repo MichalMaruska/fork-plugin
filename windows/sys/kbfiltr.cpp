@@ -1292,10 +1292,6 @@ void accept_event(PKEYBOARD_INPUT_DATA event, PDEVICE_EXTENSION devExt)
         DebugPrint(("%s we see E0/E1 flag %u\n", __func__, event->Flags));
     }
 
-    if (event->Flags > 1) {
-        KdPrint(("%s we lose information about flags %u\n", __func__, event->Flags));
-    }
-
     extendedEvent ev;
     win_event_to_extended(*event, ev, current_time_miliseconds());
 
