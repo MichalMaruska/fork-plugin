@@ -57,3 +57,7 @@ openssl x509 -text        -in kbfiltr.cer -out kbfiltr.txt
 
 openssl x509 -outform DER -in kbfiltr.txt   -out kbfiltr.der
 ```
+
+
+https://learn.microsoft.com/en-us/sysinternals/downloads/regjump
+regjump put into Local/Microsoft\WindowsApps which is in $Env:PATH
