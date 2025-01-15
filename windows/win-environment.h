@@ -103,7 +103,7 @@ public:
   USHORT detail_of(const extendedEvent& event) const OVERRIDE{
     // note: we ignore the E0/E1 bits!
     // I might even fork to an E0 key!
-    return event.key | ((event.flags & KEY_E0)?0:1<<8);
+    return event.key | ((event.flags & KEY_E0)?1<<8:0);
   }
 
   bool ignore_event(const extendedEvent& pevent) OVERRIDE{
