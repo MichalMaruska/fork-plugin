@@ -875,7 +875,7 @@ Return Value:
 
     PAGED_CODE();
 
-    DebugPrint(("Entered KbFilter_EvtIoInternalDeviceControl\n"));
+    DebugPrint(("Entered KbFilter_EvtIoInternalDeviceControl %lu\n", IoControlCode));
 
     hDevice = WdfIoQueueGetDevice(Queue);
     devExt = FilterGetData(hDevice);
