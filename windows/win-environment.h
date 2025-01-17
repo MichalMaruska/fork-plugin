@@ -18,8 +18,8 @@ typedef struct _archived_event
 
     void* operator new(size_t size, void* p) noexcept
     {
-        UNREFERENCED_PARAMETER(size);
-        return p;
+      UNREFERENCED_PARAMETER(size);
+      return p;
     };
 } extendedEvent;
 
@@ -40,15 +40,15 @@ void win_event_to_extended(const KEYBOARD_INPUT_DATA& event, extendedEvent &ev, 
 
 void extended_event_to_win(const extendedEvent &pevent, KEYBOARD_INPUT_DATA& event)
 {
-    event.MakeCode = pevent.key;
-    event.Flags = pevent.flags;
+  event.MakeCode = pevent.key;
+  event.Flags = pevent.flags;
 
-    event.UnitId = pevent.UnitId;
-    event.Reserved = pevent.Reserved;
-    event.ExtraInformation = pevent.ExtraInformation;
-    // ev.time = time;
-    // ev.forked = 0;
-    // ev.press = !(event.Flags & 1);
+  event.UnitId = pevent.UnitId;
+  event.Reserved = pevent.Reserved;
+  event.ExtraInformation = pevent.ExtraInformation;
+  // ev.time = time;
+  // ev.forked = 0;
+  // ev.press = !(event.Flags & 1);
 }
 
 
