@@ -1289,17 +1289,12 @@ void accept_event(PKEYBOARD_INPUT_DATA event, PDEVICE_EXTENSION devExt)
     auto *forking_machine = (machineRec*) devExt->machine;
 
     if (event->Flags & (KEY_E0 | KEY_E1)) {
-        DebugPrint(("%s we see E0/E1 flag %u\n", __func__, event->Flags));
+        KdPrint(("%s we see E0/E1 flag %u\n", __func__, event->Flags));
     }
 
     extendedEvent ev;
     win_event_to_extended(*event, ev, current_time_miliseconds());
 
-    if (ev.flags & (KEY_E0 | KEY_E1)) {
-        DebugPrint(("%s we see E0/E1 flag %u\n", __func__, ev.flags));
-    }
-
-    // KdPrint(("%s passing \n", __func__));
     int timeout = forking_machine->accept_event(ev);
     if (timeout != 0) {
         startTimer(devExt->timerHandle, timeout);
