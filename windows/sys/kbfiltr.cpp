@@ -574,6 +574,7 @@ save_configuration_to_registry(IN WDFKEY hKey,
 // NonPagedPool is restricted, can fail!
 void* operator ::new(size_t size) {
     const long tag = (long) 'kbfi';
+    // endianess https://stackoverflow.com/questions/6370894/converting-a-four-character-string-to-a-long
     return ExAllocatePool2(POOL_FLAG_PAGED, size, tag);
 }
 
