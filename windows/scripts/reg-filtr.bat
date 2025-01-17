@@ -1,2 +1,2 @@
-regjump HKLM\System\ControlSet001\Services\kbfiltr\State
+regjump HKLM\System\ControlSet001\Services\kbdouble\State
 
