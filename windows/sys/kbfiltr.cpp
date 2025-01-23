@@ -193,8 +193,6 @@ Return Value:
     PDEVICE_EXTENSION       filterExt;
     WDF_IO_QUEUE_CONFIG     ioQueueConfig;
 
-    UNREFERENCED_PARAMETER(Driver);
-
     PAGED_CODE();
 
     DebugPrint(("Enter FilterEvtDeviceAdd \n"));
