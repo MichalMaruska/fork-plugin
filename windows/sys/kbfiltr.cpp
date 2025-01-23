@@ -302,58 +302,6 @@ Return Value:
     KdPrint(("mmc: everything passed\n"));
     // registry:
     configure_from_registry(Driver, hDevice, (machineRec*) filterExt->machine);
-#if 0
-    if (*InitSafeBootMode == 0)
-
-    Do not attach the filter device object to the device stack.
-    Return success from the filter driver's AddDevice routine.
-      KbFilter_EvtDeviceAdd
-
-    #include <wdfstring.h>
-    WDFSTRING              *String;
-    WDFSTRING  stringHandle = NULL;
-
-    // atts
-    WDF_OBJECT_ATTRIBUTES  attributes;
-    WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
-
-    NTSTATUS WdfStringCreate(PCUNICODE_STRING       UnicodeString, // copied !!!с
-                             PWDF_OBJECT_ATTRIBUTES StringAttributes, // WDF_NO_OBJECT_ATTRIBUTES
-                             WDFSTRING              *String);
-
-
-    NTSTATUS
-    WdfRegistryQueryString(WDFKEY Key, PCUNICODE_STRING ValueName,
-                           // A handle to a framework string object.
-                           WDFSTRING String);
-
-
-    // what's the use?
-    HANDLE WdfRegistryWdmGetHandle(WDFKEY Key);
-
-    //
-    NTSTATUS WdfRegistryCreateKey(WDFKEY                 ParentKey,
-                                  PCUNICODE_STRING       KeyName,
-                                  ACCESS_MASK            DesiredAccess,
-                                  ULONG                  CreateOptions,
-                                  PULONG                 CreateDisposition,
-                                  PWDF_OBJECT_ATTRIBUTES KeyAttributes,
-                                  WDFKEY                 *Key
-                                  );
-
-    NTSTATUS WdfRegistryQueryMultiString(WDFKEY                 Key,
-                                         PCUNICODE_STRING       ValueName,
-                                         PWDF_OBJECT_ATTRIBUTES StringsAttributes,
-                                         WDFCOLLECTION          Collection);
-    // assign:
-    NTSTATUS WdfRegistryAssignMultiString([in] WDFKEY           Key,
-                                          [in] PCUNICODE_STRING ValueName,
-                                          [in] WDFCOLLECTION    StringsCollection
-                                          );
-
-    void WdfRegistryClose(WDFKEY Key);
-
-#endif
 
     return status;
 }
