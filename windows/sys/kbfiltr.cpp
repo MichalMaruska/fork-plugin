@@ -61,7 +61,7 @@ extern "C" {
   extern PULONG InitSafeBootMode;
 }
 
-using machineConfig = forkNS::ForkConfiguration<USHORT, time_type, forkNS::MAX_KEYCODE >;
+const int MAX_KEYCODE = 512;
 
 // experiments:
 #if 1
@@ -72,7 +72,11 @@ using last_event_t = circular_buffer<extendedEvent, false, kernelAllocator<exten
 #endif
 
 using machineRec =  forkNS::forkingMachine<USHORT, time_type,
-                                           extendedEvent, winEnvironment, extendedEvent, last_event_t >;
+                                           extendedEvent, winEnvironment, extendedEvent, last_event_t, MAX_KEYCODE>;
+
+using machineConfig = machineRec::fork_configuration;
+// forkNS::ForkConfiguration<USHORT, time_type, MAX_KEYCODE>;
+
 
 
 void KbFilter_EvtWdfTimer(IN WDFTIMER Timer);
@@ -436,7 +440,7 @@ configure_from_registry_key(IN WDFKEY hKey,
         USHORT fork = val & MAX_USHORT;
         // binary_values[top++] = key << 16 | value;
         DebugPrint(("fork %u to %u\n", key, fork));
-        if (key > forkNS::MAX_KEYCODE) {
+        if (key > MAX_KEYCODE) {
             DebugPrint(("skipping overflow key %u\n", key));
             continue;
         } else {
@@ -488,7 +492,7 @@ save_configuration_to_registry(IN WDFKEY hKey,
     ULONG binary_values[MAX_FORKS];
     int top = 0;
 
-    for(USHORT key = 0; key < forkNS::MAX_KEYCODE; key++) {
+    for(USHORT key = 0; key < MAX_KEYCODE; key++) {
         // int -> short
         if (USHORT value = (USHORT) forking_machine->configure_key(fork_configure_key_fork, key,  0, GET);
             value != 0)
