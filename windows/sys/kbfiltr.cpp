@@ -1300,6 +1300,8 @@ Return Value:
 
     devExt = FilterGetData(hDevice);
 
+    //
+    DebugPrint(("%s: %d events\n", __func__, (InputDataEnd - InputDataStart) ));
     for (PKEYBOARD_INPUT_DATA event = InputDataStart; event != InputDataEnd; event++) {
         accept_event(event, devExt);
     }
