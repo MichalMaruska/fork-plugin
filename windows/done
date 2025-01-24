@@ -1,0 +1,77 @@
+* difference
+http://alter.org.ua/en/docs/nt_kernel/kdprint/
+https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-kdprint
+
+KdPrint is identical to the DbgPrint routine in code that is compiled for a debug
+configuration. This routine has no effect if compiled for a release configuration. Only
+kernel-mode drivers can call the KdPrint routine.
+
+
+DebugPrint(("trying to set fork\n"));
+vs.
+KdPrint() ..... so this is #ifdef DBG
+KdPrint(("%s we see E0/E1 flag %u\n", __func__, event->Flags));
+
+#ifdef DBG
+#define KdPrint(_x_) DbgPrint _x_
+#else
+#define KdPrint(_x_)
+#endif
+
+* rename in INF
+
+* Convert to C++
+Done:
+** just filter
+** ....circular
+** ...triqueue
+** compile use machine with ...?
+
+*** how to read Registry?
+
+*** install kbfilter
+
+*** how to interract with the new PDO?
+
+* add/remove events
+... but documented?
+
+* dmesg?
+  debugview as admin !!!
+
+* recovery:
+by rescan hardware I could restore it!
+
+
+* BSOD & reboot loop:
+RE recovery:
+
+dism /image:c:\ /get-drivers
+dism /image:c:\ /remove-driver /driver:oem#.inf
+
+:
+/ ... left to Right-shift  and / goes ok for \
+
+F8
+    automatic
+Troubleshoot
+Advanced
+cmd
+---------------
+cancel ? Advanced >
+
+* inf2cat during build  ... date
+https://learn.microsoft.com/th-th/windows-hardware/drivers/devtest/inf2cat
+
+
+* allocate machine, queues, env
+
+- once I get event in a buffer .... what to do, copy over to.
+
+ExAllocatePoolWithTag()
+
+
+|--queue----|--- queue--|----qH----|
+                              ^ put it here?
+
+exit --> buffer.
