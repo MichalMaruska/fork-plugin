@@ -77,4 +77,7 @@ bcdedit /set testsigning on
 
 
 ./kbftest from to
+./kbftest 30 42
+
+scancodes tool
 
