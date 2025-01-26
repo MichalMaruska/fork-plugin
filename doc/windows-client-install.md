@@ -38,4 +38,7 @@ A reboot is needed.
 
 ### Configuration
 ./kbftest from to
+./kbftest 30 42
+
+scancodes tool
 
