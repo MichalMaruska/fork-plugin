@@ -37,8 +37,21 @@ A reboot is needed.
 
 
 ### Configuration
-./kbftest from to
-./kbftest 30 42
 
-scancodes tool
+use ./kbftest tool, to make scan-code "from", emit scancode "to" when pressed long/in
+parallel with another key:
+
+30 is "a", "42" is shift:
+
+```
+./kbftest 30 42
+```
+
+## Useful links:
+https://github.com/lelegard/winkbdlayouts tools to install key-layouts, see 'scancodes'.
+
+I have created my rich key-layout [here](https://github.com/MichalMaruska/winkbdlayouts/commits/maruska/).
+
+http://www.kbdedit.com/ -- a paid tool to create rich layouts. Extensive information.
+
 
