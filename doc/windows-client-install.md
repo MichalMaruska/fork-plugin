@@ -48,7 +48,7 @@ parallel with another key:
 ```
 
 ## Useful links:
-https://github.com/lelegard/winkbdlayouts tools to install key-layouts, see 'scancodes'.
+https://github.com/lelegard/winkbdlayouts tools to install key-layouts, see 'scancodes'. Requires VS
 
 I have created my rich key-layout [here](https://github.com/MichalMaruska/winkbdlayouts/commits/maruska/).
 

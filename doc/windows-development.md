@@ -185,3 +185,22 @@ so 48 valid ....
  .... which treats position 16 as an internal delimiter value.
 
 SHFT_INVALID  ???
+
+
+### External tools
+https://www.microsoft.com/en-us/download/details.aspx?id=102134
+klc files ?  but see below:
+https://github.com/rimas-kudelis/windows-keyboard-layouts
+> I am aware that Microsoft has abandoned Microsoft Keyboard Layout Creator.
+
+
+https://github.com/davidebeatrici/kli
+needs
+https://github.com/benhoyt/inih
+
+https://github.com/rimas-kudelis/windows-keyboard-layouts/issues/1#issuecomment-1030586558
+
+
+
+* MS account
+https://partner.microsoft.com/dashboard/v2/home
