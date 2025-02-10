@@ -1204,14 +1204,16 @@ Return Value:
 BOOLEAN
 startTimer(WDFTIMER timerHandle, int miliseconds)
 {
-  LONGLONG DueTime = - miliseconds * 1000 * 10; // 10 microseconds, 1000 miliseconds , 100 of them.
-  // negative: relative to now.
+    // in microseconds
+    LONGLONG DueTime = - miliseconds * 1000 * 10; // 10 microseconds, 1000 miliseconds , 100 of them.
+    // negative: relative to now.
 
-  BOOLEAN already = WdfTimerStart(timerHandle, DueTime);
-  if (already) {
-      KdPrint(("timer start in %ld: %s\n", DueTime, already?"already":"new"));
-  }
-  return already;
+    KdPrint(("%s setting timer in %ld (%dms)\n", __func__, DueTime, miliseconds));
+    BOOLEAN already = WdfTimerStart(timerHandle, DueTime);
+    if (already) {
+        KdPrint(("timer start in %ld: %s\n", DueTime, already?"already":"new"));
+    }
+    return already;
 }
 
 void pass_event(const extendedEvent& pevent, WDFDEVICE hDevice)
