@@ -62,3 +62,9 @@ http://www.kbdedit.com/ -- a paid tool to create rich layouts. Extensive informa
 https://learn.microsoft.com/en-us/answers/questions/1239908/developed-a-keyboard-layout-dll-from-source-but-is
 > I finally managed to find the solution by myself. I documented the explanations here: https://github.com/lelegard/winkbdlayouts#declaring-a-keyboard-layout-on-windows
 
+
+
+### setup
+- via dev-mng or CLI tool?
+
+
