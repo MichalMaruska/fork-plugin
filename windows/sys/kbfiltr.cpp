@@ -1262,11 +1262,12 @@ void accept_event(PKEYBOARD_INPUT_DATA event, PDEVICE_EXTENSION devExt)
     }
 
     extendedEvent ev;
-    win_event_to_extended(*event, ev, current_time_miliseconds());
+    time_type now = current_time_miliseconds();
+    win_event_to_extended(*event, ev, now);
 
     time_type timeout = forking_machine->accept_event(ev);
     if (timeout != 0) {
-        startTimer(devExt->timerHandle, timeout);
+        startTimer(devExt->timerHandle, timeout - now);
     } else {
         // can I stop an already stopped?
         KdPrint(("%s no timer needed -> stop it\n", __func__));
