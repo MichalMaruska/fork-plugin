@@ -16,6 +16,8 @@ It should be in as seen here:  ![Screenshot of certml](images/Screenshot-ITA-cer
 At this point the driver can be installed into the "DriverStore" .
 
 
+https://learn.microsoft.com/en-us/windows-hardware/drivers/install/the-testsigning-boot-configuration-option
+
 But to be **used**, loaded into the kernel, you also need (as admininstrator):
 ```
 bcdedit /set testsigning on
@@ -54,4 +56,9 @@ I have created my rich key-layout [here](https://github.com/MichalMaruska/winkbd
 
 http://www.kbdedit.com/ -- a paid tool to create rich layouts. Extensive information.
 
+
+
+* keymap
+https://learn.microsoft.com/en-us/answers/questions/1239908/developed-a-keyboard-layout-dll-from-source-but-is
+> I finally managed to find the solution by myself. I documented the explanations here: https://github.com/lelegard/winkbdlayouts#declaring-a-keyboard-layout-on-windows
 
