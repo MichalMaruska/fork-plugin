@@ -318,8 +318,11 @@ save_global_value(IN WDFKEY hKey,
     const bool GET=false;
     UNICODE_STRING ValueName;
     RtlInitUnicodeString(&ValueName, ValueNameW);
-    return WdfRegistryAssignULong(hKey, &ValueName,
-                                  forking_machine->configure_global(attribute, 0, GET));
+    return
+      WdfRegistryAssignULong(hKey, &ValueName,
+                             forking_machine->configure_global
+                             ((enum fork_configuration_t) attribute,
+                              0, GET));
 }
 
 static NTSTATUS
@@ -338,7 +341,9 @@ restore_global_value(IN WDFKEY hKey,
                                    &ValueName,
                                    &Value);
     if (NT_SUCCESS(status)) {
-        forking_machine->configure_global(attribute, Value, SET);
+        forking_machine->configure_global(
+                                          (enum fork_configuration_t) attribute,
+                                           Value, SET);
     } else {
         DebugPrint(("configuration value %S not found\n", ValueNameW));
     }
@@ -610,13 +615,17 @@ machine_configure(machineRec* machine, int values[5])
 
    switch (subtype_n_args(type)){
    case fork_GLOBAL_OPTION:
-           machine->configure_global(type_subtype(type), (USHORT) values[1], true);
+           machine->configure_global(
+                                     (enum fork_configuration_t) type_subtype(type),
+                                      (USHORT) values[1], true);
            break;
    case fork_LOCAL_OPTION:
-           machine->configure_key(type_subtype(type), (USHORT) values[1], (USHORT) values[2], true);
+           machine->configure_key((enum fork_configuration_t)type_subtype(type),
+                                  (USHORT) values[1], (USHORT) values[2], true);
            break;
    case fork_TWIN_OPTION:
-           machine->configure_twins(type_subtype(type), (USHORT) values[1], (USHORT) values[2], (USHORT) values[3], true);
+           machine->configure_twins((enum fork_configuration_t) type_subtype(type),
+                                    (USHORT) values[1], (USHORT) values[2], (USHORT) values[3], true);
            break;
 
    default:
