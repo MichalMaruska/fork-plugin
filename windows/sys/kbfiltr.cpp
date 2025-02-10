@@ -1222,11 +1222,18 @@ void pass_event(const extendedEvent& pevent, WDFDEVICE hDevice)
     extended_event_to_win(pevent, event);
     ULONG InputDataConsumed = 0;
 
+#if 0
+    // maybe we should do this after we exit?
+    KdPrint(("%s: 1 event %p %p\n", __func__,
+             devExt->UpperConnectData.ClassService,
+             devExt->UpperConnectData.ClassDeviceObject));
+#endif
     (*(PSERVICE_CALLBACK_ROUTINE)(ULONG_PTR) devExt->UpperConnectData.ClassService)(
         devExt->UpperConnectData.ClassDeviceObject,
         &event,
         &event + 1,
         &InputDataConsumed);
+    KdPrint(("%s: consumed %d events\n", __func__, InputDataConsumed));
 }
 
 void accept_time(long time, PDEVICE_EXTENSION devExt)
