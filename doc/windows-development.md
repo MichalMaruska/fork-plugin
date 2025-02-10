@@ -204,3 +204,58 @@ https://github.com/rimas-kudelis/windows-keyboard-layouts/issues/1#issuecomment-
 
 * MS account
 https://partner.microsoft.com/dashboard/v2/home
+
+* https://dennisbabkin.com/blog/?t=how-to-get-a-certificate-to-code-sign-windows-kernel-drivers
+
+> Only a registered company can purchase an EV code-signing certificate.
+
+> Your Company Website must provide some publicly available information about its line of business.
+
+* CAB file?
+
+
+* Company: $99  ... NL: 75 EUR
+or 14 EUR  ?
+https://partner.microsoft.com/
+"Partner center"
+https://partner.microsoft.com/dashboard/v2/home
+
+Workspaces
++
+https://partner.microsoft.com/dashboard/v2/account-settings/settings/programs
+
+### Hardware
+Use the work email address that you use to log in to Office 365, Microsoft Azure, or Microsoft Dynamics CRM (for example, you@yourcompany.com).
+
+> A text or phone call helps us make sure this is you. Enter a number that isn't VoIP or toll free.
+
+68...
+068...
+cannot receive SMS !!!!
+
+
+
+
+
+
+
+https://www.advancedinstaller.com/publish-msi-exe-app-microsoft-store.html
+msiexec.exe  ?
+> silent installation
+> offline installation  (after setup d/l-ed)
+an
+
+
+## Generic Windows C++
+https://learn.microsoft.com/en-us/cpp/cpp/raw-pointers
+
+
+exceptions & STL
+https://github.com/microsoft/stl
+MSVC's implementation of the C++ Standard Library. 
+ StephanTLavavej
+
+https://github.com/microsoft/wil
+All of WIL can be used from user-space Windows code, and some (such as the RAII resource wrappers) can even be used in kernel mode.
+
+Consuming WIL via NuGet/ vcpkg ?
