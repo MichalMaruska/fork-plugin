@@ -1202,13 +1202,13 @@ Return Value:
 }
 
 BOOLEAN
-startTimer(WDFTIMER timerHandle, int miliseconds)
+startTimer(WDFTIMER timerHandle, time_type miliseconds)
 {
     // in microseconds
     LONGLONG DueTime = - miliseconds * 1000 * 10; // 10 microseconds, 1000 miliseconds , 100 of them.
     // negative: relative to now.
 
-    KdPrint(("%s setting timer in %ld (%dms)\n", __func__, DueTime, miliseconds));
+    KdPrint(("%s setting timer in %ld (%ldms)\n", __func__, DueTime, miliseconds));
     BOOLEAN already = WdfTimerStart(timerHandle, DueTime);
     if (already) {
         KdPrint(("timer start in %ld: %s\n", DueTime, already?"already":"new"));
@@ -1242,7 +1242,7 @@ void accept_time(long time, PDEVICE_EXTENSION devExt)
 {
     auto *forking_machine = (machineRec*) devExt->machine;
 
-    int timeout = forking_machine->accept_time(time);
+    time_type timeout = forking_machine->accept_time(time);
 
     if (timeout != 0) {
         startTimer(devExt->timerHandle, timeout);
@@ -1264,11 +1264,12 @@ void accept_event(PKEYBOARD_INPUT_DATA event, PDEVICE_EXTENSION devExt)
     extendedEvent ev;
     win_event_to_extended(*event, ev, current_time_miliseconds());
 
-    int timeout = forking_machine->accept_event(ev);
+    time_type timeout = forking_machine->accept_event(ev);
     if (timeout != 0) {
         startTimer(devExt->timerHandle, timeout);
     } else {
         // can I stop an already stopped?
+        KdPrint(("%s no timer needed -> stop it\n", __func__));
         WdfTimerStop(devExt->timerHandle, FALSE);
     }
 }
