@@ -6,7 +6,13 @@
 
 well, Visual Studio has the "Deploy" function.
 
-Using debugger?
+## Using debugger?
+/windows/minidump
+https://learn.microsoft.com/en-us/troubleshoot/windows-client/performance/read-small-memory-dump-file
+https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/debugger-download-tools
+install !
+As part of the WDK
+
 
 
 ## using a non-provisioned PC, which only does the minimum to install it
@@ -259,3 +265,12 @@ https://github.com/microsoft/wil
 All of WIL can be used from user-space Windows code, and some (such as the RAII resource wrappers) can even be used in kernel mode.
 
 Consuming WIL via NuGet/ vcpkg ?
+
+
+* how to turn on debugging?
+
+### Shell CMD
+https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/for
+
+https://ss64.com/nt/delayedexpansion.html
+https://stackoverflow.com/questions/10552812/defining-and-using-a-variable-in-batch-file
