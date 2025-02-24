@@ -8,6 +8,14 @@ msbuild .\exe /p:Platform=x64 /p:Configuration="Release"
 )
 
 IF ERRORLEVEL 1 GOTO FAILED
+
+
+ECHO "verify the .inf file"
+"%WindowsSdkDir%\tools\%WindowsSdkVersion%\x64\infverif.exe" /v /h sys/x64/Release/kbfilter.inf
+
+IF ERRORLEVEL 1 GOTO FAILED
+
+
 ::
 ECHO "Copy to my SMB share"
 
